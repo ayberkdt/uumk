@@ -4,7 +4,8 @@
  * · "Tarihçemizi keşfet": düğmenin uçağı kalkar, sayfa tarihçeye kayar, varınca başlığın altında sarı çizgi uzar, odak başlığa geçer.
  * · Kabin turu: kart hep açık; görünürken 7 sn'de bir sonraki ekibe geçer (süre çubuğu CSS animasyonu, bitince ilerler; kartın
  *   üstündeyken durur). Kullanıcı bir ekip seçerse ya da durdurursa tur kapanır; hareket azaltmada baştan kapalı. WebGL varsa
- *   2,5B maket (sahne/maket3b.mjs) posterin yerine geçer. */
+ *   2,5B maket (sahne/maket3b.mjs) posterin yerine geçer; donanım GPU'su yoksa (yazılımsal çizici) "yavaş" kipte: 1x piksel,
+ *   ~15 kare/sn. Poster yalnız WebGL hiç yoksa kalır (v13: GPU'suz tarayıcıda sahne hareketsiz görünüyordu). */
 import { metin } from '../ceviri.mjs';
 
 const $ = (s, k = document) => k.querySelector(s);
@@ -41,14 +42,15 @@ export function bizKur({ az, prm, gozle }) {
   kabinYaz(); addEventListener('dil-degisti', kabinYaz);
   new IntersectionObserver(([x]) => { if (turGorunur !== x.isIntersecting) { turGorunur = x.isIntersecting; turYenile(); } }, { threshold: 0.4 }).observe(maketEl);
   gozle(maketEl, { yakin: '700px', ilk: async () => {
-    if (!(await import('./gpu.mjs')).donanimGpu()) return;
-    maket = (await import('./maket3b.mjs')).maketKur($('#maket-tuval'), { imler, az, secildi: (i) => { if (i >= 0) { turKapat(); kabinSec(i); } } });
+    const gpu = await import('./gpu.mjs'), donanim = gpu.donanimGpu();
+    if (!gpu.webglVar()) return;
+    maket = (await import('./maket3b.mjs')).maketKur($('#maket-tuval'), { imler, az, yavas: !donanim, secildi: (i) => { if (i >= 0) { turKapat(); kabinSec(i); } } });
     if (!maket) return;
     maketEl.dataset.cizici = '3b'; maket.sec(prm.has('genel') ? -1 : kabinSecili); if (prm.has('olc')) globalThis.__maket = maket;
   } });
 
-  const kimlik = $('.kimlik'), kimlikUcus = $('#kimlik-yay animateMotion');
-  const kimlikUc = () => { if (az || !kimlikUcus?.beginElement) return; kimlik.dataset.ucus = ''; kimlikUcus.beginElement(); };
+  const kimlik = $('.kimlik'), kimlikUcus = $$('#kimlik-yay :is(animateMotion, animate)');   /* uçuş ve arkasından çizilen iz birlikte */
+  const kimlikUc = () => { if (az || !kimlikUcus[0]?.beginElement) return; kimlik.dataset.ucus = ''; kimlikUcus.forEach((a) => a.beginElement()); };
   gozle(kimlik, { yakin: '-25% 0px', ilk: kimlikUc });
   kimlik.addEventListener('pointerenter', kimlikUc);
   const tarihceEl = $('#tarihce');

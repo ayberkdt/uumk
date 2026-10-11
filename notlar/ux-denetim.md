@@ -1,3 +1,32 @@
+# YASA DENETİMİ — UUMK v13 (kimlik yayı, ok yerine uçak, kapı çizimi, kabin kartı ve hareketi, telefonda kapı) · 2026-10-11 gece · denetleyici index 0 HATA · 7 UYARI (v12 ile aynı)
+
+Sonuç: 20/20 ölçüldü · 0 HATA · 7 UYARI (hepsi v12'den; gerekçeler değişmedi) · TESLİM
+
+| # | Yasa | Ölçüm | Eşik | Durum | Gerekçe (yalnız UYARI) |
+|---|---|---|---|---|---|
+| 1 | Hick | kabin bölümü 9 eylem (6 numara + önceki/sonraki/durdur; başvuru bağlantı); sayı değişmedi, gezinti kartın üst satırına taşındı | ≤ 5 | UYARI | 6 numara tek seçim kümesi; gezinti üçlüsü karusel denetimi (v12 gerekçesi) |
+| 2 | Fitts | önceki/sonraki/durdur 44×44, başvuru 44 px yükseklik; kart ≥ 1280 px'te sahnenin sol altında, numaralardan uzak | ≥ 44 px | geçti | |
+| 3 | Jakob | dış bağlantı imi ↗ yerine −40° uçak (aynı yön, aynı yer: metnin sonu); önceki/sonraki uçakları sola/sağa; "Başa dön" uçağı yukarı | tanıdık desen | geçti | |
+| 4 | Seçim Yükü | kabin 6 ekip, varsayılan 1 seçili (değişmedi) | ≤ 5 ya da varsayılan | geçti | |
+| 5 | Yakınlık | kabin kartı: üst satır–ekip 12 px, ekip–düğme 12 px, dolgu 16/24 px; kimlik: yay logolara iner (−4 px), logo–ad 8 px | ≤ 1:2 | geçti | |
+| 6 | Benzerlik | uçak imi her yerde tek siluet (--ucak); yeni punto, renk, gölge yok; kart gölgesi g-1 | — | geçti | |
+| 7 | Tekdüze Bağlılık | sıra numarası, süre çubuğu ve gezinti tek satırda; kimlik yayı iki logoyu bağlar | — | geçti | |
+| 8 | Ortak Bölge | kabin kartı sahnenin üstünde tek kutu (iç içe kart yok); boş gündem kartı tek kutu | 0 | geçti | |
+| 9 | Prägnanz | degrade 0, cam 0, ışıma 0; kart düz yüzey (backdrop-filter yok) | 0 | geçti | |
+| 10 | Von Restorff | kabin görünümünde tek birincil: "Bu ekibe başvur" | 1 | geçti | |
+| 11 | Miller | değişmedi | ≤ 7 | geçti | |
+| 12 | Sıra Konumu | değişmedi | — | geçti | |
+| 13 | Doherty | süre çubuğu 7 sn (zamanlayıcı; ucunda uçak ilerler); kimlik uçuşu 2,6 sn (süs, eylemi beklemez); seçim aynı karede | < 400 ms geri bildirim | UYARI (denetleyici: 7000 ms animasyon) | Zamanlayıcıdır, geri bildirim değil; üstüne gelince durur (v12) |
+| 14 | Zeigarnik | tur "n / 6" ve süre çubuğu | — | geçti | |
+| 15 | Zirve-Son | boş gündem çizimi telefonda kart genişliğinde (390 px'te 4:3) | 3/3 | geçti | |
+| 16 | Parkinson | değişmedi | ≤ %50 | UYARI | Kullanıcı isteği (v12) |
+| 17 | Tesler | GPU'suz tarayıcıda sistem kendiliğinden yavaş kipe geçer (1x piksel, ~15 kare/sn); WebGL yoksa poster; kartın yeri genişliğe göre (≥ 1280 px sahnede, altında sahnenin altında) | — | geçti | |
+| 18 | Postel | değişmedi | 0 | geçti | |
+| 19 | Occam | kabin notu tek satıra kısaldı; ↗ karakterleri CSS imine geçti; yeni bölüm yok | ≤ 900 | UYARI (sayfa öğe sayısı) | Tek sayfalık site; bölümler tembel (v12) |
+| 20 | Pareto | ilk ekran değişmedi | ≥ %60 | UYARI (v9 gerekçesi) | |
+
+Risk: GPU'suz yavaş kip yalnız başsız Chrome'un SwiftShader'ında ölçüldü (13,5 ms/kare); kullanıcının tarayıcısının neden yazılımsal çiziciye düştüğü doğrulanmadı.
+
 # YASA DENETİMİ — UUMK v12 (Biz kimiz, Ne yapıyoruz, kabin turu, gündem, sponsorluk, kulüp kartı, hover) · 2026-10-11 akşam · denetleyici index 0 HATA · 7 UYARI · axe 0 (390 TR, 360 EN, 1440 TR, 1440 API'siz)
 
 Sonuç: 20/20 ölçüldü · 0 HATA · 7 UYARI (5'i v11'den: kapak ve tarihçe öğe yoğunluğu, sayfa öğe sayısı, ayrıntı penceresi 6 eylem, hesap formu zorunlu alanlar; yeni 2: kabin 9 eylem, tur süre çubuğu 7 sn) · ara ölçümde 10 UYARI vardı: yarıçap 6 → jetonlara, gölge 6 → 2, kart geçişi 360 → 280 ms ile 3'ü kapandı · karar: TESLİM.

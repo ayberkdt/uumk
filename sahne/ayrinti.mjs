@@ -50,7 +50,7 @@ function ciz() {
   isikKapat();
   dlg.querySelector('.ayrinti__kaynak-bas').textContent = metin('ayrintiKaynak');
   dlg.querySelector('.ayrinti__kaynaklar').replaceChildren(...k.kaynak.map(([u, tr, en]) => {
-    const a = el('a', `${(d && en) || tr} ↗`); a.href = u; a.target = '_blank'; a.rel = 'noopener';
+    const a = el('a', (d && en) || tr); a.className = 'dis'; a.href = u; a.target = '_blank'; a.rel = 'noopener';
     const li = el('li'); li.append(a); return li;
   }));
   yon(geri, KAYITLAR[no - 1], 'ayrintiOnceki', d); yon(ileri, KAYITLAR[no + 1], 'ayrintiSonraki', d);
@@ -65,7 +65,7 @@ function isikAc(i) {
   if (!g?.[i]) return;
   foto = i; isik.hidden = false;
   isik.querySelector('img').src = `gorseller/tarihce/${g[i][0]}-960.jpg`; isik.querySelector('img').alt = g[i][1 + d];
-  const a = el('a', `${metin('ayrintiFotoKaynak')} ↗`); a.href = g[i][3]; a.target = '_blank'; a.rel = 'noopener';
+  const a = el('a', metin('ayrintiFotoKaynak')); a.className = 'dis'; a.href = g[i][3]; a.target = '_blank'; a.rel = 'noopener';
   isik.querySelector('figcaption').replaceChildren(el('span', `${i + 1} / ${g.length} · ${g[i][1 + d]}`), a);
   isik.querySelectorAll('.ayrinti__isik-yon').forEach((b) => { b.disabled = !g[i + Number(b.dataset.isik)]; });
   isik.querySelector('.ayrinti__isik-kapat').focus();

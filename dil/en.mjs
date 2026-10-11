@@ -6,7 +6,7 @@ export const SAYFA = {
   navGundem: 'Agenda', navEtkinlikler: 'Events', navYazilar: 'Articles', navKulup: 'About us', navSponsor: 'Sponsorship',
   ad0: 'ITU Aeronautical and Astronautical Engineering Club', ad2: 'ITU UUMK', ad2k: 'Aeronautical and Astronautical Engineering Club',
   giris: 'The student club of the ITU Faculty of Aeronautics and Astronautics. We organise technical trips, model aircraft workshops and seminars, and we are part of EUROAVIA as AS Istanbul.',
-  girisCta: 'Agenda', uyeOl: 'Join the club ↗',
+  girisCta: 'Agenda', uyeOl: 'Join the club',
   olguKurulus: 'Founded', olguEkip: 'Teams', olguAg: 'EUROAVIA network', olguAgD: '<span data-ag="grup">40</span> groups · <span data-ag="ulke">15</span> countries',
   gundemUst: 'Agenda', gundemBaslik: 'Registrations and announcements',
   gundemNot: 'If you are signed in, registering takes one click. You can also register without an account, but then you enter your details again for each event.',
@@ -84,7 +84,7 @@ export const SAYFA = {
   r2026k: 'May · General assembly', r2026b: 'New board', r2026: 'A new board was elected in May 2026; we went on technical trips to Pegasus and TUSAŞ.',
   seritDevam: 'Details',
   /* tarihce:bitir */
-  t12k: 'Membership', t12b: 'Membership intake', uyeForm: 'Membership form ↗',
+  t12k: 'Membership', t12b: 'Membership intake', uyeForm: 'Membership form',
   agBaslik: '<span data-ag="grup">40</span> local groups in <span data-ag="ulke">15</span> countries',
   agGiris: 'EUROAVIA is the European Association of Aerospace Students, founded in 1959. As AS Istanbul we take part in symposia, workshops and congresses; in 2024 we hosted the celebration of EUROAVIA’s 65th anniversary (Lustrum) and the EMEAC congress in Istanbul.',
   haritaEtiket: 'Map of EUROAVIA local groups; a route is drawn from Istanbul to each group. Use the list next to it to select an event.',
@@ -133,7 +133,7 @@ export const JS = {
   kayitlarim: 'Events you are registered for', kayitYok: 'You have not registered for an event yet.',
   yukleniyor: 'Loading…', okuDevam: 'Open the article', disBaglanti: 'Opens on {kaynak}',
   menuAc: 'Open the menu', menuKapat: 'Close the menu',
-  bosBekleme: 'No events are open for registration right now', bosBeklemeNot: 'New events will be listed here when registration opens; they are also announced on Instagram.', bosKapali: 'Event registration on this site is closed for now', bosKapaliNot: 'You can register for events with the form in the Instagram announcement.', bosTakip: 'Instagram: @ituuumk ↗',
+  bosBekleme: 'No events are open for registration right now', bosBeklemeNot: 'New events will be listed here when registration opens; they are also announced on Instagram.', bosKapali: 'Event registration on this site is closed for now', bosKapaliNot: 'You can register for events with the form in the Instagram announcement.', bosTakip: 'Instagram: @ituuumk',
   ayrintiKaynak: 'Sources', ayrintiOnceki: 'Previous entry', ayrintiSonraki: 'Next entry', ayrintiGaleri: 'Photos ({n})', ayrintiFotoKaynak: 'Photo source',
   sponsorKonu: 'Sponsorship — ITU UUMK', sponsorGovde: 'Hello,\n\nOn behalf of [company], we would like to talk to ITU UUMK about sponsorship or a partnership.\n\nName:\nCompany:\nPhone:\n',
   adresKopyalandi: '{adres} copied.', adresKopyalanamadi: 'Could not copy; the address is {adres}', parolaGoster: 'Show', parolaGizle: 'Hide',
@@ -153,5 +153,5 @@ export const JS = {
   profilKaydedildi: 'Your profile has been updated.', parolaDegisti: 'Your password has been changed; sessions on other devices were signed out.',
   bildirimGitti: 'Your message has been sent to the board. The reply will come to your school e-mail.', bildirimKaydedildi: 'Your message was saved; the e-mail could not be sent right now, the board will see it on the site.',
   'h-sunucu-hatasi': 'A server error occurred. Try again a little later.', 'h-genel': 'The action could not be completed.',
-  kabinBasvur: 'Apply to this team ↗', kabinUyeOl: 'Join the club ↗', kabinNot: 'Join with the membership form first; then you can work in this team.', kabinNotYonetim: 'The board is elected at the general assembly; join the club first.',
+  kabinBasvur: 'Apply to this team', kabinUyeOl: 'Join the club', kabinNot: 'Join the club first, then take a role here.', kabinNotYonetim: 'Elected at the general assembly; join first.',
 };

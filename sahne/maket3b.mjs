@@ -3,7 +3,8 @@
  * Burun → kuyruk: kokpit · yönetim kurulu, Etkinlik, Ar-Ge, Sponsorluk, Tanıtım, Tasarım. Bölme numaraları uzak duvarın üstünde
  * küçük HTML düğmeleridir (dünyadan ekrana izdüşümle konur); seçilen bölmeye kamera yaklaşır. Tur ve kartlar site.mjs'te.
  * Canlılık: koridorda yürüyen iki üye, konuşan/çalışan figürler, değişen ekranlar, uçan dron, dönen motor fanları, yanıp sönen
- * uçak ışıkları, uçağın çevresinde dönen bagaj treni; uçak çok yavaş salınır.
+ * uçak ışıkları, uçağın çevresinde dönen bagaj treni; uçak yavaşça salınır (±4°, 24 sn), seçili bölmenin ışığı nefes alır.
+ * yavas: yazılımsal çizici (donanım GPU'su yok): 1x piksel, ~15 kare/sn.
  * Ekran dışında ya da sekme gizliyken döngü durur; hareket azaltmada tek kare. WebGL yoksa null (poster ve aynı düğmeler kalır). */
 import { THREE, RENK, cizici, isiklar, araclar, tuvalDoku, cerceve, dongu, birlestir, pikselOrani } from './maket-ortak.mjs';
 
@@ -35,7 +36,7 @@ function yolNokta(s) {
   return parca[0][1](0);
 }
 
-export function maketKur(tuvalEl, { imler = [], az = false, secildi } = {}) {
+export function maketKur(tuvalEl, { imler = [], az = false, yavas = false, secildi } = {}) {
   const renderer = cizici(tuvalEl); if (!renderer) return null;
   const sahne = new THREE.Scene();
   isiklar(sahne, { boyut: 12 });
@@ -262,7 +263,9 @@ export function maketKur(tuvalEl, { imler = [], az = false, secildi } = {}) {
     V(1.1, KY, 5.0), V(0.1, KY, 5.0), V(1.1, KY + 0.6, -5.0), V(0.1, KY + 0.6, -5.0), 
     V(YOL.x0 - 0.3, 0, YOL.z + 0.3), V(YOL.x1 + 0.3, 0, YOL.z + 0.3), V(X1 + 3.1, 0, -1.6)];
   /* dar tuvalde (telefon) uçak köşegene yatar: kuyruk sol üstte, burun sağ altta */
-  const cerGenis = cerceve(kamera, yon, hedef, sinir, 1.04), cerDar = cerceve(kamera, new THREE.Vector3(0.55, 1.2, 0.9).normalize(), hedef, [...sinir.slice(0, 11), sinir.at(-1)], 1.04);
+  /* salınımın iki ucundaki konumlar da çerçevede: uçak dönerken hiçbir yeri kesilmez */
+  const SALINIM = 0.07, Y = new THREE.Vector3(0, 1, 0), salin = (l) => [...l, ...l.map((p) => p.clone().applyAxisAngle(Y, SALINIM)), ...l.map((p) => p.clone().applyAxisAngle(Y, -SALINIM))];
+  const cerGenis = cerceve(kamera, yon, hedef, salin(sinir), 1.04), cerDar = cerceve(kamera, new THREE.Vector3(0.55, 1.2, 0.9).normalize(), hedef, salin([...sinir.slice(0, 11), sinir.at(-1)]), 1.04);
   let cer = cerGenis;
   const kam = { x: 0, y: 0, z: 1 }, kamHedef = { x: 0, y: 0, z: 1 };
   let gen = 1, yuk = 1, ilk = true;
@@ -270,7 +273,7 @@ export function maketKur(tuvalEl, { imler = [], az = false, secildi } = {}) {
   function odakHedef() { const { mx, my } = cer.yari; Object.assign(kamHedef, { x: mx, y: my, z: 1 }); }
   function boyutla() {
     gen = tuvalEl.clientWidth || 1; yuk = tuvalEl.clientHeight || 1;
-    renderer.setPixelRatio(pikselOrani()); renderer.setSize(gen, yuk, false);
+    renderer.setPixelRatio(yavas ? 1 : pikselOrani()); renderer.setSize(gen, yuk, false);
     cer = gen / yuk < 1.5 ? cerDar : cerGenis; cer.olc(gen, yuk); odakHedef(); if (ilk || az) { Object.assign(kam, kamHedef); ilk = false; }
     d.ciz();
   }
@@ -299,8 +302,9 @@ export function maketKur(tuvalEl, { imler = [], az = false, secildi } = {}) {
     const k = az ? 1 : 1 - Math.exp(-dt * 5.5);
     kam.x += (kamHedef.x - kam.x) * k; kam.y += (kamHedef.y - kam.y) * k; kam.z += (kamHedef.z - kam.z) * k;
     cer.uygula(kam.x, kam.y, kam.z);
-    dunya.rotation.y = az ? 0 : Math.sin(t * (Math.PI * 2 / 30)) * 0.05;
-    vurgular.forEach((vv) => { vv.m.material.opacity += (vv.hedef - vv.m.material.opacity) * (az ? 1 : 0.2); });
+    dunya.rotation.y = az ? 0 : Math.sin(t * (Math.PI * 2 / 24)) * SALINIM;
+    const nefes = az ? 1 : 0.8 + 0.2 * Math.sin(t * 2.4);
+    vurgular.forEach((vv) => { vv.m.material.opacity += (vv.hedef * (vv.hedef > 0.3 ? nefes : 1) - vv.m.material.opacity) * (az ? 1 : 0.2); });
     if (!az && Math.floor(t * 8) !== sonDoku) { sonDoku = Math.floor(t * 8); dokular.forEach((d0) => d0.yeniden(t)); }
     for (const c of canli) {
       if (c.tur === 'dron') { c.dron.position.set(c.x0 + Math.sin(t * 0.5) * 0.45, YC + 0.15 + Math.sin(t * 2.2) * 0.05, Math.sin(t * 1.0) * 0.18); c.dron.rotation.y = Math.sin(t * 0.5) * 0.6; c.pervaneler.forEach((p, i) => { p.rotation.y = t * 40 + i; }); c.dronIsik.visible = az || Math.floor(t * 2) % 2 === 0; }
@@ -329,18 +333,18 @@ export function maketKur(tuvalEl, { imler = [], az = false, secildi } = {}) {
       p.g.rotation.y += (hedefRy - p.g.rotation.y) * (az ? 1 : 0.15);
       if (!az) yuru(p, t * 7 + i);
     });
-    /* bagaj treni */
-    tren.forEach((p) => { const [x, z, a] = yolNokta(t * 0.85 - p.gec * 0.95 + 4); p.g.position.set(x, 0.02, z); p.g.rotation.y = a; if (p.tepe) p.tepe.visible = az || Math.floor(t * 3) % 2 === 0; });
+    /* bagaj treni (t = 0 anında, hareket azaltmada ve posterde, yakın kenarın sağında: masaüstü kartı sol altta) */
+    tren.forEach((p) => { const [x, z, a] = yolNokta(t * 0.85 - p.gec * 0.95 + 9.7); p.g.position.set(x, 0.02, z); p.g.rotation.y = a; if (p.tepe) p.tepe.visible = az || Math.floor(t * 3) % 2 === 0; });
     /* uçak ışıkları, fanlar */
     for (const l of isiklarU) l.m.visible = az || (l.tur === 'seyir' ? true : l.tur === 'tepe' ? (t % 1.2) < 0.2 : ((t % 1.6) < 0.06 || ((t % 1.6) > 0.16 && (t % 1.6) < 0.22)));
-    fanlar.forEach((f) => { f.rotation.x = az ? 0 : t * 2.4; });
+    fanlar.forEach((f) => { f.rotation.x = az ? 0 : t * 7; });
     renderer.render(sahne, kamera); imleriKoy();
   }
   /* hareket edenler birleştirilmez; geri kalan her şey malzemeye göre tek ağ */
   for (const c of canli) for (const o of [c.m, c.dron, c.k?.g, c.a?.g, c.b?.g, ...(c.duman || [])]) if (o) dinamik.add(o);
   for (const o of [...vurgular.map((v) => v.m), ...isiklarU.map((l) => l.m), ...fanlar, ...tren.map((p) => p.g)]) dinamik.add(o);
   birlestir(dunya, dinamik);
-  const d = dongu(tuvalEl, ciz, az);
+  const d = dongu(tuvalEl, ciz, az, yavas ? 66 : undefined);
   new ResizeObserver(boyutla).observe(tuvalEl);
   boyutla();
   tuvalEl.dataset.cizici = '3b';

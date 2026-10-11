@@ -63,7 +63,7 @@ export function panoKur({ tablo, pencere, az = false }) {
     const kaynakFoto = m.dataset.foto && document.querySelector(`#fotolar img[src*="${m.dataset.foto}"]`), f = alan('foto');
     f.hidden = !kaynakFoto;
     f.replaceChildren(...(kaynakFoto ? [Object.assign(document.createElement('img'), { src: kaynakFoto.currentSrc || kaynakFoto.src, alt: kaynakFoto.alt, width: 480, height: 360 })] : []));
-    const k = alan('kaynak'); k.href = m.dataset.kaynak; k.textContent = en ? 'Open the post ↗' : 'Gönderiyi aç ↗';
+    const k = alan('kaynak'); k.href = m.dataset.kaynak; k.textContent = en ? 'Open the post' : 'Gönderiyi aç'; k.classList.add('dis');
     k.setAttribute('aria-label', en ? `Open the post on ${m.dataset.kaynakAd} (new tab)` : `Gönderiyi ${m.dataset.kaynakAd}'da aç (yeni sekme)`);
     const kod = `UUMK-${id.toUpperCase()}`;
     alan('kod').textContent = kod;

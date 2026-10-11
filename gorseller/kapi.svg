@@ -1,23 +1,35 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 300" width="640" height="300">
-<!-- Boş gündem çizimi (v12): kayıt bankosu kapalı, kemerli bariyer çekili, koltukta kedi uyuyor; camın ardında uçak taksi eder,
-     bulutlar kayar. Hareket azaltmada her şey durur. Renkler site paletinden. -->
+<!-- Boş gündem çizimi (v13): A1 kapısı kapalı, kayıt bankosu kapalı levhalı, kemerli bariyer çekili, koltukta kedi uyuyor; camın
+     ardında kule (radar döner, tepe lambası yanar), rüzgâr tulumu dalgalanır, yolcu uçağı taksi eder (çakar lambaları), uzakta bir uçak
+     kalkar, bulutlar kayar. Telefonda ortadan 4:3 kırpılır (x 120–520): kapı tabelası, levha, bariyer, kedi ve kule o aralıkta.
+     Hareket azaltmada her şey durur. Renkler site paletinden. -->
 <style>
 .c{stroke:#141414;stroke-width:2;stroke-linejoin:round;stroke-linecap:round}
 .i{stroke:#141414;stroke-width:1.2;stroke-linejoin:round;stroke-linecap:round}
-.ucak{animation:taksi 24s linear infinite}
-.bulut{animation:bulut 26s ease-in-out infinite alternate}
+.ucak{animation:taksi 26s linear infinite}
+.uzak{animation:uzak 19s linear infinite}
+.bulut{animation:bulut 30s ease-in-out infinite alternate}
 .z{opacity:0;animation:z 3.6s ease-out infinite}
 .z2{animation-delay:1.2s}.z3{animation-delay:2.4s}
 .lamba{animation:lamba 2.4s ease-in-out infinite}
+.flas{animation:flas 1.3s linear infinite}.flas2{animation-delay:.65s}
+.radar{transform-box:fill-box;transform-origin:50% 50%;animation:radar 2.6s ease-in-out infinite}
+.tulum{transform-box:fill-box;transform-origin:0 50%;animation:tulum 2.2s ease-in-out infinite alternate}
+.yaprak{transform-box:fill-box;transform-origin:50% 100%;animation:yaprak 4.4s ease-in-out infinite alternate}
 .nefes{transform-box:fill-box;transform-origin:50% 100%;animation:nefes 3.6s ease-in-out infinite}
 .kuyruk{transform-box:fill-box;transform-origin:0% 50%;animation:kuyruk 5s ease-in-out infinite}
-@keyframes taksi{from{transform:translateX(-240px)}to{transform:translateX(700px)}}
+@keyframes taksi{from{transform:translateX(-230px)}to{transform:translateX(700px)}}
+@keyframes uzak{from{transform:translate(20px,120px)}to{transform:translate(660px,-30px)}}
 @keyframes bulut{to{transform:translateX(-90px)}}
 @keyframes z{0%{opacity:0;transform:translate(0,0)}25%{opacity:1}100%{opacity:0;transform:translate(14px,-30px)}}
 @keyframes lamba{50%{opacity:.3}}
+@keyframes flas{0%,12%{opacity:1}14%,100%{opacity:.12}}
+@keyframes radar{50%{transform:scaleX(.1)}}
+@keyframes tulum{to{transform:skewY(5deg) scaleX(.9)}}
+@keyframes yaprak{to{transform:rotate(3deg)}}
 @keyframes nefes{50%{transform:scaleY(1.06)}}
 @keyframes kuyruk{50%{transform:rotate(9deg)}}
-@media (prefers-reduced-motion:reduce){*{animation:none!important}.z1{opacity:1}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important}.z1{opacity:1}.uzak{display:none}}
 </style>
 <defs><clipPath id="cam"><rect x="40" y="34" width="560" height="156"/></clipPath></defs>
 <rect width="640" height="300" fill="#ecebe7"/>
@@ -26,53 +38,86 @@
 <g clip-path="url(#cam)">
   <g class="bulut">
     <path d="M90 78h62a12 12 0 0 0-14-14a17 17 0 0 0-30-4a13 13 0 0 0-18 18z" fill="#f8f8f6" class="i"/>
-    <path d="M330 62h48a10 10 0 0 0-11-11a13 13 0 0 0-23-3a10 10 0 0 0-14 14z" fill="#f8f8f6" class="i"/>
-    <path d="M520 90h56a11 11 0 0 0-12-12a15 15 0 0 0-27-4a12 12 0 0 0-17 16z" fill="#f8f8f6" class="i"/>
+    <path d="M300 62h48a10 10 0 0 0-11-11a13 13 0 0 0-23-3a10 10 0 0 0-14 14z" fill="#f8f8f6" class="i"/>
+    <path d="M540 84h56a11 11 0 0 0-12-12a15 15 0 0 0-27-4a12 12 0 0 0-17 16z" fill="#f8f8f6" class="i"/>
   </g>
-  <path d="M500 158v-46h-8l4-14h20l4 14h-8v46z" fill="#f8f8f6" class="i"/><path d="M494 98h24v-8h-24z" fill="#056b7a" class="i"/>
+  <!-- uzakta kalkan uçak -->
+  <g class="uzak"><path d="M0 7l20-4q6-1 7 1.4q-1 2.4-7 3L3 9z" fill="#85837e"/><path d="M9 6l-4-6h3.4l7.4 5.4zM1 6.6l-2-4h2.4l3 3.4z" fill="#85837e"/></g>
+  <!-- rüzgâr tulumu -->
+  <path d="M80 158v-46" class="i"/>
+  <g class="tulum"><path d="M80 112l9 1.2v11.6l-9 1.2z" fill="#a4262c" class="i"/><path d="M89 113.2l8 1v9.6l-8 1z" fill="#f8f8f6" class="i"/><path d="M97 114.2l8 1.2v7.2l-8 1.2z" fill="#a4262c" class="i"/></g>
+  <!-- kontrol kulesi: gövde, bantlar, cam kabin, çatı, direk lambası, dönen radar -->
+  <path d="M438 158v-12h44v12z" fill="#f8f8f6" class="i"/><rect x="455" y="150" width="10" height="8" fill="#03525e"/>
+  <path d="M446 146l4-48h20l4 48z" fill="#f8f8f6" class="i"/>
+  <path d="M448.4 130h23.2M449.6 115h20.8" stroke="#056b7a" stroke-width="2.2"/>
+  <path d="M438 98h44v-5h-44z" fill="#cfcdc6" class="i"/>
+  <path d="M440 93l-6-20h52l-6 20z" fill="#1d3a40" class="i"/>
+  <path d="M447.5 93l-3-20M460 93v-20M472.5 93l3-20" stroke="#8fb9bf" stroke-width="1.2"/>
+  <path d="M439 85l7-8M452 85l5-6" stroke="#dfeaeb" stroke-width="1.4" opacity=".55"/>
+  <path d="M430 73h60l-7-6h-46z" fill="#056b7a" class="i"/>
+  <path d="M452 67V50" class="i"/><circle class="lamba" cx="452" cy="49" r="2.8" fill="#a4262c"/>
+  <path d="M474 67v-7" class="i"/><rect class="radar" x="467" y="56" width="15" height="3.4" rx="1.2" fill="#4a4a48"/>
+  <!-- pist -->
   <rect x="40" y="158" width="560" height="32" fill="#cfcdc6"/><path d="M40 158H600" class="i"/>
-  <path d="M60 174h36M130 174h36M200 174h36M270 174h36M340 174h36M410 174h36M480 174h36M550 174h36" stroke="#f8f8f6" stroke-width="3"/>
+  <path d="M60 176h36M130 176h36M200 176h36M270 176h36M340 176h36M410 176h36M480 176h36M550 176h36" stroke="#f2c200" stroke-width="2.4"/>
+  <!-- taksi eden yolcu uçağı (yandan): dikey kuyruk, gövde, alt gölge, şerit, pencereler, kapılar, kokpit, kanat, motor, iniş takımı, lambalar -->
   <g class="ucak">
-    <g transform="translate(0 112)">
-      <path d="M8 24L0 0h14l20 22z" fill="#056b7a" class="i"/>
-      <path d="M10 22h120q18 0 24 9q-4 9-24 9H24q-14 0-18-8z" fill="#f8f8f6" class="i"/>
-      <path d="M147 26h7q3 2 2 4h-10z" fill="#141414"/>
-      <path d="M30 34h112" stroke="#056b7a" stroke-width="2.4"/>
-      <g fill="#03525e"><circle cx="40" cy="29" r="1.8"/><circle cx="50" cy="29" r="1.8"/><circle cx="60" cy="29" r="1.8"/><circle cx="70" cy="29" r="1.8"/><circle cx="80" cy="29" r="1.8"/><circle cx="90" cy="29" r="1.8"/><circle cx="100" cy="29" r="1.8"/><circle cx="110" cy="29" r="1.8"/><circle cx="120" cy="29" r="1.8"/></g>
-      <path d="M62 36l34 0l-20 8z" fill="#cfcdc6" class="i"/>
-      <rect x="70" y="40" width="22" height="9" rx="4.5" fill="#f8f8f6" class="i"/>
-      <path d="M40 40v6M132 40v6" class="i"/><circle cx="40" cy="47" r="3" fill="#141414"/><circle cx="132" cy="47" r="3" fill="#141414"/>
+    <g transform="translate(0 116)">
+      <path d="M8 29l-14 2.6l1.6 2.4l26-2.6z" fill="#cfcdc6" class="i"/>
+      <path d="M10 24L0-2h14l26 22z" fill="#056b7a" class="i"/><path d="M3.1 6h20.4l4.7 4H4.6z" fill="#f2c200"/>
+      <path d="M2 24L24 20h126c14 0 24 5 30 11c-5 6-15 9-30 9H40C26 40 12 33 2 24z" fill="#f8f8f6"/>
+      <path d="M24 36h150c-6 2.8-13 4-24 4H40c-6 0-11-1.4-16-4z" fill="#dedcd6"/>
+      <path d="M24 31.6h148" stroke="#056b7a" stroke-width="2.6"/><path d="M30 34.4h138" stroke="#f2c200" stroke-width="1"/>
+      <path d="M2 24L24 20h126c14 0 24 5 30 11c-5 6-15 9-30 9H40C26 40 12 33 2 24z" fill="none" class="i"/>
+      <g fill="#03525e"><circle cx="46" cy="26.4" r="1.5"/><circle cx="52.5" cy="26.4" r="1.5"/><circle cx="59" cy="26.4" r="1.5"/><circle cx="65.5" cy="26.4" r="1.5"/><circle cx="72" cy="26.4" r="1.5"/><circle cx="78.5" cy="26.4" r="1.5"/><circle cx="85" cy="26.4" r="1.5"/><circle cx="91.5" cy="26.4" r="1.5"/><circle cx="98" cy="26.4" r="1.5"/><circle cx="104.5" cy="26.4" r="1.5"/><circle cx="111" cy="26.4" r="1.5"/><circle cx="117.5" cy="26.4" r="1.5"/><circle cx="124" cy="26.4" r="1.5"/><circle cx="130.5" cy="26.4" r="1.5"/><circle cx="137" cy="26.4" r="1.5"/><circle cx="143.5" cy="26.4" r="1.5"/></g>
+      <rect x="152" y="22.4" width="6" height="12" rx="1.6" fill="none" class="i"/><rect x="34" y="22.8" width="5.6" height="11.6" rx="1.6" fill="none" class="i"/>
+      <path d="M163 24.4h7.6l4.2 4.2h-11.8z" fill="#1d3a40"/><path d="M167.4 24.4v4.2M171.2 24.4l1.6 4.2" stroke="#f8f8f6" stroke-width=".8"/>
+      <path d="M82 40v15M166 40v15" class="i"/>
+      <circle cx="78" cy="56" r="4" fill="#141414"/><circle cx="87" cy="56" r="4" fill="#141414"/><circle cx="166" cy="56.4" r="3.6" fill="#141414"/>
+      <circle cx="78" cy="56" r="1.4" fill="#85837e"/><circle cx="87" cy="56" r="1.4" fill="#85837e"/><circle cx="166" cy="56.4" r="1.2" fill="#85837e"/>
+      <path d="M70 36h40l26 10h-10z" fill="#cfcdc6" class="i"/>
+      <path d="M106 39l3 3h8l-2-3z" fill="#cfcdc6" class="i"/>
+      <rect x="98" y="41" width="34" height="11" rx="5.5" fill="#f8f8f6" class="i"/><path d="M112 41.4v10.2" stroke="#056b7a" stroke-width="2.6"/>
+      <ellipse cx="131.4" cy="46.5" rx="2" ry="4.6" fill="#141414"/><path d="M98 44l-5 2.5l5 2.5z" fill="#4a4a48"/>
+      <circle class="flas" cx="96" cy="19.6" r="2" fill="#a4262c"/><circle class="flas flas2" cx="120" cy="40.4" r="1.8" fill="#a4262c"/>
+      <circle class="flas flas2 i" cx="3" cy="24" r="1.7" fill="#f8f8f6"/><circle cx="166" cy="48" r="1.6" fill="#f2c200"/>
     </g>
   </g>
 </g>
 <rect x="40" y="34" width="560" height="156" fill="none" class="c"/>
-<path d="M180 34v156M320 34v156M460 34v156" class="c"/>
-<!-- tavandan sarkan kapı tabelası -->
-<path d="M110 0v14M190 0v14" class="i"/>
-<rect x="92" y="14" width="116" height="40" rx="5" fill="#1a1a1a" class="c"/>
-<text x="112" y="44" font-family="Futura, 'Century Gothic', 'Segoe UI', sans-serif" font-size="24" font-weight="700" fill="#f2c200">A1</text>
-<circle cx="182" cy="34" r="11" fill="#a4262c" class="lamba"/><path d="M175 34h14" stroke="#f8f8f6" stroke-width="3.4" stroke-linecap="round"/>
+<path d="M170 34v156M320 34v156M470 34v156" class="c"/>
+<!-- tavandan sarkan kapı tabelası ve kalkış ekranı -->
+<path d="M154 0v14M234 0v14" class="i"/>
+<rect x="136" y="14" width="116" height="40" rx="5" fill="#1a1a1a" class="c"/>
+<text x="156" y="44" font-family="Futura, 'Century Gothic', 'Segoe UI', sans-serif" font-size="24" font-weight="700" fill="#f2c200">A1</text>
+<circle cx="226" cy="34" r="11" fill="#a4262c" class="lamba"/><path d="M219 34h14" stroke="#f8f8f6" stroke-width="3.4" stroke-linecap="round"/>
+<path d="M544 0v12M596 0v12" class="i"/>
+<rect x="528" y="12" width="84" height="46" rx="4" fill="#1a1a1a" class="c"/>
+<path d="M538 25h12M538 35h12M538 45h12" stroke="#f2c200" stroke-width="3"/>
+<path d="M558 25h44M558 35h44M558 45h30" stroke="#f8f8f6" stroke-width="3" stroke-dasharray="4 2.4" opacity=".7"/>
 <!-- zemin -->
 <rect y="236" width="640" height="64" fill="#cfcdc6"/><path d="M0 236H640" class="c"/>
-<path d="M0 268H640" stroke="#f8f8f6" stroke-width="2" stroke-dasharray="26 14" opacity=".7"/>
+<path d="M0 264H640M60 236l-16 64M180 236l-8 64M300 236v64M420 236l8 64M540 236l16 64" stroke="#bdbbb3" stroke-width="1.2"/>
 <!-- kayıt bankosu: kapalı, ekran kararmış, üstünde kapalı levhası -->
-<rect x="52" y="196" width="196" height="54" rx="4" fill="#056b7a" class="c"/>
-<rect x="44" y="188" width="212" height="10" rx="3" fill="#f8f8f6" class="c"/>
-<path d="M60 222h180" stroke="#03525e" stroke-width="2"/>
-<rect x="88" y="160" width="40" height="28" rx="3" fill="#141414" class="c"/><path d="M104 188v-4h8v4" fill="#4a4a48" class="i"/>
-<path d="M176 188l14-26h22l14 26z" fill="#f8f8f6" class="c"/><circle cx="201" cy="176" r="7" fill="#a4262c"/><path d="M196 176h10" stroke="#f8f8f6" stroke-width="2.4" stroke-linecap="round"/>
+<rect x="32" y="196" width="170" height="54" rx="4" fill="#056b7a" class="c"/>
+<rect x="24" y="188" width="186" height="10" rx="3" fill="#f8f8f6" class="c"/>
+<path d="M40 222h154" stroke="#03525e" stroke-width="2"/>
+<rect x="48" y="160" width="40" height="28" rx="3" fill="#141414" class="c"/><path d="M64 188v-4h8v4" fill="#4a4a48" class="i"/>
+<path d="M134 188l14-26h22l14 26z" fill="#f8f8f6" class="c"/><circle cx="159" cy="176" r="7" fill="#a4262c"/><path d="M154 176h10" stroke="#f8f8f6" stroke-width="2.4" stroke-linecap="round"/>
 <!-- kemerli bariyer -->
-<g><rect x="286" y="198" width="7" height="52" rx="3" fill="#141414"/><ellipse cx="289.5" cy="250" rx="11" ry="3.4" fill="#141414"/><circle cx="289.5" cy="198" r="5" fill="#4a4a48" class="i"/>
-<rect x="372" y="198" width="7" height="52" rx="3" fill="#141414"/><ellipse cx="375.5" cy="250" rx="11" ry="3.4" fill="#141414"/><circle cx="375.5" cy="198" r="5" fill="#4a4a48" class="i"/>
-<path d="M292 205q40 14 80 0" fill="none" stroke="#f2c200" stroke-width="6"/><path d="M292 205q40 14 80 0" fill="none" stroke="#141414" stroke-width="1.2" stroke-dasharray="6 6"/></g>
-<!-- bekleme koltukları, valiz, uyuyan kedi -->
-<rect x="568" y="206" width="22" height="30" rx="4" fill="#f2c200" class="c"/><path d="M574 206v-8h10v8" fill="none" class="i"/><path d="M572 220h14" class="i"/>
+<g><rect x="218.5" y="198" width="7" height="52" rx="3" fill="#141414"/><ellipse cx="222" cy="250" rx="11" ry="3.4" fill="#141414"/><circle cx="222" cy="198" r="5" fill="#4a4a48" class="i"/>
+<rect x="292.5" y="198" width="7" height="52" rx="3" fill="#141414"/><ellipse cx="296" cy="250" rx="11" ry="3.4" fill="#141414"/><circle cx="296" cy="198" r="5" fill="#4a4a48" class="i"/>
+<path d="M225 205q35 14 70 0" fill="none" stroke="#f2c200" stroke-width="6"/><path d="M225 205q35 14 70 0" fill="none" stroke="#141414" stroke-width="1.2" stroke-dasharray="6 6"/></g>
+<!-- bekleme koltukları, valiz, saksı, uyuyan kedi -->
 <g>
-  <rect x="408" y="204" width="146" height="10" rx="3" fill="#03525e" class="c"/>
-  <path d="M414 214v22M548 214v22M481 214v22" class="c"/>
-  <rect x="410" y="174" width="44" height="30" rx="6" fill="#056b7a" class="c"/><rect x="459" y="174" width="44" height="30" rx="6" fill="#056b7a" class="c"/><rect x="508" y="174" width="44" height="30" rx="6" fill="#056b7a" class="c"/>
+  <rect x="318" y="204" width="146" height="10" rx="3" fill="#03525e" class="c"/>
+  <path d="M324 214v22M458 214v22M391 214v22" class="c"/>
+  <rect x="320" y="174" width="44" height="30" rx="6" fill="#056b7a" class="c"/><rect x="369" y="174" width="44" height="30" rx="6" fill="#056b7a" class="c"/><rect x="418" y="174" width="44" height="30" rx="6" fill="#056b7a" class="c"/>
 </g>
-<g transform="translate(456 178) scale(1.4)">
+<rect x="478" y="206" width="22" height="30" rx="4" fill="#f2c200" class="c"/><path d="M484 206v-8h10v8" fill="none" class="i"/><path d="M482 220h14" class="i"/>
+<g class="yaprak"><path d="M580 210q-22-10-20-34q14 12 20 34zM580 210q-4-30 8-46q8 22-8 46zM580 210q14-22 34-22q-10 20-34 22z" fill="#4f8a5b" class="i"/></g>
+<path d="M564 236l4-26h24l4 26z" fill="#056b7a" class="c"/>
+<g transform="translate(366 178) scale(1.4)">
   <path class="kuyruk" d="M36 16q14 2 10-10" fill="none" stroke="#4a4a48" stroke-width="5" stroke-linecap="round"/>
   <path class="nefes c" d="M4 18q0-14 18-14q16 0 18 14z" fill="#85837e"/>
   <path d="M2 18q-2-10 7-12l1-6l4 5q5 0 7 6q2 8-6 7z" fill="#85837e" class="c"/>
@@ -80,6 +125,6 @@
   <path d="M4 18h36" class="c"/>
 </g>
 <g font-family="Futura, 'Century Gothic', 'Segoe UI', sans-serif" font-weight="700" fill="#03525e">
-  <text class="z z1" x="470" y="170" font-size="13">z</text><text class="z z2" x="478" y="164" font-size="16">z</text><text class="z z3" x="487" y="157" font-size="19">Z</text>
+  <text class="z z1" x="380" y="170" font-size="13">z</text><text class="z z2" x="388" y="164" font-size="16">z</text><text class="z z3" x="397" y="157" font-size="19">Z</text>
 </g>
 </svg>

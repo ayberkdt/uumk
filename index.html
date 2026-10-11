@@ -65,7 +65,7 @@
         <p class="giris__aciklama" data-i18n="giris">İTÜ Uçak ve Uzay Bilimleri Fakültesi öğrencilerinin kulübü. Teknik geziler, model uçak atölyeleri ve seminerler düzenliyoruz; EUROAVIA'da AS Istanbul adıyla yer alıyoruz.</p>
         <div class="giris__eylem">
           <a class="dugme dugme--birincil" href="#gundem" data-i18n="girisCta">Gündem</a>
-          <a class="dugme dugme--ikincil" href="https://forms.gle/NcRygayZjb2JumV77" target="_blank" rel="noopener" data-i18n="uyeOl">Üye ol ↗</a>
+          <a class="dugme dugme--ikincil dis" href="https://forms.gle/NcRygayZjb2JumV77" target="_blank" rel="noopener" data-i18n="uyeOl">Üye ol</a>
         </div>
         <dl class="giris__olgu">
           <div><dt data-i18n="olguKurulus">Kuruluş</dt><dd>2001</dd></div>
@@ -89,8 +89,8 @@
         <p class="biz__eylem"><a class="dugme dugme--birincil biz__git" id="tarihce-git" href="#tarihce"><span data-i18n="tarihceGit">Tarihçemizi keşfet</span><span class="biz__ucak" aria-hidden="true"></span></a></p>
       </div>
       <div class="kimlik">
+        <svg class="kimlik__yay" id="kimlik-yay" viewBox="0 0 400 94" aria-hidden="true" focusable="false"><defs><mask id="kimlik-iz"><path d="M62 90C67.7 85.3 82 69.7 96 62C110 54.3 129.3 47 146 44C162.7 41 183 46.3 196 44C209 41.7 221 36 224 30C227 24 219.7 12 214 8C208.3 4 196.3 4 190 6C183.7 8 176.3 14.7 176 20C175.7 25.3 178.7 33.7 188 38C197.3 42.3 216 44.3 232 46C248 47.7 269.7 45.3 284 48C298.3 50.7 309 55 318 62C327 69 334.7 85.3 338 90" fill="none" stroke="#fff" stroke-width="6" pathLength="1" stroke-dasharray="1" stroke-dashoffset="0"><animate attributeName="stroke-dashoffset" values="1;0" dur="2.6s" begin="indefinite" fill="freeze" calcMode="spline" keyTimes="0;1" keySplines="0.45 0 0.25 1"/></path></mask></defs><path id="kimlik-yol" d="M62 90C67.7 85.3 82 69.7 96 62C110 54.3 129.3 47 146 44C162.7 41 183 46.3 196 44C209 41.7 221 36 224 30C227 24 219.7 12 214 8C208.3 4 196.3 4 190 6C183.7 8 176.3 14.7 176 20C175.7 25.3 178.7 33.7 188 38C197.3 42.3 216 44.3 232 46C248 47.7 269.7 45.3 284 48C298.3 50.7 309 55 318 62C327 69 334.7 85.3 338 90" fill="none" mask="url(#kimlik-iz)"/><g class="kimlik__ucak"><animateMotion id="kimlik-ucus" dur="2.6s" begin="indefinite" fill="freeze" rotate="auto" calcMode="spline" keyTimes="0;1" keySplines="0.45 0 0.25 1"><mpath href="#kimlik-yol"/></animateMotion><path transform="translate(-13.5 -9) scale(1.5)" d="M17.6 6c0 .5-.6.8-1.4.8H11l-3.8 4.9H5.8L8 6.8H3.4L1.4 9H.4l.8-2.4L.4 6l.8-.6L.4 3h1l2 2.2H8L5.8.3h1.4L11 5.2h5.2c.8 0 1.4.3 1.4.8zM9.4 8.3h1.9v1H9.4zM9.4 2.7h1.9v1H9.4z"/></g></svg>
         <div class="kimlik__uc"><span class="kimlik__rozet"><img src="gorseller/logo-uumk-360.png" width="360" height="151" alt="İTÜ UUMK"></span><b data-i18n="ad2">İTÜ UUMK</b><span data-i18n="kimlikItu">4 Ocak 2001 · İTÜ</span></div>
-        <svg class="kimlik__yay" id="kimlik-yay" viewBox="0 0 160 70" aria-hidden="true" focusable="false"><path id="kimlik-yol" d="M8 62Q80-14 152 62" fill="none"/><path class="kimlik__ucak" d="M-9-6L9 0L-9 6L-5 0Z"><animateMotion dur="1.6s" begin="indefinite" fill="freeze" rotate="auto" calcMode="spline" keyTimes="0;1" keySplines="0.45 0 0.25 1"><mpath href="#kimlik-yol"/></animateMotion></path></svg>
         <div class="kimlik__uc"><span class="kimlik__rozet"><img src="gorseller/logo-as-istanbul-240.png" width="240" height="235" alt="EUROAVIA AS Istanbul"></span><b>AS Istanbul</b><span data-i18n="kimlikAg">7 Mayıs 2001 · EUROAVIA</span></div>
         <p class="kimlik__yer" data-i18n="kimlikYer">Ayazağa Kampüsü, Merkezi Derslik C Blok</p>
       </div>
@@ -118,15 +118,16 @@
         <picture><source media="(max-width: 760px)" srcset="gorseller/kabin-maket-m-800.jpg" width="800" height="602"><img class="maket__poster" src="gorseller/kabin-maket-1200.jpg" srcset="gorseller/kabin-maket-800.jpg 800w, gorseller/kabin-maket-1200.jpg 1200w, gorseller/kabin-maket-1800.jpg 1800w" sizes="(max-width: 1240px) 100vw, 1184px" width="1200" height="675" alt="" loading="lazy"></picture>
         <canvas class="maket__tuval" id="maket-tuval" aria-hidden="true"></canvas>
         <ol class="maket__imler">
-          <li data-konum="83.72 38.77 82.69 65.02"><button class="maket__im" type="button" aria-controls="kabin-0" aria-pressed="true"><span class="maket__no" aria-hidden="true">1</span><span class="maket__ad" data-i18n="kokpit">Yönetim kurulu</span></button></li>
-          <li data-konum="73.78 33.33 74.05 56.72"><button class="maket__im" type="button" aria-controls="kabin-1" aria-pressed="false"><span class="maket__no" aria-hidden="true">2</span><span class="maket__ad" data-i18n="e1">Etkinlik</span></button></li>
-          <li data-konum="62.12 31.61 62.82 50.58"><button class="maket__im" type="button" aria-controls="kabin-2" aria-pressed="false"><span class="maket__no" aria-hidden="true">3</span><span class="maket__ad" data-i18n="e2">Ar-Ge</span></button></li>
-          <li data-konum="50.46 29.89 51.62 44.40"><button class="maket__im" type="button" aria-controls="kabin-3" aria-pressed="false"><span class="maket__no" aria-hidden="true">4</span><span class="maket__ad" data-i18n="e3">Sponsorluk</span></button></li>
-          <li data-konum="38.78 28.17 40.41 38.26"><button class="maket__im" type="button" aria-controls="kabin-4" aria-pressed="false"><span class="maket__no" aria-hidden="true">5</span><span class="maket__ad" data-i18n="e4">Tanıtım</span></button></li>
-          <li data-konum="27.12 26.44 29.21 32.12"><button class="maket__im" type="button" aria-controls="kabin-5" aria-pressed="false"><span class="maket__no" aria-hidden="true">6</span><span class="maket__ad" data-i18n="e5">Tasarım</span></button></li>
+          <li data-konum="83.71 39.38 81.23 67.34"><button class="maket__im" type="button" aria-controls="kabin-0" aria-pressed="true"><span class="maket__no" aria-hidden="true">1</span><span class="maket__ad" data-i18n="kokpit">Yönetim kurulu</span></button></li>
+          <li data-konum="73.98 33.38 73.10 58.84"><button class="maket__im" type="button" aria-controls="kabin-1" aria-pressed="false"><span class="maket__no" aria-hidden="true">2</span><span class="maket__ad" data-i18n="e1">Etkinlik</span></button></li>
+          <li data-konum="62.43 30.96 62.41 52.32"><button class="maket__im" type="button" aria-controls="kabin-2" aria-pressed="false"><span class="maket__no" aria-hidden="true">3</span><span class="maket__ad" data-i18n="e2">Ar-Ge</span></button></li>
+          <li data-konum="50.89 28.56 51.72 45.77"><button class="maket__im" type="button" aria-controls="kabin-3" aria-pressed="false"><span class="maket__no" aria-hidden="true">4</span><span class="maket__ad" data-i18n="e3">Sponsorluk</span></button></li>
+          <li data-konum="39.35 26.14 41.03 39.25"><button class="maket__im" type="button" aria-controls="kabin-4" aria-pressed="false"><span class="maket__no" aria-hidden="true">5</span><span class="maket__ad" data-i18n="e4">Tanıtım</span></button></li>
+          <li data-konum="27.80 23.72 30.36 32.73"><button class="maket__im" type="button" aria-controls="kabin-5" aria-pressed="false"><span class="maket__no" aria-hidden="true">6</span><span class="maket__ad" data-i18n="e5">Tasarım</span></button></li>
         </ol>
         </div>
         <div class="kabin" id="kabin" aria-live="polite">
+          <div class="kabin__ust"><span class="kabin__sure" aria-hidden="true"><span></span></span><p class="kabin__gez"><button class="kabin__ok" type="button" data-kabin="-1" aria-label="Önceki ekip" data-i18n-aria="kabinOnceki"><span class="ucak-im ucak-im--geri" aria-hidden="true"></span></button><button class="kabin__ok" type="button" data-kabin="1" aria-label="Sonraki ekip" data-i18n-aria="kabinSonraki"><span class="ucak-im" aria-hidden="true"></span></button><button class="kabin__ok kabin__tur" type="button" aria-pressed="false" aria-label="Otomatik geçişi durdur" data-i18n-aria="kabinTur"></button></p></div>
           <ol class="kabin__kartlar">
           <li class="kabin__kart" id="kabin-0" data-secili><p class="kabin__sira" aria-hidden="true">1 / 6</p><h4 data-i18n="kokpit">Yönetim kurulu</h4><p data-i18n="kokpitP">Kokpit: kulübü yürütür ve dönemin etkinliklerini planlar.</p></li>
           <li class="kabin__kart" id="kabin-1"><p class="kabin__sira" aria-hidden="true">2 / 6</p><h4 data-i18n="e1">Etkinlik</h4><p data-i18n="e1p">Seminer, panel, atölye ve teknik gezileri, açılış mangalı ve film gecesi gibi buluşmaları hazırlar.</p></li>
@@ -135,9 +136,8 @@
           <li class="kabin__kart" id="kabin-4"><p class="kabin__sira" aria-hidden="true">5 / 6</p><h4 data-i18n="e4">Tanıtım</h4><p data-i18n="e4p">Kulübün sosyal medyasını yürütür; kulübün dışa açılan yüzüdür.</p></li>
           <li class="kabin__kart" id="kabin-5"><p class="kabin__sira" aria-hidden="true">6 / 6</p><h4 data-i18n="e5">Tasarım</h4><p data-i18n="e5p">Afişleri, kulübe özel ürünleri ve paylaşım görsellerini tasarlar.</p></li>
           </ol>
-          <a class="dugme dugme--birincil kabin__basvur" href="https://forms.gle/NcRygayZjb2JumV77" target="_blank" rel="noopener">Üye ol ↗</a>
-          <p class="kabin__not">Yönetim kurulu genel kurulda seçilir; önce üye ol.</p>
-          <p class="kabin__gez"><button class="kabin__ok" type="button" data-kabin="-1" aria-label="Önceki ekip" data-i18n-aria="kabinOnceki">←</button><span class="kabin__sure" aria-hidden="true"><span></span></span><button class="kabin__ok" type="button" data-kabin="1" aria-label="Sonraki ekip" data-i18n-aria="kabinSonraki">→</button><button class="kabin__ok kabin__tur" type="button" aria-pressed="false" aria-label="Otomatik geçişi durdur" data-i18n-aria="kabinTur"></button></p>
+          <a class="dugme dugme--birincil kabin__basvur dis" href="https://forms.gle/NcRygayZjb2JumV77" target="_blank" rel="noopener">Üye ol</a>
+          <p class="kabin__not">Genel kurulda seçilir; önce üye ol.</p>
         </div>
       </div>
     </section>
@@ -168,7 +168,7 @@
         <li class="serit serit--kulup rota__nokta" id="tarih-2025"><span class="serit__resim serit__resim--kapak" aria-hidden="true"><img src="gorseller/aestro/sayi-3-360.jpg" width="360" height="521" alt="" loading="lazy"></span><time>2025</time><p class="serit__kod" data-i18n="r2025k">Nisan · AESTRO 3</p><h4><a class="serit__ac" href="#tarih-2025" data-i18n="r2025b">Üçüncü sayı</a></h4><p data-i18n="r2025">AESTRO'nun üçüncü sayısı Nisan'da 19 gönüllü yazarla çıktı; Mayıs'ta Turkish Technic mühendisleriyle atölye yaptık.</p><span class="serit__devam" aria-hidden="true" data-i18n="seritDevam">Ayrıntılar</span></li>
         <li class="serit serit--kulup rota__nokta" id="tarih-2026"><span class="serit__resim serit__resim--foto" aria-hidden="true"><img src="gorseller/foto/pegasus-2026-480.jpg" width="480" height="360" alt="" loading="lazy"></span><time>2026</time><p class="serit__kod" data-i18n="r2026k">Mayıs · Genel kurul</p><h4><a class="serit__ac" href="#tarih-2026" data-i18n="r2026b">Yeni yönetim</a></h4><p data-i18n="r2026">Mayıs 2026'da yeni yönetim kurulu seçildi; Pegasus ve TUSAŞ teknik gezileri yapıldı.</p><span class="serit__devam" aria-hidden="true" data-i18n="seritDevam">Ayrıntılar</span></li>
         <!-- /tarihce:seritler -->
-        <li class="serit serit--sirada"><span class="serit__resim" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path pathLength="1" d="M3 11l18-7-7 18-3-8zM11 14l10-10"/></svg></span><p class="serit__kod" data-i18n="t12k">Üyelik</p><h4 data-i18n="t12b">Üye alımı</h4><p><a class="dugme dugme--birincil" href="https://forms.gle/NcRygayZjb2JumV77" target="_blank" rel="noopener" data-i18n="uyeForm">Üye alım formu ↗</a></p></li>
+        <li class="serit serit--sirada"><span class="serit__resim" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path pathLength="1" d="M3 11l18-7-7 18-3-8zM11 14l10-10"/></svg></span><p class="serit__kod" data-i18n="t12k">Üyelik</p><h4 data-i18n="t12b">Üye alımı</h4><p><a class="dugme dugme--birincil dis" href="https://forms.gle/NcRygayZjb2JumV77" target="_blank" rel="noopener" data-i18n="uyeForm">Üye alım formu</a></p></li>
       </ol>
     </div>
     <div class="ufuk ufuk--alt" aria-hidden="true"><svg viewBox="0 0 1440 120" preserveAspectRatio="none"><path d="M0 120H1440V120Q720 0 0 120Z"/></svg></div>
@@ -556,8 +556,8 @@
       </div>
     </div>
     <div class="alt__kartlar">
-      <a class="alt__kart" href="https://forms.gle/NcRygayZjb2JumV77" target="_blank" rel="noopener"><small data-i18n="altKart1u">Öğrenciler için</small><b data-i18n="altKart1">Üye alım formu</b><span aria-hidden="true">↗</span></a>
-      <a class="alt__kart alt__kart--sari" href="#sponsor"><small data-i18n="altKart2u">Şirketler için</small><b data-i18n="altKart2">Sponsorluk ve iş birliği</b><span aria-hidden="true">→</span></a>
+      <a class="alt__kart" href="https://forms.gle/NcRygayZjb2JumV77" target="_blank" rel="noopener"><small data-i18n="altKart1u">Öğrenciler için</small><b data-i18n="altKart1">Üye alım formu</b><span class="ucak-im ucak-im--dis" aria-hidden="true"></span></a>
+      <a class="alt__kart alt__kart--sari" href="#sponsor"><small data-i18n="altKart2u">Şirketler için</small><b data-i18n="altKart2">Sponsorluk ve iş birliği</b><span class="ucak-im" aria-hidden="true"></span></a>
     </div>
     <div class="alt__ic">
       <div>
@@ -598,7 +598,7 @@
     <div class="alt__dip">
       <p>© 2026 İTÜ UUMK · EUROAVIA AS Istanbul</p>
       <p class="alt__konum"><span data-i18n="altKonum">41,10° K · 29,02° D · İstanbul</span> <span class="alt__saat" id="alt-saat">--:--</span></p>
-      <a class="alt__yukari" href="#giris"><span data-i18n="basaDon">Başa dön</span><span class="alt__yukari-ok" aria-hidden="true">↑</span></a>
+      <a class="alt__yukari" href="#giris"><span data-i18n="basaDon">Başa dön</span><span class="alt__yukari-ok ucak-im ucak-im--yukari" aria-hidden="true"></span></a>
     </div>
   </div>
 </footer>
@@ -659,6 +659,6 @@
       <button class="bilet__kapat ayrinti__isik-kapat" type="button" aria-label="Fotoğrafı kapat" data-i18n-aria="fotoKapat">×</button></figure>
   </article>
 </dialog>
-<template id="bos-sablon"><li class="etkinlik bos"><img class="bos__resim" src="gorseller/kapi.svg" width="640" height="300" alt=""><div><p class="bos__baslik"></p><p class="bos__metin"></p><a class="dugme dugme--ikincil" href="https://www.instagram.com/ituuumk/" target="_blank" rel="noopener"></a></div></li></template>
+<template id="bos-sablon"><li class="etkinlik bos"><img class="bos__resim" src="gorseller/kapi.svg" width="640" height="300" alt=""><div><p class="bos__baslik"></p><p class="bos__metin"></p><a class="dugme dugme--ikincil dis" href="https://www.instagram.com/ituuumk/" target="_blank" rel="noopener"></a></div></li></template>
 </body>
 </html>

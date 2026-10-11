@@ -7,6 +7,9 @@ import { ULKELER, Q } from '../veri/harita-ulkeler.mjs';
 /* gece paleti: EUROAVIA bölümü koyu zeminde (site.css .bolum--koyu); sarı = AS Istanbul'un rotaları ve uçakları */
 const GECE = { zemin: '#0f0f0f', ag: 'rgba(242, 242, 239, 0.05)', kara: '#24241f', uye: '#123b41', uyeKenar: 'rgba(45, 124, 135, 0.9)', sinir: 'rgba(242, 242, 239, 0.13)', grup: '#f2f2ef', soluk: '#b3b3ae', sari: '#f2c200', rota: 'rgba(242, 194, 0, 0.3)' };
 const YAZI = '"IBM Plex Sans", system-ui, sans-serif';
+/* minik uçak (site.css --ucak ile aynı siluet, 18×12, burun sağda); Path2D ilk çizimde kurulur */
+let UCAK = null;
+const ucak = () => (UCAK ??= new Path2D('M17.6 6c0 .5-.6.8-1.4.8H11l-3.8 4.9H5.8L8 6.8H3.4L1.4 9H.4l.8-2.4L.4 6l.8-.6L.4 3h1l2 2.2H8L5.8.3h1.4L11 5.2h5.2c.8 0 1.4.3 1.4.8zM9.4 8.3h1.9v1H9.4zM9.4 2.7h1.9v1H9.4z'));
 /* ülke halkaları: fark kodlu tamsayılardan [enlem, boylam] dizilerine (bir kez) */
 const ULKE = ULKELER.map(([uye, ad, halkalar]) => ({ uye, ad, halkalar: halkalar.map((k) => { const n = []; let x = 0, y = 0; for (let i = 0; i < k.length; i += 2) { x += k[i]; y += k[i + 1]; n.push([y / Q, x / Q]); } return n; }) }));
 const NOKTA = ULKE.reduce((t, u) => t + u.halkalar.reduce((a, h) => a + h.length, 0), 0);
@@ -100,15 +103,16 @@ export function haritaKur(tuval, { gruplar, merkez, boyutDegisti, az = false }) 
       tg.beginPath(); tg.arc(px, py, 2.6, 0, Math.PI * 2);
       if (x[1].startsWith('P')) { tg.strokeStyle = GECE.grup; tg.lineWidth = 1.3; tg.fillStyle = GECE.zemin; tg.fill(); tg.stroke(); } else { tg.fillStyle = GECE.grup; tg.fill(); }
     }
-    /* çerçeve dışı gruplar: kara üstünde şehir gibi durmasın diye tam kenarda, o yönü gösteren bir etiket (ok + ad) */
+    /* çerçeve dışı gruplar: kara üstünde şehir gibi durmasın diye tam kenarda, o yönü gösteren bir etiket (ad + o yöne dönük minik uçak) */
     for (const x of gruplar) {
       const [px, py] = izdus(x[6], x[7]);
       if (px >= 0 && py >= 0 && px <= gen && py <= yuk) continue;
-      const ok = py > yuk ? '↓' : py < 0 ? '↑' : px < 0 ? '←' : '→', yazi = `${x[3]} ${ok}`;
-      tg.font = `600 11px ${YAZI}`; const w = tg.measureText(yazi).width + 14, h = 20;
+      const aci = py > yuk ? Math.PI / 2 : py < 0 ? -Math.PI / 2 : px < 0 ? Math.PI : 0, yazi = x[3];
+      tg.font = `600 11px ${YAZI}`; const w = tg.measureText(yazi).width + 30, h = 20;
       const kx = Math.min(gen - w - 8, Math.max(8, px - w / 2)), ky = py > yuk ? yuk - h - 8 : py < 0 ? 8 : Math.min(yuk - h - 8, Math.max(8, py - h / 2));
       tg.fillStyle = GECE.zemin; tg.strokeStyle = GECE.sinir; tg.lineWidth = 1; tg.beginPath(); tg.roundRect(kx + 0.5, ky + 0.5, w, h, 4); tg.fill(); tg.stroke();
       tg.fillStyle = GECE.grup; tg.textAlign = 'left'; tg.fillText(yazi, kx + 7, ky + 14);
+      tg.save(); tg.translate(kx + w - 13, ky + h / 2); tg.rotate(aci); tg.scale(0.7, 0.7); tg.translate(-9, -6); tg.fill(ucak()); tg.restore();
     }
     /* ölçek çubuğu: 500 km (sağ üst köşe; altta Mısır'ın ve gruplarının üstüne binmesin) */
     const [x1, y1] = izdus(MERKEZ.enlem, MERKEZ.boylam), [x2] = izdus(MERKEZ.enlem, MERKEZ.boylam + 500 / (111.32 * Math.cos(rad(MERKEZ.enlem))));

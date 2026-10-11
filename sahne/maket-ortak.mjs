@@ -140,10 +140,11 @@ export function birlestir(kok, dinamik) {
 }
 
 /* çizim döngüsü: görünürken ve sekme açıkken requestAnimationFrame; hareket azaltmada yalnız istenince tek kare */
-export function dongu(tuvalEl, ciz, az) {
+/* aralik: iki kare arası en az ms (telefonda 30, yazılımsal çizicide 66) */
+export function dongu(tuvalEl, ciz, az, aralik = MOBIL ? 30 : 0) {
   let id = 0, gorunur = false, son = 0;
   let onceki = 0;
-  const kare = (t) => { if (!MOBIL || t - onceki > 30) { onceki = t; son = t / 1000; ciz(son); } id = gorunur && !az && !document.hidden ? requestAnimationFrame(kare) : 0; };
+  const kare = (t) => { if (t - onceki > aralik) { onceki = t; son = t / 1000; ciz(son); } id = gorunur && !az && !document.hidden ? requestAnimationFrame(kare) : 0; };
   const baslat = () => { if (!id && gorunur && !az && !document.hidden) id = requestAnimationFrame(kare); };
   new IntersectionObserver(([g]) => { gorunur = g.isIntersecting; baslat(); if (az && gorunur) ciz(son); }).observe(tuvalEl);
   document.addEventListener('visibilitychange', baslat);

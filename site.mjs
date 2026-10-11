@@ -142,8 +142,9 @@ addEventListener('dil-degisti', adKur);
 /* ── bölümler arası ufuk: kavis kaydırdıkça düzleşir ── */
 const ufuklar = $$('.ufuk').map((el) => ({ yol: el.querySelector('path'), alt: el.classList.contains('ufuk--alt'), kap: el.parentElement }));
 function ufukGuncelle() {
-  for (const u of ufuklar) {
-    const r = u.kap.getBoundingClientRect();
+  const rs = ufuklar.map((u) => u.kap.getBoundingClientRect());
+  for (const [i, u] of ufuklar.entries()) {
+    const r = rs[i];
     if (r.bottom < -200 || r.top > innerHeight + 200) continue;
     const t = AZ ? 1 : u.alt ? sinir((innerHeight * 0.95 - r.bottom) / (innerHeight * 0.6)) : sinir((innerHeight - r.top) / (innerHeight * 0.7));
     const d = 44 + 76 * (1 - yumusak(t));

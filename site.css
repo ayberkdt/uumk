@@ -437,7 +437,6 @@ html:not(.js) .takvim { max-height: none; }
 .profil__sil { margin-top: var(--b-4); padding-top: var(--b-2); border-top: 1px solid var(--cizgi); font-size: var(--t-1); }
 .profil__sil summary { cursor: pointer; color: var(--soluk); min-height: 44px; display: flex; align-items: center; }
 
-.alt a { color: var(--gece-yazi); }
 .alt .ufuk path { fill: var(--kagit); }
 
 .metin-sayfa__ic, .yonetim__ic { padding: var(--b-5) 0; }
@@ -551,11 +550,13 @@ html.js:not(.az) .ayrinti[open]::backdrop { animation: belir 300ms ease both; }
 .kimlik__rozet { display: grid; place-items: center; width: 100%; aspect-ratio: 1; margin-bottom: var(--b-1); padding: 14%; border-radius: var(--r-2); background: #fff; box-shadow: 0 0 0 1px var(--cizgi); transition: transform var(--sure) var(--egri); }
 .kimlik__uc b { font: 600 var(--t-6)/1.25 var(--f-baslik); }
 .kimlik__uc > span:last-child { font: 600 var(--t-1)/1.4 var(--f-govde); letter-spacing: 0.08em; color: var(--petrol); }
-.kimlik__yay { grid-column: 1 / -1; width: 100%; margin-bottom: -4px; overflow: visible; }
+.kimlik__yay { grid-column: 1 / -1; width: 100%; margin-bottom: -4px; overflow: visible; fill: var(--petrol); }
 .kimlik__uc + .kimlik__uc { grid-column: 3; }
 #kimlik-yol { stroke: var(--murekkep); stroke-width: 1.4; stroke-dasharray: 3 5; }
-.kimlik__ucak { fill: var(--petrol); opacity: 0; }
+.kimlik__ucak, .kimlik[data-ucus] .kimlik__park { opacity: 0; }
 .kimlik[data-ucus] .kimlik__ucak { opacity: 1; }
+.js:not(.az) .kimlik:not([data-ucus]) .kimlik__park { transform: translate(70px, 80px); }
+.js:not(.az) .kimlik:not([data-ucus]) #kimlik-iz path { stroke-dashoffset: 1; }
 .kimlik__yer { grid-column: 1 / -1; margin-top: var(--b-3); padding-top: var(--b-2); border-top: 1px dashed var(--cizgi); font-size: var(--t-1); color: var(--soluk); text-align: center; }
 .tarihce h3::after { content: ''; display: block; width: 0; height: 4px; margin-top: 12px; border-radius: var(--r-3); background: var(--gece-vurgu); transition: width var(--sure) var(--egri); }
 .tarihce.varis h3::after { width: 4.5rem; }
@@ -565,7 +566,7 @@ html.js:not(.az) .ayrinti[open]::backdrop { animation: belir 300ms ease both; }
 .kabin-kap__bas { max-width: 46rem; }
 .kabin-kap__bas p { color: var(--soluk); }
 .maket { position: relative; margin-top: var(--b-3); }
-.maket__sahne { position: relative; aspect-ratio: 16 / 9; overflow: hidden; }
+.maket__sahne { position: relative; aspect-ratio: 16 / 9; overflow: hidden; border-radius: var(--r-2); }
 .maket__poster, .maket__tuval { position: absolute; inset: 0; width: 100%; height: 100%; }
 .maket__poster { object-fit: cover; transition: opacity var(--sure) ease; }
 .maket[data-cizici='3b'] .maket__poster { opacity: 0; }
@@ -606,7 +607,7 @@ html:not(.js) :is(.kabin__ust, .maket__imler, .kabin__not) { display: none; }
 .js .kabin__kart { grid-area: 1 / 1; transition: opacity 280ms ease, visibility 280ms; }
 .js .kabin__kart:not([data-secili]) { visibility: hidden; opacity: 0; }
 @media (max-width: 760px) {
-  .maket__sahne { margin-inline: calc(var(--kenar) * -1); aspect-ratio: 4 / 3; }
+  .maket__sahne { margin-inline: calc(var(--kenar) * -1); aspect-ratio: 4 / 3; border-radius: 0; }
   .maket:not([data-cizici='3b']) .maket__imler > li { left: var(--xm); top: var(--ym); }
   .maket__im[aria-pressed='true']:not(:hover) .maket__ad { opacity: 0; }
   .bos__resim { aspect-ratio: 4 / 3; object-fit: cover; }
@@ -838,15 +839,17 @@ html.js:not(.az) .bilet[open] .bilet__damga { animation: damga-bas var(--sure) v
 .alt .alt__kart--sari { background: var(--gece-vurgu); border-color: var(--gece-vurgu); color: var(--murekkep); }
 .alt__kart--sari small, .alt__kart--sari > span { color: var(--murekkep); }
 @media (hover: hover) { .alt__kart:hover { border-color: var(--gece-yazi); } .alt__kart:hover > span { translate: 4px 0; } }
-.alt__adres { display: flex; gap: 10px; }
-.alt svg { flex: none; width: 18px; height: 18px; fill: none; stroke: var(--gece-vurgu); stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+.alt__adres, .alt__eposta { display: flex; gap: 10px; }
+.alt svg:not(.ist) { flex: none; width: 18px; height: 18px; fill: none; stroke: var(--gece-vurgu); stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
 .alt ul svg { margin-right: 10px; }
 .alt__unvan, .alt__yil { color: var(--gece-soluk); font-size: var(--t-1); }
 .alt__yil { color: var(--gece-vurgu); font-weight: 600; letter-spacing: 0.06em; }
 .alt__ic { margin-top: var(--b-4); display: grid; grid-template-columns: minmax(0, 4fr) repeat(3, minmax(0, 2fr)); gap: var(--b-4); }
 .alt h2 { font: 600 var(--t-1)/1.4 var(--f-govde); color: var(--gece-soluk); letter-spacing: 0.12em; text-transform: uppercase; }
 .alt__adres { margin-top: var(--b-1); color: var(--gece-soluk); }
-.alt__eposta { margin-top: var(--b-1); font: 600 var(--t-3)/1.3 var(--f-govde); }
+.alt__eposta { margin-top: var(--b-2); color: var(--gece-soluk); }
+.alt__eposta a { display: inline-flex; align-items: center; min-height: 44px; margin-top: -13px; font-weight: 600; color: var(--gece-yazi); }
+.alt__eposta small { display: block; font-size: var(--t-1); }
 .alt ul { margin-top: var(--b-1); display: grid; }
 .alt ul a { display: inline-flex; align-items: center; min-height: 44px; padding: 10px 0; text-decoration: none; }
 @media (hover: hover) { .alt ul a:hover { text-decoration: underline; } }

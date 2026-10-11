@@ -1,3 +1,30 @@
+# YASA DENETİMİ — UUMK v14 (kabin apronu, gece İstanbulu, altbilgi e-postası, kimlik uçuşu) · 2026-10-11 gece · denetleyici index 0 HATA · 7 UYARI (v13 ile aynı)
+
+Sonuç: 20/20 ölçüldü · 0 HATA · 7 UYARI (hepsi v12–v13'ten, gerekçeler değişmedi) · TESLİM
+
+| # | Yasa | Ölçüm | Eşik | Durum | Gerekçe (yalnız UYARI) |
+|---|---|---|---|---|---|
+| 1 | Hick | kabin 9 eylem (değişmedi); altbilgi e-posta 1 bağlantı | ≤ 5 | UYARI | v13 gerekçesi |
+| 2 | Fitts | e-posta bağlantısı 44 px yükseklik; mobil-denetim < 44 px hedef 0 | ≥ 44 px | geçti | |
+| 3 | Jakob | e-posta satırı zarf simgesiyle, adres satırı konum simgesiyle (aynı desen) | — | geçti | |
+| 4 | Seçim Yükü | değişmedi | — | geçti | |
+| 5 | Yakınlık | iletişim: adres–e-posta 16 px, e-posta–açıklama 0 px (aynı grup) | ≤ 1:2 | geçti | |
+| 6 | Benzerlik | yeni punto yok (açıklama t-1, adresle aynı soluk renk); apron işaret renkleri site paletinden (sarı, kırmızı, beyaz) | — | geçti | |
+| 7 | Tekdüze Bağlılık | e-posta ve açıklaması tek satır bloğunda | — | geçti | |
+| 8 | Ortak Bölge | sahne tek çerçeve (r-2), kart onun üstünde | 0 iç içe kart | geçti | |
+| 9 | Prägnanz | gece panoramasındaki sızan sarı çerçeveler kalktı; degrade/cam/ışıma 0 | 0 | geçti | |
+| 10 | Von Restorff | altbilgide vurgu yine iki karttan sarısı; e-posta kalın değil artık (t-3 → gövde) | 1 | geçti | |
+| 11 | Miller | değişmedi | ≤ 7 | geçti | |
+| 12 | Sıra Konumu | değişmedi | — | geçti | |
+| 13 | Doherty | kabin süre çubuğu 7 sn (v12) | — | UYARI | v12 gerekçesi |
+| 14 | Zeigarnik | değişmedi | — | geçti | |
+| 15 | Zirve-Son | değişmedi | — | geçti | |
+| 16 | Parkinson | değişmedi | ≤ %50 | UYARI | kullanıcı isteği (v12) |
+| 17 | Tesler | e-postanın neden euroavia.eu uzantılı olduğu sorulmadan açıklanır | — | geçti | |
+| 18 | Postel | değişmedi | — | geçti | |
+| 19 | Occam | yeni bölüm yok | ≤ 900 | UYARI | v12 gerekçesi |
+| 20 | Pareto | değişmedi | ≥ %60 | UYARI (v9) | |
+
 # YASA DENETİMİ — UUMK v13 (kimlik yayı, ok yerine uçak, kapı çizimi, kabin kartı ve hareketi, telefonda kapı) · 2026-10-11 gece · denetleyici index 0 HATA · 7 UYARI (v12 ile aynı)
 
 Sonuç: 20/20 ölçüldü · 0 HATA · 7 UYARI (hepsi v12'den; gerekçeler değişmedi) · TESLİM

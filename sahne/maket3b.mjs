@@ -2,6 +2,7 @@
  * dioramalarla (three.js r184, ortografik kamera, gölgeli PBR; Antra Tech / Desilla 2,5B dili).
  * Burun → kuyruk: kokpit · yönetim kurulu, Etkinlik, Ar-Ge, Sponsorluk, Tanıtım, Tasarım. Bölme numaraları uzak duvarın üstünde
  * küçük HTML düğmeleridir (dünyadan ekrana izdüşümle konur); seçilen bölmeye kamera yaklaşır. Tur ve kartlar site.mjs'te.
+ * Zemin (v14): koyu beton apron ve boyalı işaretler (taksi çizgisi, durma çubuğu, park alanı sınırı, servis yolu, A1).
  * Canlılık: koridorda yürüyen iki üye, konuşan/çalışan figürler, değişen ekranlar, uçan dron, dönen motor fanları, yanıp sönen
  * uçak ışıkları, uçağın çevresinde dönen bagaj treni; uçak yavaşça salınır (±4°, 24 sn), seçili bölmenin ışığı nefes alır.
  * yavas: yazılımsal çizici (donanım GPU'su yok): 1x piksel, ~15 kare/sn.
@@ -48,10 +49,37 @@ export function maketKur(tuvalEl, { imler = [], az = false, yavas = false, secil
     celik: std(0xc9ccd0, 0.3, 0.6), lastik: std(0x222222, 0.9), cam: std(0xbfdde2, 0.08, 0.1, { transparent: true, opacity: 0.45 }) };
   const canli = [], dokular = [];
 
-  /* ── zemin: yalnız gölge alan saydam düzlem; uçak sayfanın kâğıdına kendi gölgesiyle oturur (v12: gri apron, sarı yanaşma
-   * çizgisi, koniler ve apron görevlisi kalktı; çerçeve uçağa göre) ── */
-  const zemin = new THREE.Mesh(new THREE.PlaneGeometry(34, 24), new THREE.ShadowMaterial({ color: 0x1a1a1a, opacity: 0.18 }));
-  zemin.rotation.x = -Math.PI / 2; zemin.position.y = 0.004; zemin.receiveShadow = true; dunya.add(zemin);
+  /* ── apron (v14): sahneyi kenardan kenara dolduran koyu beton (uçağın açık gövdesi zeminden ayrışsın; görünür kenarı yok) ve ayrı
+   * saydam katmanda boyalı işaretler: arkadan park yerine kıvrılan sarı taksi çizgisi, burun önünde durma çubuğu, kırmızı kesikli park
+   * alanı sınırı, bagaj treninin dolaştığı servis yolunun beyaz kesikli kenarları, park yeri numarası. İkisi de uçakla birlikte salınır. ── */
+  const plaka = tuvalDoku(128, 128, (g, w, h) => {
+    g.fillStyle = '#6a6c69'; g.fillRect(0, 0, w, h);
+    for (let k = 0; k < 140; k++) { const x = (k * 37.3) % w, y = (k * 61.7) % h; g.fillStyle = k % 3 ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.06)'; g.fillRect(x, y, 2 + (k % 4), 2); }
+    g.fillStyle = '#525451'; g.fillRect(0, 0, w, 2); g.fillRect(0, 0, 2, h);
+  });
+  plaka.wrapS = plaka.wrapT = THREE.RepeatWrapping; plaka.repeat.set(30, 30);
+  const zemin = new THREE.Mesh(new THREE.PlaneGeometry(120, 120), std(0xffffff, 0.95, 0, { map: plaka }));
+  zemin.rotation.x = -Math.PI / 2; zemin.receiveShadow = true; dunya.add(zemin);
+  const AX0 = -15, AX1 = 11, AZ = 8, PU = 56;
+  const isaret = tuvalDoku((AX1 - AX0) * PU, 2 * AZ * PU, (g) => {
+    const px = (x) => (x - AX0) * PU, pz = (z) => (z + AZ) * PU;
+    g.lineCap = 'round'; g.lineJoin = 'round';
+    /* servis yolu: bagaj yolunun iki yanında beyaz kesikli kenar */
+    g.strokeStyle = 'rgba(242,242,239,0.85)'; g.lineWidth = 0.07 * PU; g.setLineDash([0.5 * PU, 0.4 * PU]);
+    for (const d of [-0.5, 0.5]) { const { x0, x1, z, r } = YOL; g.beginPath(); g.roundRect(px(x0 - d), pz(-z - d), (x1 - x0 + 2 * d) * PU, (2 * z + 2 * d) * PU, (r + d) * PU); g.stroke(); }
+    /* park alanı sınırı: kırmızı kesikli */
+    g.strokeStyle = '#b8323a'; g.lineWidth = 0.09 * PU; g.setLineDash([0.7 * PU, 0.45 * PU]);
+    g.strokeRect(px(-10.2), pz(-6.2), 19.6 * PU, 12.4 * PU);
+    /* taksi çizgisi: arkadaki taksi yolundan kıvrılıp burun tekerine kadar; durma çubuğu */
+    g.setLineDash([]); g.strokeStyle = '#f2c200'; g.lineWidth = 0.13 * PU;
+    g.beginPath(); g.moveTo(px(-15), pz(-7.2)); g.lineTo(px(-13.4), pz(-7.2)); g.bezierCurveTo(px(-10.6), pz(-7.2), px(-11.2), pz(0), px(-8.6), pz(0)); g.lineTo(px(X1 + 0.75), pz(0)); g.stroke();
+    g.beginPath(); g.moveTo(px(-15), pz(-7.2)); g.lineTo(px(11), pz(-7.2)); g.stroke();
+    g.lineWidth = 0.22 * PU; g.beginPath(); g.moveTo(px(X1 + 0.95), pz(-0.7)); g.lineTo(px(X1 + 0.95), pz(0.7)); g.stroke();
+    /* park yeri numarası: burnun önünde, kameraya okunur */
+    g.fillStyle = '#f2c200'; g.font = `700 ${0.9 * PU}px Futura, 'Century Gothic', 'Segoe UI', sans-serif`; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText('A1', px(5.5), pz(2.5));
+  });
+  const isaretM = ekle(new THREE.PlaneGeometry(AX1 - AX0, 2 * AZ), std(0xffffff, 0.9, 0, { map: isaret, transparent: true, depthWrite: false, polygonOffset: true, polygonOffsetFactor: -2 }), (AX0 + AX1) / 2, 0.01, 0, dunya, { golge: false, rx: -Math.PI / 2 });
+  isaretM.receiveShadow = true;
 
   /* ── gövde kabuğu: kesit silindir, burun kubbesi, kuyruk konisi ── */
   const kabuk = new THREE.CylinderGeometry(R, R, X1 - X0, 64, 1, true, T0, TL); kabuk.rotateZ(Math.PI / 2);

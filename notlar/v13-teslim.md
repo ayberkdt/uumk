@@ -25,3 +25,11 @@ Neden: `.vercelignore`'da v3'ten (commit 6f932af, 3B sahne yokken) kalma `vendor
 için hiçbir yerel test bunu göremedi. CSP aynı (yerel sunucu ve vercel.json birebir), engel değil.
 Düzeltme: `vendor/` satırı kaldırıldı. Yeni denetim (dogrula §13): sayfalardan başlayıp modül grafiğini ve sayfa src/href'lerini izler; her yerel dosya var ve
 `.vercelignore` dışında olmalı (düzeltmeden önce düştü: `vendor/three-r184/three.module.min.js`; sonra 1568/0). Yayındaki siteyi ben açıp doğrulamadım.
+
+## Ek 2: kimlik uçuşunun başlangıç ve bitişi
+Kullanıcı: "başlangıç ve bitiş noktaları kötü". Bulunan: iz İTÜ UUMK kutusunun kenarından kopuk başlıyordu, uçak burnu aşağıda AS Istanbul kutusuna dalıyordu;
+uçuştan önce uçak görünmüyordu. Yapılan: uçak İTÜ UUMK kutusunun üstünde yatay park eder (iz yok), kalkış koşusu, tırmanış, boşluğun üstünde takla,
+süzülüş, AS Istanbul kutusunun üstüne yatay iniş ve yavaşlayarak durma (3,2 sn, yumuşak başlayıp yumuşak biten zaman eğrisi). Kutu konumları viewBox'ta
+1440/1047/390 px'te ölçüldü (sol kutu x 0–184, sağ 216–400, üst kenar y≈90). Hareket azaltmada ve JS'siz: uçak inmiş, iz tam (html.az sınıfı).
+Yörünge doğrulaması: yol boyunca teğete göre döndürülmüş uçak hayaletleri (takla doğru yönde, kalkış ve iniş yatay). CSS gzip 17,93 kB (yinelenen `.alt a` kuralı silindi).
+Testler: dogrula 1570/0 · e2e "Biz kimiz" geçti · UX 0 HATA / 7 UYARI.

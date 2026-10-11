@@ -107,6 +107,7 @@ export const SAYFA = {
   altUnvan: 'ITU Aeronautical and Astronautical Engineering Club · full member of EUROAVIA (Affiliated Society)', basaDon: 'Back to top',
   altYil: 'Since 4 January 2001 · Ayazağa', altHarita: 'Network map',
   altIletisim: 'Contact', agBlog: 'EUROAVIA blog', altKonum: '41.10° N · 29.02° E · Istanbul',
+  altEpostaNot: 'The club\'s email, registered with EUROAVIA as AS Istanbul',
   adres: 'ITU Faculty of Aeronautics and Astronautics · Merkezi Derslik C Blok, Reşitpaşa Mah. Katar Cad. No: 2/8A, Sarıyer, Istanbul',
   altSite: 'Site', duzenleBaslik: 'Edit your profile', duzenleNot: 'Name, surname, student number and password', bildirBaslik: 'Report a problem or ask a question', bildirNot: 'Your message goes to the club board by e-mail', yonetimNot: 'Events, registrations and incoming messages',
   epostaSabit: 'The e-mail address cannot be changed; your account was confirmed with it.', kaydet: 'Save', geriProfil: 'Back to my account', parolaBaslik: 'Change your password', lParolaMevcut: 'Current password',

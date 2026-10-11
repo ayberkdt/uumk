@@ -614,7 +614,7 @@ const SENARYO = {
   async 'giriş sonrası: profil menüsü, profili düzenle (dolu gelir, kaydeder), parola değiştir, sorun bildir (yönetim adresine), alt bilgiden bildirim bağlantısı'(s) {
     await s.git('./?az=1#hesap', 1440, 900);
     if (!(await kosulBekle(s, `!document.querySelector('#giris-form fieldset').disabled`, 6000))) throw new Error('sunucu yok');
-    const k = { ad: 'Profil', soyad: 'Deneme', eposta: `prf.${DAMGA}@itu.edu.tr`, okul_no: `15${DAMGA}`, parola: 'profil-parola-1' };
+    const k = { ad: 'Profil', soyad: 'Deneme', eposta: `prf.${DAMGA}@itu.edu.tr`, okul_no: `17${DAMGA}`, parola: 'profil-parola-1' };
     await s.js(`document.querySelector('#sekme-kayit').click()`);
     await doldur(s, '#kayit-form', { ...k, kvkk: true });
     await s.js(`document.querySelector('#kayit-form button[type=submit]').click()`);

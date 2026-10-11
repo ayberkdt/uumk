@@ -78,7 +78,7 @@ function hikayePayi() {
   return yol > 0 ? sinir(-r.top / yol) : 0;
 }
 /* adın hâlleri */
-const durumlar = $$('.ad__durum'), duraklar = $$('.durak li');
+const durumlar = $$('.ad__durum');
 function bol(el) {
   for (const p of el.querySelectorAll('.ad__buyuk, .ad__kucuk')) {
     const yazi = p.textContent;
@@ -115,25 +115,39 @@ function adCiz(p) {
     });
     el.dataset.gorunur = gorunen ? '1' : '0';
   });
-  const etkin = p < (PENCERE[0][1][0] + PENCERE[1][0][1]) / 2 ? 0 : p < (PENCERE[1][1][0] + PENCERE[2][0][1]) / 2 ? 1 : 2;
-  duraklar.forEach((d, i) => d.toggleAttribute('data-etkin', i === etkin));
-  duraklar[0].parentElement.style.opacity = (1 - sinir((p - 0.9) / 0.08)).toFixed(3);
 }
-const siletYol = $$('#silet path'), silet = $('#silet');
-function siletCiz(p) {
-  const n = siletYol.length;
-  siletYol.forEach((y, i) => { y.style.strokeDashoffset = (1 - sinir(((p - 0.27) / 0.24) * 1.5 - (i / n) * 0.5)).toFixed(3); });
-  silet.style.opacity = ((0.7 - 0.48 * sinir((p - 0.62) / 0.12)) * (innerWidth < innerHeight * 1.05 ? 1 : 1 - sinir((p - 0.9) / 0.1))).toFixed(3);
+/* İstanbul panoraması: blok blok inşa (site.css .ist--kur); --s blok gecikmesi, --k blok içi sıra */
+function istKur(svg, { sure = 1100, sonra } = {}) {
+  const bloklar = svg.querySelectorAll('.blok');
+  bloklar.forEach((b, i) => b.style.setProperty('--s', `${Math.round((i / bloklar.length) * sure)}ms`));
+  for (const p of svg.querySelectorAll('.parca')) p.style.setProperty('--k', p.dataset.k);
+  if (AZ) { svg.classList.add('ist--kuruldu'); sonra?.(); return; }
+  svg.classList.add('ist--kur');
+  setTimeout(() => { svg.classList.add('ist--kuruldu'); svg.classList.remove('ist--kur'); sonra?.(); }, sure + 1000);
 }
+const ist = $('#istanbul');
+istKur(ist);
+/* geniş ekranda metin uzunsa (ör. İngilizce üç satır başlık) metnin altına uzanan yapılar metne binmesin: şehir biraz aşağı iner */
+const SEHIR_TEPE = [[116, 206], [148, 190], [316, 190], [348, 206], [426, 283], [534, 283], [762, 140]];   /* [x, tepe y] viewBox birimi */
+function sehirYerlestir() {
+  ist.style.setProperty('--sehir-in', '0px');
+  if (innerWidth <= 860) return;
+  const m = $('.giris__metin > .ad').getBoundingClientRect(), o = ($('.giris__olgu').offsetParent ? $('.giris__olgu') : $('.giris__eylem')).getBoundingClientRect(), r = ist.getBoundingClientRect();
+  const k = Math.max(r.width / 1600, r.height / 480), x0 = r.left + (r.width - 1600 * k) / 2, y0 = r.bottom - 480 * k;
+  let in_ = 0;
+  for (const [x, y] of SEHIR_TEPE) { const sx = x0 + x * k; if (sx > m.left - 12 && sx < Math.max(o.right, m.left + 640) + 12) in_ = Math.max(in_, o.bottom + 14 - (y0 + y * k)); }
+  ist.style.setProperty('--sehir-in', `${Math.min(90, Math.round(in_))}px`);
+}
+sehirYerlestir(); addEventListener('dil-degisti', sehirYerlestir); document.fonts?.ready.then(sehirYerlestir);
 let ucus = null, sonP = -1;
 function hikayeGuncelle() {
   const p = hikayePayi();
   if (p === sonP) return;
   sonP = p;
-  if (!AZ) { adCiz(p); siletCiz(p); }
+  if (!AZ) { adCiz(p); ist.style.setProperty('--ist-p', p.toFixed(3)); }
   ucus?.ciz(p);
 }
-ucus = ucusKur($('#ucus-tuval'), { az: AZ, metinAlt: () => { const t = $('#ucus-tuval').getBoundingClientRect(), o = $('.giris__olgu').getBoundingClientRect(); return o.bottom - t.top; } });
+ucus = ucusKur($('#ucus-tuval'), { az: AZ, metinAlt: () => { const t = $('#ucus-tuval').getBoundingClientRect(), o = ($('.giris__olgu').offsetParent ? $('.giris__olgu') : $('.giris__eylem')).getBoundingClientRect(); return o.bottom - t.top; }, sehirUst: () => ist.getBoundingClientRect().top - $('#ucus-tuval').getBoundingClientRect().top });
 $('#ucus-tuval').dataset.cizici = '2b';
 adKur();
 if (!AZ && hikayePayi() < 0.02) { $('#ad').classList.add('ad--ilk'); setTimeout(() => $('#ad').classList.remove('ad--ilk'), 1400); }
@@ -152,50 +166,19 @@ function ufukGuncelle() {
   }
 }
 
-/* ── tarihçe rotası ── */
-const rota = $('#rota'), rotaNokta = $$('.rota__nokta'), rotaSvg = $('.rota__yol');
-const [rotaIz, rotaDolu] = $$('.rota__yol path');
-const rotaUcak = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-rotaUcak.setAttribute('class', 'rota__ucak'); rotaUcak.setAttribute('d', 'M9 0L-9-6-2 1.5zM9 0-2 1.5-3 6z'); rotaSvg.append(rotaUcak);
-const RY = [42, 32, 46, 34, 42, 34];
-let rotaX = [], rotaL = 0;
-function rotaKur() {
-  rotaNokta.forEach((li, i) => li.style.setProperty('--y', `${RY[i % RY.length]}px`));
-  if (getComputedStyle(rotaSvg).display === 'none') { rotaL = 0; return; }
-  const rr = rota.getBoundingClientRect();
-  const pts = rotaNokta.map((li, i) => [li.getBoundingClientRect().left - rr.left + 8, RY[i % RY.length]]);
-  rotaX = pts.map((q) => q[0]);
-  const t = [...pts, [rr.width, pts.at(-1)[1] - 8]];
-  let d = `M${t[0][0]} ${t[0][1]}`;
-  for (let i = 0; i < t.length - 1; i++) {
-    const p0 = t[Math.max(0, i - 1)], p1 = t[i], p2 = t[i + 1], p3 = t[Math.min(t.length - 1, i + 2)];
-    d += `C${(p1[0] + (p2[0] - p0[0]) / 6).toFixed(1)} ${(p1[1] + (p2[1] - p0[1]) / 6).toFixed(1)} ${(p2[0] - (p3[0] - p1[0]) / 6).toFixed(1)} ${(p2[1] - (p3[1] - p1[1]) / 6).toFixed(1)} ${p2[0].toFixed(1)} ${p2[1].toFixed(1)}`;
-  }
-  rotaIz.setAttribute('d', d); rotaDolu.setAttribute('d', d);
-  rotaL = rotaDolu.getTotalLength();
-  rotaDolu.style.strokeDasharray = `${rotaL}`;
-  rotaGuncelle();
-}
+/* ── tarihçe: şerit rafı; omurga kaydırdıkça dolar, uçak ucunda, geçilen şerit yerine oturur ── */
+const rota = $('#rota'), rotaNokta = $$('#rota .serit:not(.serit--sirada)');
 function rotaGuncelle() {
   const r = rota.getBoundingClientRect();
   if (r.bottom < -100 || r.top > innerHeight + 100) return;
-  const t = AZ ? 1 : sinir((innerHeight * 0.85 - r.top) / (innerHeight * 0.55));
-  if (!rotaL) {
-    const v = AZ ? 1 : sinir((innerHeight * 0.7 - r.top - 15) / (r.height - 30)), ust = rotaNokta.map((li) => li.getBoundingClientRect().top);   /* önce oku, sonra yaz */
-    rota.style.setProperty('--rota-t', v.toFixed(3)); rota.style.setProperty('--rota-u', v > 0.01 && v < 0.99 ? 1 : 0);
-    rotaNokta.forEach((li, i) => li.toggleAttribute('data-gecti', ust[i] + 15 <= innerHeight * 0.7 + 1)); return;
-  }
-  rotaDolu.style.strokeDashoffset = (rotaL * (1 - t)).toFixed(1);
-  const a = rotaDolu.getPointAtLength(rotaL * t), b = rotaDolu.getPointAtLength(Math.min(rotaL, rotaL * t + 2));
-  const aci = (Math.atan2(b.y - a.y, b.x - a.x) * 180) / Math.PI;
-  rotaUcak.setAttribute('transform', `translate(${a.x.toFixed(1)} ${a.y.toFixed(1)}) rotate(${aci.toFixed(1)})`);
-  rotaUcak.style.opacity = t > 0.01 && t < 0.995 ? '1' : '0';
-  rotaNokta.forEach((li, i) => li.toggleAttribute('data-gecti', a.x >= rotaX[i] - 4));
+  const cizgi = innerHeight * 0.62, ust = rotaNokta.map((li) => li.getBoundingClientRect().top);   /* önce oku, sonra yaz */
+  const v = AZ ? 1 : sinir((cizgi - r.top) / r.height);
+  rota.style.setProperty('--rota-t', v.toFixed(3)); rota.style.setProperty('--rota-u', v > 0.01 && v < 0.99 ? 1 : 0);
+  rotaNokta.forEach((li, i) => li.toggleAttribute('data-gecti', AZ || ust[i] + 24 <= cizgi + 1));
 }
-rotaKur();
 
 let boyutZaman = 0;
-new ResizeObserver(() => { cancelAnimationFrame(boyutZaman); boyutZaman = requestAnimationFrame(() => { sonP = -1; rotaKur(); isaretKoy(); kaydirma(); }); }).observe(document.body);
+new ResizeObserver(() => { cancelAnimationFrame(boyutZaman); boyutZaman = requestAnimationFrame(() => { sonP = -1; isaretKoy(); sehirYerlestir(); kaydirma(); }); }).observe(document.body);
 kaydirma();
 
 /* ── gündem, hesap ve kulüp kartı ── */
@@ -248,20 +231,22 @@ const tarihYaz = (t) => new Intl.DateTimeFormat(etkinDil() === 'en' ? 'en-GB' : 
 let yazilar = null;
 /* bölünmez boşluklar */
 const bag = (s) => s.replace(/(\d) (?=\p{L})/gu, '$1 ').replace(/ (\d{4})/g, ' $1');
+const PUL = ['kiz', 'galata', 'kopru', 'cami', 'vapur', 'ev'];
 function yazilariCiz() {
   if (!yazilar?.length) return;
   const d = etkinDil();
-  yaziListe.replaceChildren(...yazilar.map((y, i) => {
-    const li = document.createElement('li'); li.className = 'yazi';
-    li.innerHTML = (i ? '' : '<svg class="yazi__silet" viewBox="0 0 1200 240" preserveAspectRatio="xMidYMax meet" aria-hidden="true"><use href="#silet-cizim"/></svg>') + '<p class="yazi__ust"><time></time></p><h3><a></a></h3><p></p>';
+  /* AESTRO sayıları ve üçüncü sayının yazısı raftadır */
+  yaziListe.replaceChildren(...yazilar.filter((y) => y.kaynak !== 'AESTRO' && y.id !== 'aestro-yolculugu').map((y, i) => {
+    const li = document.createElement('li'); li.className = 'kartpostal';
+    li.innerHTML = `<svg class="kartpostal__resim" viewBox="0 0 100 100" aria-hidden="true" focusable="false"><use href="#pul-${PUL[i % PUL.length]}"/></svg><div class="kartpostal__yazi"><p class="kartpostal__damga"><time></time></p><h3><a></a></h3><p></p></div>`;
     li.querySelector('time').textContent = tarihYaz(y.tarih);
     li.querySelector('time').dateTime = y.tarih;
-    if (y.kaynak && y.kaynak !== 'EUROAVIA') li.querySelector('.yazi__ust').append(Object.assign(document.createElement('span'), { className: 'etiket', textContent: y.kaynak }));   /* EUROAVIA varsayılan kaynak */
+    if (y.kaynak && y.kaynak !== 'EUROAVIA') li.querySelector('.kartpostal__yazi').prepend(Object.assign(document.createElement('span'), { className: 'etiket', textContent: y.kaynak }));
     const a = li.querySelector('a');
     a.textContent = bag((d === 'en' && y.baslik_en) || y.baslik_tr);
     if (y.baglanti) { a.href = y.baglanti; a.target = '_blank'; a.rel = 'noopener'; }
     else { a.href = `#yazi-${y.id}`; a.addEventListener('click', (e) => { e.preventDefault(); yaziAc(y); }); }
-    li.querySelector('p:last-child').textContent = bag((d === 'en' && y.ozet_en) || y.ozet_tr);
+    li.querySelector('.kartpostal__yazi > p:last-child').textContent = bag((d === 'en' && y.ozet_en) || y.ozet_tr);
     return li;
   }));
 }
@@ -294,6 +279,36 @@ gozle($('#ag'), {
   async ilk() { ag = await (await import('./sahne/ag.mjs')).agKur({ kap: $('#harita'), liste: $('#takvim'), secim: $('#ag-secim'), km: $('#ag-km'), az: AZ }); ag.gorunur(agGorunur); },
   gorunur: (b) => { agGorunur = b; ag?.gorunur(b); },
 });
+
+/* ── sponsorluk: e-posta konu satırı dile göre, adresi kopyala ── */
+const sponsorAdres = $('#sponsor-adres').textContent.trim(), sponsorYaz = $('#sponsor-yaz');
+function sponsorBagla() { sponsorYaz.href = `mailto:${sponsorAdres}?subject=${encodeURIComponent(metin('sponsorKonu'))}&body=${encodeURIComponent(metin('sponsorGovde'))}`; }
+sponsorBagla(); addEventListener('dil-degisti', sponsorBagla);
+$('#sponsor-kopyala').addEventListener('click', async () => {
+  try { await navigator.clipboard.writeText(sponsorAdres); duyuru.textContent = metin('adresKopyalandi', { adres: sponsorAdres }); }
+  catch { duyuru.textContent = metin('adresKopyalanamadi', { adres: sponsorAdres }); }
+});
+
+/* ── parola alanları: göster / gizle ── */
+for (const g of $$('#hesap-panel input[type="password"]')) {
+  const kutu = document.createElement('span'); kutu.className = 'alan__kutu';
+  g.replaceWith(kutu); kutu.append(g);
+  const d = Object.assign(document.createElement('button'), { type: 'button', className: 'alan__goster' });
+  const yaz = () => { const acik = g.type === 'text'; d.textContent = metin(acik ? 'parolaGizle' : 'parolaGoster'); d.setAttribute('aria-pressed', String(acik)); };
+  d.addEventListener('click', () => { g.type = g.type === 'password' ? 'text' : 'password'; yaz(); g.focus(); });
+  g.form?.addEventListener('submit', () => { g.type = 'password'; yaz(); });
+  kutu.append(d); yaz(); addEventListener('dil-degisti', yaz);
+}
+
+/* ── alt bilgi: gece İstanbul'u görününce kurulur, ışıklar yanar; İstanbul saati ── */
+gozle($('.alt'), { yakin: '0px', ilk() {
+  const gece = ist.cloneNode(true);   /* aynı preset, gece renkleri (site.css .ist--gece) */
+  gece.id = 'istanbul-gece'; gece.setAttribute('class', 'ist ist--gece');
+  $('.alt__sehir').append(gece);
+  istKur(gece, { sure: 900, sonra: () => gece.classList.add('ist--isik') });
+} });
+const altSaat = $('#alt-saat'), altSaatYaz = () => { altSaat.textContent = saatBicim.format(new Date()); };
+altSaatYaz(); setInterval(altSaatYaz, 20000);
 
 /* yüklemeden sonra yumuşak kaydırma (site.css html.yumusak) */
 const yumusakAc = () => requestAnimationFrame(() => document.documentElement.classList.add('yumusak'));

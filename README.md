@@ -1,4 +1,4 @@
-# İTÜ UUMK · EUROAVIA AS Istanbul — web sitesi (v3)
+# İTÜ UUMK · EUROAVIA AS Istanbul — web sitesi (v4)
 
 İTÜ Uçak Uzay Mühendisliği Kulübü'nün sitesi: gündem ve etkinlik kayıtları (hesap ya da misafir), son etkinlikler, yazılar,
 kulüp ve EUROAVIA ağı. Türkçe ve İngilizce. Bağımlılık yok: tarayıcı tarafı bağımsız ES modülleri (WebGL gerekmez); sunucu
@@ -6,8 +6,9 @@ tarafı Node ve yerleşik SQLite (`node:sqlite`; bayraksız kullanım için 22.1
 
 **Açılış.** Solda sabit ana başlık (h1) ve kulübü anlatan sabit açıklama; kaydırdıkça yalnız ad değişir: İTÜ Uçak Uzay
 Mühendisliği Kulübü → "AS Istanbul" (altında küçük EUROAVIA) → "İTÜ UUMK"; harfler kelimenin kırpma kutusunda sırayla kayar. Sağda katlanmış kâğıt uçak uçar (tuvalde kendi 3B
-izdüşümü, `sahne/ucus.mjs`): dönüşte yatar, taklada sırtüstü döner, arkasında kesikli iz, önünde gideceği yolun soluk uçuş planı; AS Istanbul hâlinde İstanbul silüeti
-(Galata, cami, Boğaz Köprüsü, Kız Kulesi) çizilir. Sayfa boyunca aynı iz: üst şeritte ilerleme, bölüm etiketleri, tarihçe rotası,
+izdüşümü, `sahne/ucus.mjs`): dönüşte yatar, taklada sırtüstü döner, arkasında kesikli iz, önünde gideceği yolun soluk uçuş planı; gökte üç küçük kâğıt uçak.
+Sahnenin altında blok blok kurulan İstanbul panoraması (`sahne/istanbul.mjs` preseti: Süleymaniye, Yeni Cami, Galata, Boğaz Köprüsü, suyun içinde
+Kız Kulesi, Üsküdar, vapur, martılar, dalgalar); açılışta parça parça yükselir, kaydırdıkça katmanlar farklı hızda kayar. Alt bilgide aynı preset gece renkleriyle. Sayfa boyunca aynı iz: üst şeritte ilerleme, bölüm etiketleri, tarihçe rotası,
 harita rotaları, alt bilgide pist. Siyah bölümlere (pano, EUROAVIA gece haritası, alt bilgi) geçişte ufuk kavisi kaydırdıkça düzleşir.
 
 **Renk ve yazı.** Palet "E · Hangar" (11 Ekim 2026, yedi seçenek arasından seçildi): beton grisi zemin #ecebe7, vurgu UUMK logosundaki petrol #056b7a, kalkış panosu ve alt bilgi siyah #1a1a1a üstüne sarı #f2c200. Önizlemeler `notlar/palet-secenekleri/`. Başlıklar
@@ -49,13 +50,14 @@ site açılır, kayıt bölümü "sunucuya ulaşılamıyor" der ve yazılar `ver
 
 | Bölüm | İçerik |
 |---|---|
-| Açılış | Sabit ana başlık, adın üç hâli (UUMK · AS Istanbul/EUROAVIA · İTÜ UUMK), kâğıt uçak, İstanbul silüeti, "Gündem" + "Üye ol" |
-| Gündem | Kayda açık etkinlikler (sunucudan; ilk 4, kalanı "göster") + duyurular (2026–27 programı, yeni öğrenciler, EUROAVIA Ideathon 2026) |
-| Son etkinlikler | Kalkış panosu (10 etkinlik, kaynaklı biniş kartları) + 3 fotoğraf |
-| Yazılar | AS Istanbul'un 7 EUROAVIA blog yazısı + AESTRO 1 ve 2; yönetimden eklenen yazılar sitenin kendi okuyucusunda açılır |
-| Kulüp | Tarihçe rotası (1983, 2001, 2003, 2021, 2024, 2026; her noktada anlamına göre ikon; ≤ 1080 px'te dikey rota), 5 ekip, her yıl tekrarlananlar, üyelik formu |
-| EUROAVIA | Koyu "gece haritası": 40 grup / 15 ülke, İstanbul'dan sarı rotalar ve uçaklar, seçimde odak + km sayacı; ağın 2025–26 takvimi (5 tam satır + "Tüm takvim", geçmişler soluk) |
-| Hesap | "Kulüp kartın" (forma yazdıkça dolar), giriş / hesap aç / parola / profil, kayıtlarım, hesabı sil |
+| Açılış | Sabit ana başlık, adın üç hâli (UUMK · AS Istanbul/EUROAVIA · İTÜ UUMK), kâğıt uçaklar, blok blok kurulan İstanbul panoraması, "Gündem" + "Üye ol" |
+| 01 Biz kimiz | Künye, 8 faaliyet, uçak gövdesi biçiminde kabin ekipleri (kokpit = yönetim kurulu), Güz/Bahar çizelgesi; koyu bantta "uçuş şeritleri" tarihçesi (11 kayıt, 1941–2026, kaydırdıkça dolan omurga) |
+| 02 Gündem | Kayda açık etkinlikler (sunucudan; ilk 4, kalanı "göster") + duyurular (2026–27 programı, yeni öğrenciler, EUROAVIA Ideathon 2026) |
+| 03 Son etkinlikler | Kalkış panosu (10 etkinlik) + biniş kartı (rota, tür, uçuş kodu, damga, fotoğraf, dile göre tarih) + 3 fotoğraf |
+| 04 Yazılar | AESTRO rafı (3 kapak) + AS Istanbul'un 6 EUROAVIA dönem raporu kartpostal olarak; yönetimden eklenen yazılar sitenin kendi okuyucusunda açılır |
+| 05 EUROAVIA | Koyu "gece haritası": 40 grup / 15 ülke, İstanbul'dan sarı rotalar ve uçaklar, seçimde odak + km sayacı; ağın 2025–26 takvimi (5 tam satır + "Tüm takvim", geçmişler soluk) |
+| 06 Sponsorluk | 4 iş birliği biçimi (doğrulanmış geçmiş örnekleriyle), "E-posta yaz" (konu satırı hazır) + "Adresi kopyala" |
+| 07 Hesap | "Check-in" paneli, parola göster/gizle, "Kulüp kartın" (forma yazdıkça dolar), giriş / hesap aç / parola / profil, kayıtlarım, hesabı sil |
 
 ## Kaynak disiplini
 
@@ -67,9 +69,10 @@ veriyor; EUROAVIA'nın bugünkü sitesindeki "1999" gerekçesiz ve EUROAVIA'nın
 ## Araçlar
 
 ```
-node araclar/dogrula.mjs                     # ~855 sınama, tarayıcısız (açılış yörüngesi dahil)
+node araclar/dogrula.mjs                     # ~1150 sınama, tarayıcısız (açılış yörüngesi, panorama = preset dahil)
+node araclar/istanbul-insa.mjs [--sina]      # İstanbul panoramasını ve pulları sahne/istanbul.mjs'ten index.html'e yazar (preset değişince)
 node araclar/sunucu-sina.mjs                 # 61 sınama: API, güvenlik, kayıt akışları, 404 sayfası (geçici veritabanıyla)
-node araclar/uctan-uca.mjs                   # 25 senaryo, başsız Chrome (sunucu --deneme ile açık olmalı; sınama etkinliklerini önce ve sonra siler)
+node araclar/uctan-uca.mjs                   # 29 senaryo, başsız Chrome (sunucu --deneme ile açık olmalı; sınama etkinliklerini önce ve sonra siler)
 node araclar/erisilebilirlik.mjs 1440x900    # axe-core
 node araclar/cekim.mjs <adres> <klasör> [g] [y] [adım…]
 node "C:\Users\ayber\Desktop\Custom Yetenekler\ux-yasalari\scripts\ux-yasa-denetimi.mjs" index.html --tablo
@@ -81,7 +84,8 @@ node "C:\Users\ayber\Desktop\Custom Yetenekler\ux-yasalari\scripts\ux-yasa-denet
 |---|---|
 | `index.html` · `kvkk.html` · `yonetim.html` · `404.html` | Türkçe metnin tek kaynağı · aydınlatma metni (taslak) · yönetim · bulunamadı sayfası (kökten mutlak yollar) |
 | `site.css` · `site.mjs` · `ceviri.mjs` · `dil/en.mjs` | Tasarım sistemi · denetleyici · dil altyapısı · İngilizce |
-| `sahne/ucus.mjs` | Açılıştaki uçak: yörünge, koordineli uçuş yönü, çizim; adın hâl pencereleri |
+| `sahne/ucus.mjs` | Açılıştaki uçak: yörünge, koordineli uçuş yönü, çizim; gökteki küçük kâğıt uçaklar; adın hâl pencereleri |
+| `sahne/istanbul.mjs` | İstanbul panoraması preseti (yapı taşları → bloklar → sahne); yalnız üretim zamanında (`araclar/istanbul-insa.mjs`) çalışır |
 | `sahne/hesap.mjs` | Hesap paneli, etkinlik kartları, misafir formu |
 | `sahne/pano.mjs` · `ag.mjs` · `harita.mjs` · `renk.mjs` | Pano + biniş kartı · EUROAVIA denetleyicisi · harita · palet |
 | `sunucu/` | `sunucu.mjs` (HTTP + statik), `api.mjs`, `vt.mjs` (şema), `guvenlik.mjs`, `posta.mjs`, `ayar.mjs`, `yonet.mjs` |
@@ -95,6 +99,7 @@ node "C:\Users\ayber\Desktop\Custom Yetenekler\ux-yasalari\scripts\ux-yasa-denet
 - Okul numarası biçimi şimdilik "8–11 rakam" (`OKUL_NO_DESENI`); İTÜ'nün kesin biçimi teyit edilmeli.
 - Fotoğraflarda kişiler seçiliyor; kulübün paylaşım onayı alınmalı. Logo vektör değil (2048 px PNG); vektör dosya kulüpten istenmeli.
 - Güz 2026 için tarihli etkinlik bilgisi yok; gündem "hazırlanıyor" der.
+- Ayrı bir sponsorluk e-posta adresi bulunamadı; sponsorluk düğmesi istanbul@euroavia.eu'ya "Sponsorluk" konulu e-posta açar. ATA İHA Takımı'nın bugünkü durumu doğrulanmadı (sitede yalnız 2021 sonucu ve sponsoru, yılıyla).
 - Firefox ve Safari'de ve gerçek telefonda sınanmadı (ölçümler başsız Chrome'da; işlemci 4× yavaşlatılarak da). Telefonda takvimden seçimde haritaya
   yumuşak kaydırma başsız Chrome'da doğrulanamadı (yalnız hareket azaltma kipinde anlık kaydırma sınandı).
 - Paylaşım önizlemesi görseli (`og:image`) mutlak adres ister; alan adı belli olunca eklenmeli.

@@ -1,5 +1,6 @@
 /* PANO — kalkış panosu ve biniş kartı. Ayrıntı: notlar/tasarim.md. */
 import { code128Svg } from '../lib/sunumatik/boarding_pass/code128.mjs';
+import { metin } from '../ceviri.mjs';
 
 const HARF = 'ABCÇDEFGĞHIİJKLMNOÖPRSŞTUÜVYZ0123456789';
 
@@ -52,13 +53,20 @@ export function panoKur({ tablo, pencere, az = false }) {
     const tr = tablo.querySelector(`tr[data-bilet="${id}"]`), m = metinler.get(id);
     if (!tr || !m) return;
     const i = (k) => (tablo.getAttribute('aria-busy') ? asil[hucreler.indexOf(tr.querySelectorAll('[data-flap]')[k])] : tr.querySelectorAll('[data-flap]')[k].textContent);
-    pencere.querySelector('#bilet-ad').textContent = i(1);
-    alan('tarih').textContent = (document.documentElement.lang === 'en' && m.dataset.tarihEn) || m.dataset.tarih;
-    alan('kapi').textContent = i(2);
-    alan('kisa').textContent = i(0);
-    alan('durum').textContent = i(3);
-    alan('metin').innerHTML = m.innerHTML;
     const en = document.documentElement.lang === 'en';
+    pencere.querySelector('#bilet-ad').textContent = i(1);
+    alan('tarih').textContent = (en && m.dataset.tarihEn) || m.dataset.tarih;
+    alan('kapi').textContent = alan('kapi2').textContent = i(2);
+    alan('kisa').textContent = i(0);
+    alan('durum').textContent = alan('damga').textContent = i(3);
+    alan('damga').dataset.durum = tr.querySelector('.durum')?.dataset.i18n || '';
+    alan('tur').textContent = metin('tur' + m.dataset.tur.charAt(0).toUpperCase() + m.dataset.tur.slice(1));
+    alan('ucus').textContent = `UUMK ${String([...tablo.tBodies[0].rows].reverse().indexOf(tr) + 1).padStart(3, '0')}`;
+    alan('metin').innerHTML = m.innerHTML;
+    /* fotoğrafı olan etkinlik: galerideki görsel (dile göre alt metniyle) */
+    const kaynakFoto = m.dataset.foto && document.querySelector(`#fotolar img[src*="${m.dataset.foto}"]`), f = alan('foto');
+    f.hidden = !kaynakFoto;
+    f.replaceChildren(...(kaynakFoto ? [Object.assign(document.createElement('img'), { src: kaynakFoto.currentSrc || kaynakFoto.src, alt: kaynakFoto.alt, width: 480, height: 360 })] : []));
     const k = alan('kaynak'); k.href = m.dataset.kaynak; k.textContent = en ? 'Open the post ↗' : 'Gönderiyi aç ↗';
     k.setAttribute('aria-label', en ? `Open the post on ${m.dataset.kaynakAd} (new tab)` : `Gönderiyi ${m.dataset.kaynakAd}'da aç (yeni sekme)`);
     const kod = `UUMK-${id.toUpperCase()}`;

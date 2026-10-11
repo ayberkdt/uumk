@@ -78,9 +78,9 @@ export function yorunge(anahtar) {
   return { nokta, eksen };
 }
 
-export function ucusKur(tuval, { az = false, metinAlt = null } = {}) {
+export function ucusKur(tuval, { az = false, metinAlt = null, sehirUst = null } = {}) {
   const g = tuval.getContext('2d');
-  let gen = 0, yuk = 0, dpr = 1, S = 100, hw = 4, anahtar = GENIS, olcek = 0.85, yer = true;
+  let gen = 0, yuk = 0, dpr = 1, S = 100, hw = 4, anahtar = GENIS, olcek = 0.85, yer = true, sehirY = 0;
   let p = 0, zaman = 0, gorunur = true, dongu = 0, girisT0 = null, girisVar = !az;
   /* ilk kareler > 40 ms ise gölge ve doku kapanır */
   let hafif = new URLSearchParams(location.search).has('hafif'), kareSay = 0, kareTop = 0, sonKare = 0;
@@ -91,7 +91,7 @@ export function ucusKur(tuval, { az = false, metinAlt = null } = {}) {
 
   function boyutla() {
     dpr = hafif ? 1 : Math.min(2, devicePixelRatio || 1);
-    gen = tuval.clientWidth; yuk = tuval.clientHeight;
+    gen = tuval.clientWidth; yuk = tuval.clientHeight; sehirY = sehirUst ? sehirUst() : yuk * 0.7;
     tuval.width = Math.round(gen * dpr); tuval.height = Math.round(yuk * dpr);
     S = yuk / 8; hw = gen / (2 * S);
     const dar = gen / yuk < 1.05;
@@ -124,26 +124,35 @@ export function ucusKur(tuval, { az = false, metinAlt = null } = {}) {
     return g.createPattern(c, 'repeat');
   })();
 
-  /* seyrüsefer ızgarası */
-  function izgara() {
-    const ara = gen < 700 ? 72 : 96, oy = -(p * 90) % ara, ox = -(p * 30) % ara;
-    /* metnin olduğu yerde sönümlenir */
-    const dar = gen / yuk < 1.05;
-    const egim = (a) => { const r = dar ? g.createLinearGradient(0, yuk * 0.45, 0, yuk * 0.75) : g.createLinearGradient(gen * 0.32, 0, gen * 0.7, 0); r.addColorStop(0, 'rgba(5, 107, 122, 0)'); r.addColorStop(1, `rgba(5, 107, 122, ${a})`); return r; };
-    const son = dar ? 1 : 1 - sinir((p - 0.9) / 0.1); if (son <= 0) return;
-    g.strokeStyle = egim(0.06 * son); g.lineWidth = 1; g.beginPath();
-    for (let x = ox; x <= gen; x += ara) { g.moveTo(Math.round(x) + 0.5, 0); g.lineTo(Math.round(x) + 0.5, yuk); }
-    for (let y = oy; y <= yuk; y += ara) { g.moveTo(0, Math.round(y) + 0.5); g.lineTo(gen, Math.round(y) + 0.5); }
-    g.stroke();
-    g.strokeStyle = egim(0.18 * son); g.beginPath();
-    for (let x = ox; x <= gen; x += ara * 2) for (let y = oy; y <= yuk; y += ara * 2) { g.moveTo(x - 4, y); g.lineTo(x + 4, y); g.moveTo(x, y - 4); g.lineTo(x, y + 4); }
-    g.stroke();
+  /* gökteki küçük kâğıt uçaklar: [hız, yükseklik payı, genlik, faz, ölçek] */
+  const SURU = [[0.045, 0.18, 0.05, 0.0, 1.25], [0.032, 0.33, 0.04, 2.1, 0.9], [0.058, 0.08, 0.035, 4.0, 0.75]];
+  function suru() {
+    const dar = gen / yuk < 1.05, x0 = dar ? 0 : gen * 0.5, gw = gen - x0 + 120;
+    const y0 = dar ? sehirY - 24 : yuk * 0.1, yh = dar ? 70 : yuk * 0.34;
+    const t = az ? 20 : zaman;
+    (dar ? SURU.slice(0, 2) : SURU).forEach(([v, yp, a, faz, o], i) => {
+      const yer = (q) => { const u = (((q * v + faz * 0.17 + p * 0.25) % 1) + 1) % 1; return [x0 - 60 + u * gw, y0 + yh * yp + Math.sin(q * 0.9 + faz) * (dar ? 18 : yuk * a), u]; };
+      const [x, y, u] = yer(t), [x2, y2] = yer(t + 0.05), aci = Math.atan2(y2 - y, x2 - x);
+      const sol = Math.min(1, u * 8, (1 - u) * 8);   /* kenarda belirir / söner */
+      if (sol <= 0) return;
+      g.save(); g.globalAlpha = sol;
+      /* iz */
+      g.setLineDash([3, 5]); g.lineWidth = 1; g.strokeStyle = 'rgba(5, 107, 122, 0.35)'; g.beginPath();
+      for (let k = 0; k <= 10; k++) { const [ix, iy] = yer(t - k * 0.9); if (Math.abs(ix - x) > gw * 0.5) break; k ? g.lineTo(ix, iy) : g.moveTo(ix, iy); }
+      g.stroke(); g.setLineDash([]);
+      g.translate(x, y); g.rotate(aci); g.scale(o * (dar ? 0.8 : 1), o * (dar ? 0.8 : 1));
+      g.lineJoin = 'round'; g.lineWidth = 0.9; g.strokeStyle = 'rgba(20, 20, 20, 0.55)';
+      g.fillStyle = '#fbfbf8'; g.beginPath(); g.moveTo(14, 0); g.lineTo(-12, -9); g.lineTo(-6, 0); g.closePath(); g.fill(); g.stroke();
+      g.fillStyle = '#d9d8d1'; g.beginPath(); g.moveTo(14, 0); g.lineTo(-6, 0); g.lineTo(-10, 6); g.closePath(); g.fill(); g.stroke();
+      g.fillStyle = '#056b7a'; g.beginPath(); g.moveTo(-12, -9); g.lineTo(-9.4, -7.2); g.lineTo(-5.2, -0.6); g.lineTo(-6, 0); g.closePath(); g.fill();
+      g.restore(); void i;
+    });
   }
 
   function ciz() {
     g.setTransform(dpr, 0, 0, dpr, 0, 0);
     g.clearRect(0, 0, gen, yuk);
-    izgara();
+    suru();
     if (!yer) return;
     const ex = eksen(p);
     /* boşta süzülme: hafif inip kalkma ve yalpa */

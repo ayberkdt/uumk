@@ -101,3 +101,14 @@ Düz ve bilgi veren cümle. Yasak liste araclar/dogrula.mjs'de (TR + EN).
 ```
 /* PANO — kalkış panosu (bir kez döner harf, ~1 s; hareket azaltmada durağan) ve biniş kartı (<dialog>, #etkinlik-<id>, Code 128-B). */
 ```
+
+## v4 (11 Ekim 2026; ayrıntı notlar/v4-teslim.md)
+- Açılış: ızgara yok; altta İstanbul panoraması (sahne/istanbul.mjs → araclar/istanbul-insa.mjs → index.html), gökte 3 küçük kâğıt uçak (ucus.mjs suru()).
+  Panorama renkleri sınıflarla: .ist (gündüz: yüzey #f8f8f6, mürekkep çizgi, petrol çatı/su, #dfeaeb kubbe/güneş), .ist--gece (#141414 gövde, sarı pencere/fener).
+  İnşa: .blok (--s gecikme, site.mjs istKur) > .parca (--k sıra); 420 ms parça, toplam ~1,9 sn; hareket azaltmada yok. Katman kayması --ist-p × --kay.
+  Metin uzunsa (EN) şehir --sehir-in kadar iner (site.mjs sehirYerlestir, SEHIR_TEPE noktaları).
+- Bölüm sırası: Açılış · 01 Biz kimiz (+ koyu tarihçe bandı) · 02 Gündem · 03 Etkinlikler (koyu) · 04 Yazılar · 05 EUROAVIA (koyu) · 06 Sponsorluk · 07 Hesap · alt bilgi (koyu, gece şehri).
+- Tarihçe: "uçuş şeritleri" (ATC strip), tutucu rengi --serit-r: fakülte gri, kulüp sarı, EUROAVIA #2d7c87; omurga --rota-t.
+- Biniş kartı: petrol başlık, rota İTÜ ✈ yer, damga (petrol = yapıldı, gri = duyuruldu), koçan petrol-açık.
+- Yazılar: AESTRO kapakları (petrol / siyah-sarı / kâğıt), kartpostallar (pul = istanbul.mjs simgeler(), <symbol id="pul-…"> sunum öznitelikleriyle; use gölge ağacında belge seçicileri eşleşmez).
+- Yeni jetonlar: --kanat, --kuyruk (kabin üstten görünüşü), --ucak-b (beyaz uçak).

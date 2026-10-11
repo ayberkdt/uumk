@@ -63,9 +63,10 @@ button, input, textarea, select { font: inherit; color: inherit; }
 .atla:focus { top: var(--b-2); }
 .kap { width: min(74rem, 100% - 2 * var(--kenar)); margin-inline: auto; }
 
-h1, h2 { font-family: var(--f-baslik); font-weight: 600; letter-spacing: -0.015em; text-wrap: balance; font-optical-sizing: auto; }
-h1 { font-size: var(--t-5); line-height: 1.02; }
-h2 { font-size: var(--t-4); line-height: 1.1; }
+/* manşet: Instrument Sans'ın dar, kalın kesimi (havalimanı tabelası); serif yalnız kart başlıkları, yıllar ve sayılarda vurgu */
+h1, h2 { font-family: var(--f-govde); font-weight: 700; font-stretch: 78%; letter-spacing: -0.012em; text-wrap: balance; }
+h1 { font-size: var(--t-5); line-height: 0.98; }
+h2 { font-size: var(--t-4); line-height: 1.02; }
 h3 { font: 600 var(--t-3)/1.3 var(--f-govde); text-wrap: balance; }
 p, li { text-wrap: pretty; }
 h4 { font: 600 var(--t-2)/1.4 var(--f-govde); }
@@ -197,7 +198,7 @@ html.js:not(.az) .ist .blok--bulutlar { animation: bulut-git 40s ease-in-out inf
 .giris__metin { position: absolute; inset: var(--ust-h) 0 0; display: grid; align-content: start; padding-top: clamp(1.5rem, 7vh, 5rem); pointer-events: none; }
 .giris__metin > * { pointer-events: auto; max-width: 36rem; }
 .ad { display: grid; }
-.ad__durum { grid-area: 1 / 1; align-self: end; font: 600 var(--t-5)/1.02 var(--f-baslik); letter-spacing: -0.02em; }
+.ad__durum { grid-area: 1 / 1; align-self: end; font: 700 var(--t-5)/0.98 var(--f-govde); font-stretch: 78%; letter-spacing: -0.012em; }
 .ad__buyuk { display: block; }
 .ad__kucuk { display: block; margin-top: var(--b-1); font: 600 var(--t-1)/1.4 var(--f-govde); letter-spacing: 0.32em; text-transform: uppercase; color: var(--petrol); }
 .ad__durum:not([data-durum='0']) { visibility: hidden; }
@@ -219,7 +220,7 @@ html:not(.js) .giris__tuval { display: none; }
 .bolum { position: relative; padding: var(--b-6) 0; }
 .bolum__bas { max-width: 46rem; margin-bottom: var(--b-4); }
 .bolum__bas--genis { max-width: none; display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: var(--b-4); align-items: start; }
-.bolum__ust { display: flex; align-items: center; gap: var(--b-1); font-size: var(--t-1); font-weight: 600; color: var(--murekkep); margin-bottom: var(--b-2); letter-spacing: 0.04em; }
+.bolum__ust { display: flex; align-items: center; gap: var(--b-1); font-size: var(--t-1); font-weight: 700; color: var(--murekkep); margin-bottom: var(--b-2); letter-spacing: 0.14em; text-transform: uppercase; }
 .bolum__no { color: var(--petrol); font-variant-numeric: tabular-nums; }
 .bolum__ust::before { content: ''; flex: none; order: -2; width: 0; border-top: 2px dashed currentColor; opacity: 0.5; transition: width 300ms var(--egri); }
 .bolum__ust::after { content: ''; flex: none; order: -1; width: 18px; height: 12px; background: var(--petrol); -webkit-mask: var(--ucak) center / contain no-repeat; mask: var(--ucak) center / contain no-repeat; transform: translateX(-12px); opacity: 0; transition: transform 300ms var(--egri), opacity 300ms ease; }
@@ -535,7 +536,7 @@ html.js:not(.az) .bolum.gorundu .kabin > li:nth-child(6) { transition-delay: 620
 .tarihce { position: relative; margin-top: var(--b-6); background: var(--lacivert); color: var(--gece-yazi); padding: calc(var(--b-6) + 3rem) 0; }
 .tarihce .ufuk path { fill: var(--kagit); }
 .tarihce__bas { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: end; gap: var(--b-2) var(--b-4); }
-.tarihce h3 { grid-column: 1; font: 600 var(--t-4)/1.1 var(--f-baslik); }
+.tarihce h3 { grid-column: 1; font: 700 var(--t-4)/1.02 var(--f-govde); font-stretch: 78%; }
 .tarihce__bas > p:not(.tarihce__lejant) { grid-column: 1; color: var(--gece-soluk); font-size: var(--t-6); }
 .tarihce__lejant { grid-column: 2; grid-row: 1 / span 2; display: flex; gap: var(--b-2); font-size: var(--t-1); color: var(--gece-soluk); }
 .lej-serit::before { content: ''; display: inline-block; width: 6px; height: 14px; margin-right: 6px; vertical-align: -2px; background: var(--serit-r); }
@@ -631,7 +632,7 @@ html.js:not(.az) .bolum:not(.gorundu) .kartpostal, html.js:not(.az) .bolum:not(.
 html[lang='en'] .bicim__ornek::before { content: 'Example · '; }
 .teklif { position: sticky; top: calc(var(--ust-h) + var(--b-3)); padding: var(--b-3) var(--b-4) var(--b-4); border-radius: var(--r-2); background: var(--lacivert); color: var(--gece-yazi); box-shadow: var(--g-1); }
 .teklif__ust { display: flex; justify-content: space-between; gap: var(--b-2); padding-bottom: var(--b-2); border-bottom: 2px dashed rgba(242, 242, 239, 0.2); font: 600 var(--t-1)/1 var(--f-govde); letter-spacing: 0.14em; text-transform: uppercase; color: var(--gece-soluk); }
-.teklif h3 { margin-top: var(--b-3); font: 600 var(--t-4)/1.1 var(--f-baslik); }
+.teklif h3 { margin-top: var(--b-3); font: 700 var(--t-4)/1.02 var(--f-govde); font-stretch: 78%; }
 .teklif__adres, .teklif__konu { display: grid; gap: 2px; margin-top: var(--b-2); }
 .teklif__adres span, .teklif__konu span { font-size: var(--t-1); color: var(--gece-soluk); }
 .teklif__adres b { font: 600 var(--t-3)/1.3 var(--f-govde); color: var(--gece-vurgu); overflow-wrap: anywhere; }
@@ -796,7 +797,7 @@ html.js:not(.az) .ist--gece:not(.ist--isik) .p:is(.y1, .y2, .y3, .y4), html.js:n
   .menu ul { flex-direction: column; gap: 0; padding: 0; border: 0; border-radius: 0; background: none; }
   .menu a[aria-current='true'] { color: var(--petrol); }
   .menu a { border-radius: 0; }
-  .menu a { width: 100%; min-height: 64px; padding: var(--b-2) 0; align-items: baseline; gap: var(--b-2); font: 600 var(--t-4)/1.1 var(--f-baslik); border-bottom: 1px solid var(--cizgi); }
+  .menu a { width: 100%; min-height: 64px; padding: var(--b-2) 0; align-items: baseline; gap: var(--b-2); font: 700 var(--t-4)/1.1 var(--f-govde); font-stretch: 78%; border-bottom: 1px solid var(--cizgi); }
   .menu__alt { display: flex; flex-wrap: wrap; gap: var(--b-3); margin-top: var(--b-4); font-size: var(--t-1); }
   .menu__alt a { width: auto; min-height: 44px; padding: 0; align-items: center; font: 600 var(--t-2)/1.4 var(--f-govde); border: 0; color: var(--soluk); }
   html.js:not(.az) .menu.acik li { animation: menu-gir 300ms var(--egri) both; }

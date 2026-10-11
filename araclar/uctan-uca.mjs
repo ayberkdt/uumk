@@ -450,12 +450,12 @@ const SENARYO = {
       const metinli = [...document.querySelectorAll('body *')].filter((e) => !e.closest('dialog:not([open]),[hidden]') && [...e.childNodes].some((n) => n.nodeType === 3 && n.textContent.trim()) && gor(e));
       const punto = [...new Set(metinli.map((e) => getComputedStyle(e).fontSize))];
       const aile = [...new Set(metinli.map((e) => getComputedStyle(e).fontFamily.split(',')[0].replace(/["']/g, '').trim()))];
-      return { yuklu, punto, aile, h1: getComputedStyle(document.querySelector('h1')).fontFamily.split(',')[0], h2: getComputedStyle(document.querySelector('#gundem h2')).fontFamily.split(',')[0], govde: getComputedStyle(document.body).fontFamily.split(',')[0],
+      return { yuklu, punto, aile, h1g: getComputedStyle(document.querySelector('h1')).fontStretch, h1w: getComputedStyle(document.querySelector('h1')).fontWeight, h1: getComputedStyle(document.querySelector('h1')).fontFamily.split(',')[0], h2: getComputedStyle(document.querySelector('#gundem h2')).fontFamily.split(',')[0], govde: getComputedStyle(document.body).fontFamily.split(',')[0],
         birincil: getComputedStyle(document.querySelector('#giris-form .dugme--birincil')).backgroundColor };
     })()`);
     const izinli = ['Instrument Sans', 'Source Serif 4'];
     if (!r.yuklu.every((f) => izinli.includes(f)) || !r.aile.every((f) => izinli.includes(f)) || r.punto.length > 6) throw new Error(JSON.stringify(r));
-    if (!/Source Serif 4/.test(r.h1) || !/Source Serif 4/.test(r.h2) || !/Instrument Sans/.test(r.govde) || r.birincil !== 'rgb(5, 107, 122)') throw new Error(JSON.stringify(r));
+    if (!/Instrument Sans/.test(r.h1) || !/Instrument Sans/.test(r.h2) || r.h1g !== '78%' || r.h1w !== '700' || !/Instrument Sans/.test(r.govde) || r.birincil !== 'rgb(5, 107, 122)') throw new Error(JSON.stringify(r));
     console.log(`      tipografi: yüklenen [${r.yuklu.join(', ')}] · kullanılan aileler [${r.aile.join(', ')}] · ${r.punto.length} punto (${r.punto.join(' ')}) · birincil düğme ${r.birincil} (#056b7a)`);
   },
   async 'kuruluş ve tarihçe: 2001 iki dilde, rota kaydırdıkça dolar, noktalar sırayla işaretlenir'(s) {

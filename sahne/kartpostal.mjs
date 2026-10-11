@@ -26,6 +26,11 @@ const bulut = (x, y, s = 1) => `<path d="M${x} ${y}h${r(18 * s)}a${r(4 * s)} ${r
 /* kayık baskı güneş: sarı disk, yanında hafif kaymış kontur */
 const gunes = (x, y, rr) => `<circle cx="${x}" cy="${y}" r="${rr}" fill="${S}"/><circle cx="${x + 1.6}" cy="${y - 1.2}" r="${rr}" fill="none" ${ince}/>`;
 const kisi = (x, y, renk, s = 1) => `<rect x="${r(x - 2 * s)}" y="${r(y - 7 * s)}" width="${r(4 * s)}" height="${r(7 * s)}" rx="${r(1.6 * s)}" fill="${renk}" ${ince}/><circle cx="${x}" cy="${r(y - 8.8 * s)}" r="${r(1.6 * s)}" fill="${K}" ${ince}/>`;
+/* yer gölgesi, parıltı, ışınsal fan kanatları, saç */
+const golge = (x, y, rx, ry = 1.8, op = 0.22) => `<ellipse cx="${x}" cy="${y}" rx="${rx}" ry="${ry}" fill="${M}" opacity="${op}"/>`;
+const parilti = (d) => `<path d="${d}" fill="none" stroke="${K}" stroke-width="0.9" stroke-linecap="round" opacity="0.85"/>`;
+const fan = (x, y, rr) => `<path d="${Array.from({ length: 8 }, (_, i) => { const a = (i * Math.PI) / 4; return `M${x} ${y}L${r(x + Math.cos(a) * rr)} ${r(y + Math.sin(a) * rr)}`; }).join('')}" stroke="${GR}" stroke-width="0.5"/><circle cx="${x}" cy="${y}" r="1" fill="${GR}"/>`;
+const sac = (x, y, s = 1) => `<path d="M${r(x - 1.7 * s)} ${r(y - 8.7 * s)}a1.7 1.5 0 0 1 ${r(3.4 * s)} 0z" fill="${KO}"/>`;
 /* bagaj etiketi: delik, ip, petrol şerit */
 const etiket = (x, y, a) => `<g transform="translate(${x} ${y}) rotate(${a})"><path d="M38 10q6 2 9-5" fill="none" ${ince}/><path d="M0 0h32l6 5v10l-6 5H0z" fill="${K}" ${ana}/><circle cx="33" cy="10" r="1.4" fill="${Z}" ${ince}/><rect x="3" y="3" width="3.4" height="14" fill="${P}"/><text x="9.5" y="10" font-family="Jost, sans-serif" font-weight="700" font-size="6.2" fill="${M}">AS IST</text><text x="9.5" y="16" font-family="Jost, sans-serif" font-weight="600" font-size="3.7" letter-spacing="0.3" fill="${P}">EUROAVIA</text></g>`;
 /* yandan yolcu uçağı (burun +x, boy ~64): gövde, pencereler, kanat, motor, kuyruk, iniş takımı */
@@ -39,7 +44,8 @@ const jet = (x, y, s, kuyruk = P) => `<g transform="translate(${x} ${y}) scale($
   <path d="M-26 2.6H22" stroke="${P}" stroke-width="0.8"/>
   <path d="M12 6V11M-10 6V11" ${ince}/><circle cx="12" cy="11.6" r="1.6" fill="${M}"/><circle cx="-10" cy="11.6" r="1.6" fill="${M}"/>
   <rect x="-7" y="6.6" width="11" height="4.6" rx="2.3" fill="${K}" ${ince}/><path d="M3 7.2v3.4" ${ince}/>
-  <path d="M-4 4L-14 14H-9L4 4Z" fill="${K}" ${ince}/></g>`;
+  <path d="M-4 4L-14 14H-9L4 4Z" fill="${K}" ${ince}/><path d="M-6.4 8.6L-11.6 13.4M-2.6 6.2L-6.4 9.6" stroke="${M}" stroke-width="0.35" opacity="0.6"/>
+  <path d="M22.4-3.2v6.6M-20.6-3.2v6.6" stroke="${M}" stroke-width="0.4" opacity="0.7"/><circle cx="1.6" cy="7.4" r="0.6" fill="${S}"/><path d="M-26-0.6H20" stroke="${K}" stroke-width="0.5" opacity="0.8"/></g>`;
 
 /* kabin koltuğu: arka, baş örtüsü, minder */
 const koltuk = (x, y, w, h) => `<rect x="${r(x)}" y="${r(y)}" width="${r(w)}" height="${r(h)}" rx="${r(w * 0.22)}" fill="${P}" ${ince}/><rect x="${r(x + w * 0.15)}" y="${r(y + h * 0.06)}" width="${r(w * 0.7)}" height="${r(h * 0.2)}" rx="${r(w * 0.08)}" fill="${K}" ${ince}/><rect x="${r(x - w * 0.06)}" y="${r(y + h * 0.8)}" width="${r(w * 1.12)}" height="${r(h * 0.2)}" rx="${r(w * 0.1)}" fill="${PK}" ${ince}/>`;
@@ -63,10 +69,13 @@ export const KART_SAHNE = {
     <circle cx="102" cy="92" r="6" fill="${K}" ${ana}/><circle cx="102" cy="92" r="3.4" fill="${M}"/><path d="M102 89.4v5.2M99.4 92h5.2" stroke="${GR}" stroke-width="0.5"/>
     <circle cx="80" cy="84" r="13" fill="${K}" ${ana}/><path d="M71.5 80q8.5-5.4 17 0l-1.6 2.6q-6.9-3.6-13.8 0z" fill="${M}"/><path d="M80 75.5v4" ${ince}/>
     <path d="M80 97V103.4M71 95.5V103.4M89 95.5V103.4" ${ince}/><rect x="77.6" y="102" width="4.8" height="2.4" rx="1" fill="${M}"/><rect x="68.8" y="102" width="4.4" height="2.4" rx="1" fill="${M}"/><rect x="86.8" y="102" width="4.4" height="2.4" rx="1" fill="${M}"/>
-    <rect y="104" width="160" height="16" fill="${G}"/><path d="M0 104H160" ${ana}/>
-    <path d="M80 105L42 120M80 105L118 120" stroke="${K}" stroke-width="0.7"/><path d="M80 105V120" stroke="${S}" stroke-width="1.6" stroke-dasharray="3 2.4"/>
+    <rect y="104" width="160" height="16" fill="${G}"/><path d="M0 104H160" ${ana}/>${golge(80, 105, 34, 2)}
+    <path d="M80 105L42 120M80 105L118 120" stroke="${K}" stroke-width="0.7"/><path d="M58 108h44M64 112h32" stroke="${S}" stroke-width="0.8" opacity="0.35"/><path d="M80 105V120" stroke="${S}" stroke-width="1.6" stroke-dasharray="3 2.4"/>
     <path d="M21 92V104M16.5 104h9" ${ince}/><path d="M14 84.5l4-3h6l4 3-2 3.2-2-1V95H18v-8.3l-2 1z" fill="${P}" ${ana}/><path d="M19 89.5l5-1.6-1.6 1.6 1.6 1.6z" fill="${S}"/>
     ${kisi(122, 104, S)}${kisi(130, 104, K, 0.9)}<rect x="123.4" y="96" width="3.4" height="4.4" fill="${K}" ${ince}/>
+    ${fan(58, 92, 3.2)}${fan(102, 92, 3.2)}<path d="M67.4 87a13 13 0 0 0 25.2 0q-12.6 7.4-25.2 0z" fill="${G}" opacity="0.75"/>
+    <path d="M12.6 104V61M16.6 104V58.4M20.6 104V56.6M24.6 104V55.4M135.4 104V55.4M139.4 104V56.6M143.4 104V58.4M147.4 104V61" stroke="${M}" stroke-width="0.5" opacity="0.35"/>
+    <path d="M100 12l7 2.4-7 2.4 1.4-2.4z" fill="${K}" ${ince}/><path d="M86 18q6-1 12-3.4" fill="none" stroke="${P}" stroke-width="0.5" stroke-dasharray="1.2 1.4"/>
     ${etiket(5, 6, -7)}`),
 
   /* Mayıs 2026: havacılık müzesi gezisi (sütunlu müze, vitrinde çift kanatlı), model uçak atölyesi (fırlatılan planör), kutu oyunu (zarlar, piyon) */
@@ -77,7 +86,7 @@ export const KART_SAHNE = {
     <rect x="86" y="70" width="8" height="22" fill="${KO}" ${ince}/>
     ${[40, 60, 80, 100, 120, 140].map((x) => `<rect x="${x - 3}" y="56" width="6" height="36" fill="${K}" ${ince}/><path d="M${x - 1} 59V90M${x + 1} 59V90" stroke="${M}" stroke-width="0.35" opacity="0.5"/><rect x="${x - 4}" y="55.4" width="8" height="2" fill="${K}" ${ince}/>`).join('')}
     <rect x="30" y="92" width="120" height="4" fill="${K}" ${ince}/><rect x="26" y="96" width="128" height="4" fill="${K}" ${ince}/><rect x="22" y="100" width="136" height="4" fill="${K}" ${ince}/>
-    <rect y="104" width="160" height="16" fill="${G}"/><path d="M0 104H160" ${ana}/>
+    <rect y="104" width="160" height="16" fill="${G}"/><path d="M0 104H160" ${ana}/>${golge(19, 104.6, 16, 1.6)}${golge(90, 104.6, 66, 1.4, 0.15)}
     <rect x="6" y="90" width="26" height="14" fill="${K}" ${ana}/>${tarama(6, 90, 8, 14, 2.2, 0.35)}
     <g transform="translate(19 81)"><rect x="-13" y="-9" width="26" height="2.4" rx="1" fill="${P}" ${ince}/><path d="M-8-6.6V-1M8-6.6V-1" ${ince}/>
       <path d="M-15-1L9-2.5Q13-2 13 0Q13 2 9 2.5L-15 1Z" fill="${K}" ${ince}/><path d="M-15-1L-18-7H-15.5L-12-1.5Z" fill="${P}" ${ince}/>
@@ -89,6 +98,11 @@ export const KART_SAHNE = {
     <g transform="rotate(-12 128 110)"><rect x="124" y="106" width="8" height="8" rx="1.6" fill="${K}" ${ince}/><circle cx="126.2" cy="108.2" r="0.8" fill="${M}"/><circle cx="129.8" cy="111.8" r="0.8" fill="${M}"/></g>
     <g transform="rotate(10 140 112)"><rect x="136" y="108" width="7" height="7" rx="1.4" fill="${S}" ${ince}/><circle cx="139.5" cy="111.5" r="0.8" fill="${M}"/></g>
     <path d="M114 116h6l-1.2-4.2a2.2 2.2 0 1 0-3.6 0Z" fill="${R}" ${ince}/>
+    ${[40, 60, 80, 100, 120, 140].map((x) => tarama(x + 0.4, 57.4, 2.4, 34.2, 1.4, 0.35)).join('')}
+    <path d="M90 28V16" ${ince}/><path d="M90 16.4h9l-2 2.6 2 2.6h-9z" fill="${P}" ${ince}/>
+    <path d="M30 96H150M26 100H154M22 104H158" stroke="${M}" stroke-width="0.4" opacity="0.4"/>
+    <path d="M10 72.6h0.1M14 72.4v2M18 72.2v2M22 72v2M26 71.8v2" stroke="${K}" stroke-width="0.4"/>
+    ${golge(128, 115, 6, 1, 0.18)}${golge(140, 116.4, 5, 1, 0.18)}
     ${etiket(5, 6, -7)}`),
 
   /* Temmuz 2025: Turkish Technic ile kabin modifikasyonu ve kabin güvenliği — kabin içi perspektif, oksijen maskeleri, çıkış işareti */
@@ -106,12 +120,15 @@ export const KART_SAHNE = {
     ${[[44, 62, 9, 14], [53, 62, 9, 14], [22, 70, 13, 21], [36, 70, 13, 21], [4, 82, 20, 34], [26, 82, 20, 34]].map(([x, y, w, h]) => koltuk(x, y, w, h) + koltuk(160 - x - w, y, w, h)).join('')}
     <path d="M30 32V47M130 32V47" ${ince}/><path d="M27 47h6l-1 4h-4z" fill="${S}" ${ince}/><path d="M127 47h6l-1 4h-4z" fill="${S}" ${ince}/>
     ${kisi(80, 104, S, 1.25)}<rect x="81.6" y="92" width="4" height="5" rx="0.6" fill="${M}"/>
+    <path d="M2 19.4Q80 31.4 158 19.4" fill="none" stroke="${S}" stroke-width="0.9" stroke-dasharray="1 2.2"/>
+    <path d="M60 116L77.6 74M66 116L79.2 74M72 116L80.8 74" stroke="${PA}" stroke-width="0.5" stroke-dasharray="0.6 2.4" opacity="0.45"/>
+    ${[[4, 82, 20, 34], [26, 82, 20, 34]].map(([x, y, w, h]) => `<path d="M${x + 3} ${y + h * 0.42}h${w - 6}M${x + 3} ${y + h * 0.58}h${w - 6}M${160 - x - w + 3} ${y + h * 0.42}h${w - 6}M${160 - x - w + 3} ${y + h * 0.58}h${w - 6}" stroke="${K}" stroke-width="0.4" stroke-dasharray="1 1" opacity="0.7"/>`).join('')}
     ${etiket(5, 6, -7)}`),
 
   /* Eylül 2024: akademik yılın kapanışı — gün batımında kapanış mangalı, genel kurul ve seçim (oy sandığı), süs ışıkları */
   mangal: c(`<rect width="160" height="120" fill="${Z}"/>
     <circle cx="120" cy="92" r="24" fill="${S}"/><circle cx="122" cy="90.6" r="24" fill="none" ${ince}/>
-    <path d="M0 92Q30 78 60 88T120 84T160 86V96H0Z" fill="${PA}" ${ince}/><rect y="94" width="160" height="26" fill="${G}"/><path d="M0 94H160" ${ana}/>
+    <path d="M0 92Q30 78 60 88T120 84T160 86V96H0Z" fill="${PA}" ${ince}/><rect y="94" width="160" height="26" fill="${G}"/><path d="M0 94H160" ${ana}/>${golge(53, 108.6, 22, 1.8)}${golge(137, 110.6, 15, 1.4)}${golge(97, 110.4, 11, 1.2, 0.16)}
     ${[8, 22, 84, 148].map((x) => `<path d="M${x} 104l1.4-3 1.4 3M${x + 6} 112l1.4-3 1.4 3" fill="none" ${ince}/>`).join('')}
     <path d="M0 12Q40 30 80 12Q120 30 160 12" fill="none" stroke="${M}" stroke-width="0.7"/>
     ${[0.12, 0.3, 0.5, 0.7, 0.88].flatMap((t) => [0, 80].map((o) => { const x = o + 80 * t, y = 12 + 4 * t * (1 - t) * 18; return `<path d="M${r(x)} ${r(y)}v1.6" ${ince}/><circle cx="${r(x)}" cy="${r(y + 3.4)}" r="2" fill="${t === 0.5 ? K : S}" ${ince}/>`; })).join('')}
@@ -124,6 +141,10 @@ export const KART_SAHNE = {
     ${kisi(90, 110, P, 0.95)}${kisi(97, 110, S, 0.9)}${kisi(104, 110, K, 0.95)}<rect x="98.4" y="97.6" width="2.2" height="3" fill="${R}" ${ince}/>
     <rect x="124" y="86" width="26" height="24" fill="${K}" ${ana}/>${tarama(124, 86, 6, 24, 2.2, 0.35)}<rect x="124" y="94" width="26" height="4" fill="${P}"/><path d="M131 86h12" stroke="${M}" stroke-width="1.6"/>
     <g transform="rotate(-10 137 80)"><rect x="132" y="72" width="10" height="13" fill="${K}" ${ince}/><path d="M134.4 78.4l2 2 3.6-4.6" fill="none" stroke="${P}" stroke-width="1.1" stroke-linecap="round"/></g>
+    ${parilti('M34.6 73.4q1.6 12.4 12.6 16.6')}<circle cx="46" cy="84" r="0.9" fill="${GR}"/><circle cx="53" cy="86" r="0.9" fill="${GR}"/><circle cx="60" cy="84" r="0.9" fill="${GR}"/>
+    <path d="M40.4 54.4l6-1.4" stroke="${GR}" stroke-width="1.6" stroke-linecap="round"/><circle cx="35.6" cy="68.4" r="1.1" fill="${GR}"/>
+    <path d="M124 104h26M137 98v12M124 90h26" stroke="${M}" stroke-width="0.4" opacity="0.5"/>
+    ${sac(90, 110, 0.95)}${sac(104, 110, 0.95)}
     ${etiket(5, 22, -7)}`),
 
   /* Ağustos 2024: Turkish Technic hangarı — çatı kafesi, geniş gövde, motor iskelesi, gezen öğrenciler */
@@ -133,12 +154,13 @@ export const KART_SAHNE = {
     ${[20, 56, 104, 140].map((x) => `<path d="M${x} 16v3" ${ince}/><path d="M${x} 20l-8 22h16z" fill="${S}" opacity="0.1"/><circle cx="${x}" cy="20.2" r="1.3" fill="${S}" ${ince}/>`).join('')}
     <rect x="10" y="26" width="140" height="28" fill="${PA}" ${ince}/><path d="${Array.from({ length: 9 }, (_, i) => `M${24 + i * 14} 26V54`).join('')}M10 40H150" stroke="${M}" stroke-width="0.45"/>${tarama(10, 26, 140, 28, 5, 0.18)}
     <rect y="86" width="160" height="34" fill="${G}"/><path d="M0 86H160" ${ana}/>
-    <path d="M8 120L52 86M152 120L108 86" stroke="${S}" stroke-width="1.2"/><path d="M80 88V120" stroke="${K}" stroke-width="0.8" stroke-dasharray="3 3"/>
+    <path d="M8 120L52 86M152 120L108 86" stroke="${S}" stroke-width="1.2"/>${golge(80, 90.4, 52, 2.4, 0.2)}<path d="M40 96h80M50 102h60" stroke="${K}" stroke-width="0.8" opacity="0.4"/><path d="M80 88V120" stroke="${K}" stroke-width="0.8" stroke-dasharray="3 3"/>
     ${jet(80, 66, 1.9)}
     <path d="M92 98V82H104V98M92 88H104M92 93H104" fill="none" stroke="${P}" stroke-width="1"/>${kisi(98, 82, S, 0.7)}
     ${[18, 25, 32, 39, 46].map((x, i) => kisi(x, 114, [P, K, S, P, K][i], 0.8)).join('')}
     ${kisi(56, 114, R, 0.85)}<path d="M57.8 105V99" ${ince}/><path d="M57.8 99l4 1.4-4 1.4z" fill="${S}" ${ince}/>
-    ${etiket(5, 22, -7)}`),
+    ${golge(98, 98.6, 8, 1, 0.2)}${[18, 25, 32, 39, 46, 56].map((x) => golge(x, 114.4, 2.4, 0.7, 0.2)).join('')}${sac(25, 114, 0.8)}${sac(39, 114, 0.8)}
+    ${etiket(108, 22, 5)}`),
 
   /* Mayıs 2024: Lustrum — EUROAVIA'nın 65. yılı, gece Boğaz turu: köprü ışıkları, havai fişek, vapurda "65" flaması */
   lustrum: c(`<rect width="160" height="120" fill="${M}"/>

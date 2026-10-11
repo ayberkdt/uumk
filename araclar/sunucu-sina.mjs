@@ -86,6 +86,39 @@ sina('doğrulama bağlantısı siteye yönlendirir', r.durum === 303 && /dogrula
 r = await a(new URL(dogrulama).pathname + new URL(dogrulama).search);
 sina('doğrulama bağlantısı tek kullanımlık', /dogrulama=gecersiz/.test(r.r.headers.get('location')));
 
+/* ── 2b. profil, parola, bildirim (v9) ── */
+r = await a('/api/hesap/profil', { yontem: 'POST', govde: { ad: 'Ayşe Nur', soyad: KISI.soyad, okul_no: '12ab' } });
+sina('profil: geçersiz okul no reddedilir', r.durum === 400 && r.veri.alanlar?.okul_no === 'okul-no-gecersiz', JSON.stringify(r.veri));
+vt.prepare("INSERT INTO kullanici (ad, soyad, eposta, okul_no, parola, olusturma) VALUES ('Baş','Ka','baska@itu.edu.tr','220330456','x','2026-01-01')").run();
+r = await a('/api/hesap/profil', { yontem: 'POST', govde: { ad: 'Ayşe Nur', soyad: KISI.soyad, okul_no: '220330456' } });
+sina('profil: başkasının okul numarası alınamaz', r.durum === 409 && r.veri.alanlar?.okul_no === 'okul-no-kayitli', JSON.stringify(r.veri));
+r = await a('/api/hesap/profil', { yontem: 'POST', govde: { ad: 'Ayşe Nur', soyad: KISI.soyad, okul_no: KISI.okul_no, eposta: 'baska.adres@itu.edu.tr' } });
+sina('profil: ad güncellenir, e-posta değişmez', r.durum === 200 && r.veri.kullanici.ad === 'Ayşe Nur' && vt.prepare('SELECT eposta FROM kullanici WHERE okul_no = ?').get(KISI.okul_no)?.eposta === KISI.eposta, JSON.stringify(r.veri));
+await a('/api/hesap/profil', { yontem: 'POST', govde: { ad: KISI.ad, soyad: KISI.soyad, okul_no: KISI.okul_no } });
+vt.prepare("DELETE FROM kullanici WHERE eposta = 'baska@itu.edu.tr'").run();
+r = await a('/api/hesap/parola', { yontem: 'POST', govde: { eski: 'yanlis-parola-1', yeni: 'yeni-parola-2026' } });
+sina('parola: mevcut parola yanlışsa reddedilir', r.durum === 400 && r.veri.alanlar?.eski === 'parola-yanlis');
+r = await a('/api/hesap/parola', { yontem: 'POST', govde: { eski: KISI.parola, yeni: 'kisa' } });
+sina('parola: kısa yeni parola reddedilir', r.durum === 400 && r.veri.alanlar?.yeni === 'parola-kisa');
+r = await a('/api/hesap/parola', { yontem: 'POST', govde: { eski: KISI.parola, yeni: 'yeni-parola-2026' } });
+const yeniGiris = await istemci('10.0.0.9')('/api/hesap/giris', { yontem: 'POST', govde: { kim: KISI.eposta, parola: 'yeni-parola-2026' } });
+sina('parola değişir, yeni parolayla giriş olur, oturum sürer', r.durum === 200 && yeniGiris.durum === 200 && (await a('/api/hesap/ben')).veri.kullanici?.eposta === KISI.eposta);
+await a('/api/hesap/parola', { yontem: 'POST', govde: { eski: 'yeni-parola-2026', yeni: KISI.parola } });
+r = await istemci('10.0.0.8')('/api/bildirim', { yontem: 'POST', govde: { konu: 'site', mesaj: 'oturumsuz deneme mesajı' } });
+sina('bildirim: oturum ister', r.durum === 401);
+r = await a('/api/bildirim', { yontem: 'POST', govde: { konu: 'yok', mesaj: 'kısa' } });
+sina('bildirim: konu ve mesaj denetlenir', r.durum === 400 && r.veri.alanlar?.konu === 'konu-gecersiz' && r.veri.alanlar?.mesaj === 'mesaj-kisa');
+r = await a('/api/bildirim', { yontem: 'POST', govde: { konu: 'etkinlik', mesaj: 'Teknik gezinin buluşma saati nedir?\r\nTo: araya-sokma@ornek.com' } });
+const bp = postalar().find((m) => m.startsWith('Kime: istanbul@euroavia.eu') && m.includes('Teknik gezinin buluşma saati'));
+const eml = readdirSync(process.env.POSTA_KUTUSU).filter((f) => f.endsWith('.eml') && f.includes('istanbul@euroavia.eu')).map((f) => readFileSync(join(process.env.POSTA_KUTUSU, f), 'utf8')).find((m) => m.includes('Reply-To'));
+sina('bildirim: kaydedilir, yönetim adresine gider, yanıt adresi üye', r.durum === 200 && r.veri.tamam && !!bp && /Reply-To: yilmaz\.ayse@itu\.edu\.tr\r\n/.test(eml || '') && vt.prepare("SELECT COUNT(*) n FROM bildirim WHERE konu = 'etkinlik'").get().n === 1, JSON.stringify(r.veri));
+sina('bildirim: mesajdaki satır sonları başlığa sızmaz', !/\r\nTo: araya-sokma/.test((eml || '').split('\r\n\r\n')[0]));
+r = await a('/api/bildirim', { yontem: 'POST', govde: { konu: 'diger', mesaj: 'üçüncü deneme mesajı' } });
+r = await a('/api/bildirim', { yontem: 'POST', govde: { konu: 'diger', mesaj: 'dördüncü deneme mesajı' } });
+sina('bildirim: üye başına 15 dakikada 3 sınırı', r.durum === 429, String(r.durum));
+r = await a('/api/yonetim/bildirimler');
+sina('yönetim bildirim listesi yalnız yöneticiye', r.durum === 403);
+
 /* ── 3. etkinlik kaydı ── */
 r = await a('/api/etkinlikler');
 const gezi = r.veri.etkinlikler.find((e) => e.id === 'sina-gezi');

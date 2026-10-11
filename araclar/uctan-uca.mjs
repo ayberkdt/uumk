@@ -92,7 +92,7 @@ function sinamaTemizle(ne) {
   const silinen = db.prepare("DELETE FROM etkinlik WHERE id LIKE 'sinama-%'").run().changes;
   /* betiğin açtığı kayıtlar ve üye hesapları (örnek etkinliklerin kontenjanı sınamalarla dolmasın); yönetici rolüne dokunmaz */
   /* yalnız betiğin 7 haneli damgalı adresleri (elle açılmış "deneme.ad@" gibi hesaplar silinmez) */
-  const desen = ['misafir', 'deneme', 'csv', 'yon', 'sil'].map((p) => `eposta GLOB '${p}.[0-9][0-9][0-9][0-9][0-9][0-9][0-9]@itu.edu.tr'`).join(' OR ');
+  const desen = ['misafir', 'deneme', 'csv', 'yon', 'sil', 'prf'].map((p) => `eposta GLOB '${p}.[0-9][0-9][0-9][0-9][0-9][0-9][0-9]@itu.edu.tr'`).join(' OR ');
   const kayit = db.prepare(`DELETE FROM kayit WHERE ${desen}`).run().changes;
   const kisi = db.prepare(`DELETE FROM kullanici WHERE rol = 'uye' AND (${desen})`).run().changes;
   db.close();
@@ -103,27 +103,24 @@ const KISI = { ad: 'Deneme', soyad: 'Kullanıcı', eposta: `deneme.${DAMGA}@itu.
 const doldur = (s, form, v) => s.js(`(() => { const f = document.querySelector('${form}'); for (const [k, d] of Object.entries(${JSON.stringify(v)})) { const g = f.elements[k]; if (g.type === 'checkbox') g.checked = d; else g.value = d; } })()`);
 
 const SENARYO = {
-  async 'açılış: ana başlık h1 sabit; ad İTÜ UUMK → AS Istanbul / EUROAVIA → İTÜ UUMK, açıklama yerinde kalır, uçak uçar'(s) {
+  async 'açılış: ad kaydırmaya bağlı değil, kendiliğinden döner (İTÜ Uçak Uzay Mühendisliği Kulübü → AS Istanbul → İTÜ UUMK); h1 ve açıklama sabit; uçak zamanla uçar'(s) {
     await s.git('./?olc=1');
     if (!(await kosulBekle(s, `document.querySelector('#ucus-tuval').dataset.cizici === '2b' && !!document.querySelector('.ad__durum.bolundu')`, 8000))) throw new Error('sahne kurulmadı');
-    const yol = await s.js(`document.querySelector('#hikaye-iz').offsetHeight - innerHeight`);
-    const kare = async (q, hal) => {
-      await s.js(`window.scrollTo({ top: ${Math.round(yol * q)}, behavior: 'instant' })`);
-      await kosulBekle(s, `Math.abs(__uumk.hikayePayi() - ${q}) < 0.01 && document.querySelector('.ad__durum[data-durum="${hal}"]').dataset.gorunur === '1'`, 4000); await bekle(120);
-      return s.js(`(() => { const a = document.querySelector('.giris__aciklama'); const u = __uumk.ucus().olc(); return {
-        durum: [...document.querySelectorAll('.ad__durum')].filter((e) => e.dataset.gorunur === '1').map((e) => e.dataset.durum).join(),
-        h1: document.querySelector('h1').getAttribute('aria-label'), aciklamaUst: Math.round(a.getBoundingClientRect().top), x: Math.round(u.x), y: Math.round(u.y), ters: u.ters }; })()`);
-    };
-    const k0 = await kare(0.1, 0), k1 = await kare(0.53, 1), k2 = await kare(0.95, 2);
-    const kT = { ters: await s.js(`Array.from({ length: 25 }, (_, i) => 0.66 + i * 0.01).some((q) => __uumk.ucus().olc(q).ters)`) };
+    const durum = `(() => { const a = document.querySelector('.giris__aciklama'), u = __uumk.ucus().olc(); return { hal: document.querySelector('#ad').dataset.hal, etkin: [...document.querySelectorAll('.ad__durum[data-etkin]')].map((e) => e.dataset.durum).join(), h1: document.querySelector('h1').getAttribute('aria-label'), aciklamaUst: Math.round(a.getBoundingClientRect().top + scrollY), x: Math.round(u.x), y: Math.round(u.y), iz: document.querySelector('#hikaye-iz').offsetHeight, ekran: innerHeight }; })()`;
+    const k0 = await s.js(durum);
+    /* kaydırmak adı değiştirmez */
+    await s.js(`scrollTo({ top: 300, behavior: 'instant' })`); await bekle(400);
+    const kk = await s.js(durum); await s.js(`scrollTo({ top: 0, behavior: 'instant' })`);
+    const bir = await kosulBekle(s, `document.querySelector('#ad').dataset.hal === '1'`, 11000); const k1 = await s.js(durum);
+    const iki = await kosulBekle(s, `document.querySelector('#ad').dataset.hal === '2'`, 8000); const k2 = await s.js(durum);
     const sorun = [];
-    if (k0.durum !== '0' || k1.durum !== '1' || k2.durum !== '2') sorun.push(`hâller ${k0.durum}/${k1.durum}/${k2.durum}`);
+    if (k0.hal !== '0' || kk.hal !== '0' || !bir || !iki || k1.etkin !== '1' || k2.etkin !== '2') sorun.push(`hâller ${k0.hal}/${kk.hal}/${k1.hal}/${k2.hal}`);
     if (new Set([k0.h1, k1.h1, k2.h1]).size !== 1 || !k0.h1.startsWith('İTÜ Uçak Uzay')) sorun.push(`h1 ${k0.h1}`);
-    if (new Set([k0.aciklamaUst, k1.aciklamaUst, k2.aciklamaUst]).size !== 1) sorun.push(`açıklama kaydı ${k0.aciklamaUst}/${k1.aciklamaUst}/${k2.aciklamaUst}`);
-    if (Math.hypot(k1.x - k0.x, k1.y - k0.y) < 100) sorun.push('uçak yer değiştirmedi');
-    if (!kT.ters) sorun.push('taklada sırtüstü değil');
-    if (sorun.length) throw new Error(sorun.join(' · ') + ' ' + JSON.stringify({ k0, k1, k2, kT }));
-    console.log(`      açılış: hâller ${k0.durum}→${k1.durum}→${k2.durum} · h1 "${k0.h1}" sabit · açıklama ${k0.aciklamaUst} px'te sabit · uçak (${k0.x},${k0.y}) → (${k1.x},${k1.y}) → (${k2.x},${k2.y}) · takla penceresinde sırtüstü`);
+    if (new Set([k0.aciklamaUst, k1.aciklamaUst, k2.aciklamaUst]).size !== 1) sorun.push('açıklama kaydı');
+    if (Math.hypot(k2.x - k0.x, k2.y - k0.y) < 60) sorun.push('uçak zamanla yer değiştirmedi');
+    if (k0.iz > k0.ekran + 2) sorun.push(`açılış izi uzun (${k0.iz} > ${k0.ekran})`);
+    if (sorun.length) throw new Error(sorun.join(' · ') + ' ' + JSON.stringify({ k0, kk, k1, k2 }));
+    console.log(`      açılış: hâl 0 (kaydırınca da 0) → 1 → 2 kendiliğinden · h1 "${k0.h1}" sabit · açılış ${k0.iz} px (tek ekran) · uçak (${k0.x},${k0.y}) → (${k2.x},${k2.y})`);
   },
   async 'hesap: aç, doğrula, tek tıkla kaydol, iptal et (tarayıcıda)'(s) {
     await s.git('./#hesap');
@@ -344,27 +341,16 @@ const SENARYO = {
     if (!profilGizli || r !== 401) throw new Error(`profil gizli ${profilGizli} giriş ${r}`);
     console.log(`      silme: yanlış parola reddedildi, doğru parolayla silindi, sonraki giriş ${r}`);
   },
-  async 'hikâye: baştan sona kaydırma — ad hâlleri 0→1→2 sırayla, panorama kayar, uçak her karede yer değiştirir'(s) {
+  async 'kıyı: açılıştaki deniz rıhtımda biter, vapur kaydırmayla karşıya geçer, semboller dosyada'(s) {
     await s.git('./?olc=1');
-    if (!(await kosulBekle(s, `document.querySelector('#ucus-tuval').dataset.cizici === '2b' && !!document.querySelector('.ad__durum.bolundu')`, 8000))) throw new Error('sahne kurulmadı');
-    const yol = await s.js(`document.querySelector('#hikaye-iz').offsetHeight - innerHeight`);
-    const kayit = [];
-    for (let i = 0; i <= 24; i++) {
-      await s.js(`window.scrollTo({ top: ${Math.round((yol * i) / 24)}, behavior: 'instant' })`);
-      await bekle(160);
-      kayit.push(await s.js(`(() => { const t = document.querySelector('#ucus-tuval'); const d = t.getContext('2d').getImageData(0, 0, t.width, t.height).data; let h = 0, dolu = 0; for (let j = 3; j < d.length; j += 64) { if (d[j] > 10) dolu++; h = (h * 31 + d[j - 3] + d[j]) >>> 0; }
-        const ist = document.querySelector('#istanbul'); const cizili = Math.round(parseFloat(ist.style.getPropertyValue('--ist-p') || '0') * 1000), yollar = { length: 1000 };
-        const g = [...document.querySelectorAll('.ad__durum')].filter((e) => e.dataset.gorunur === '1').map((e) => +e.dataset.durum);
-        return { p: +__uumk.hikayePayi().toFixed(3), hal: g.length ? Math.max(...g) : -1, cizili, toplam: yollar.length, iz: h, dolu }; })()`));
-    }
-    const haller = kayit.map((k) => k.hal);
-    const sirali = haller.every((a, i) => i === 0 || a >= haller[i - 1]);
-    const hepsi = [0, 1, 2].every((a) => haller.includes(a));
-    const ortada = kayit.find((k) => k.p >= 0.55 && k.p <= 0.6);
-    const farkli = new Set(kayit.map((k) => k.iz)).size;
-    const kayma = kayit.map((k) => k.cizili), artan = kayma.every((a, i) => i === 0 || a >= kayma[i - 1]);
-    if (!sirali || !hepsi || !ortada || !artan || kayma[0] !== 0 || kayma.at(-1) < 990 || farkli < 22) throw new Error(JSON.stringify({ haller, farkli, kayma }));
-    console.log(`      hikâye: p 0→${kayit.at(-1).p} · hâller ${haller.join('')} · panorama kayması ‰ ${kayma[0]} → ${kayma[12]} → ${kayma.at(-1)} (katmanlar farklı hızda) · 25 karede ${farkli} farklı tuval`);
+    const olc = `(() => { const k = document.querySelector('#kiyi'), r = k.getBoundingClientRect(), v = k.querySelector('.kiyi__vapur').getBoundingClientRect(), s = document.querySelector('.giris__sahne').getBoundingClientRect(); return { gecis: +(k.style.getPropertyValue('--gecis') || 0), vx: Math.round(v.left), bitisik: Math.round(r.top - s.bottom), gen: Math.round(r.width), ic: innerWidth }; })()`;
+    await s.js(`document.querySelector('#kiyi').scrollIntoView({ block: 'end', behavior: 'instant' })`); await bekle(300);
+    const a = await s.js(olc);
+    await s.js(`scrollBy({ top: 300, behavior: 'instant' })`); await kosulBekle(s, `+(document.querySelector('#kiyi').style.getPropertyValue('--gecis') || 0) > ${a.gecis}`, 4000); await bekle(200);
+    const b = await s.js(olc);
+    const svg = await s.js(`fetch('gorseller/semboller.svg').then((r) => r.text()).then((t) => ['kiyi-su', 'kiyi-rihtim', 'kiyi-vapur'].every((k) => t.includes('<symbol id="' + k + '"')))`);
+    if (!(b.gecis > a.gecis) || !(b.vx > a.vx) || Math.abs(a.bitisik) > 2 || a.gen !== a.ic || !svg) throw new Error(JSON.stringify({ a, b, svg }));
+    console.log(`      kıyı: açılışa bitişik (${a.bitisik} px), tam genişlik · vapur ${a.vx} → ${b.vx} px (geçiş ${a.gecis} → ${b.gecis}) · semboller dosyada`);
   },
   async 'yönetim arayüzü: etkinlik ekle → gündemde görünür → misafir kaydı CSV dosyasında'(s) {
     const y = { ad: 'Yonetici', soyad: 'Deneme', eposta: `yon.${DAMGA}@itu.edu.tr`, okul_no: `15${DAMGA}`, parola: 'yonetici-parola-1' };
@@ -421,21 +407,22 @@ const SENARYO = {
     if (etkin.join() !== 'Yazılar' || !gizli || !dondu || !dolu) throw new Error(`etkin ${etkin} gizli ${gizli} döndü ${dondu} dolu ${dolu} scrollY ${yler} sınıf ${await s.js(`document.querySelector('#ust').className`)} iz ${JSON.stringify(await s.js(`__iz`))}`);
     console.log(`      header: logo ${ust.logoY} px (asıl ${ust.logo}), menü ${ust.nav.length} madde, etkin "${etkin}", aşağıda gizlendi, yukarıda döndü, kaydırınca alt çizgi`);
   },
-  async 'footer: gece İstanbul’u kurulur ve ışıklar yanar, iki beyaz logo, adres, e-posta, sponsorluk, site ve kanal bağlantıları, siyah zemin'(s) {
+  async 'footer: gece İstanbul’u kurulur ve ışıklar yanar, iki beyaz logo (AS Istanbul vektör, ≥ 72 px), adres, e-posta, üye ol / sponsor ol kartları, site ve kanal bağlantıları, siyah zemin'(s) {
     await s.git('./');
     await s.js(`document.querySelector('.alt').scrollIntoView({ behavior: 'instant' })`);
     await kosulBekle(s, `[...document.querySelectorAll('.alt__marka img')].every((i) => i.complete && i.naturalWidth > 0)`, 5000);   /* logolar loading=lazy */
     const isikOnce = await s.js(`(() => { const g = document.querySelector('#istanbul-gece'); return g ? getComputedStyle(g.querySelector('.p.y1')).fill : 'yok'; })()`);
-    const isikli = await kosulBekle(s, `document.querySelector('#istanbul-gece')?.classList.contains('ist--isik')`, 6000); await bekle(1300);
+    const isikli = await kosulBekle(s, `document.querySelector('#istanbul-gece')?.classList.contains('ist--isik')`, 6000); await bekle(300);
+    await s.js(`document.querySelector('#istanbul-gece').getAnimations({ subtree: true }).forEach((x) => { if (x instanceof CSSTransition) x.finish(); })`);   /* gizli sekmede geçişler ilerlemez: sınıf geldikten sonra son değer ölçülür */
     const gece = await s.js(`(() => { const g = document.querySelector('#istanbul-gece'); return { sinif: g.getAttribute('class'), yanik: getComputedStyle(g.querySelector('.p.y1')).fill, blok: g.querySelectorAll('.blok').length, kopru: !!g.querySelector('.blok--kopru'), kiz: !!g.querySelector('.blok--kiz') }; })()`);
     if (!isikli || gece.yanik !== 'rgb(242, 194, 0)' || isikOnce === gece.yanik || gece.blok < 50 || !gece.kopru || !gece.kiz) throw new Error('gece: ' + JSON.stringify({ isikOnce, gece }));
     const a = await s.js(`(() => { const f = document.querySelector('.alt'); return {
       zemin: getComputedStyle(f).backgroundColor, logolar: [...f.querySelectorAll('.alt__marka img')].map((i) => [i.getAttribute('src'), i.complete && i.naturalWidth > 0]),
       adres: f.querySelector('.alt__adres').textContent.includes('Katar Cad.'), eposta: f.querySelector('.alt__eposta a')?.getAttribute('href'), sponsor: f.querySelector('a[href="#sponsor"]')?.textContent,
       site: [...f.querySelectorAll('nav[aria-labelledby=alt-site] a')].map((x) => x.getAttribute('href')), kanal: [...f.querySelectorAll('nav[aria-labelledby=alt-kanal] a')].map((x) => new URL(x.href).hostname),
-      hedef: Math.min(...[...f.querySelectorAll('ul a')].map((x) => x.getBoundingClientRect().height)), dip: f.querySelector('.alt__dip').textContent.includes('© 2026') }; })()`);
+      hedef: Math.min(...[...f.querySelectorAll('ul a')].map((x) => x.getBoundingClientRect().height)), logoAs: Math.round(f.querySelector('.alt__logo-as').getBoundingClientRect().height), dip: f.querySelector('.alt__dip').textContent.includes('© 2026') }; })()`);
     const kvkk = await s.js(`fetch('kvkk.html').then((r) => r.status)`);
-    if (a.zemin !== 'rgb(26, 26, 26)' || a.logolar.length !== 2 || !a.logolar.every((l) => l[1] && l[0].includes('beyaz')) || !a.adres || a.eposta !== 'mailto:istanbul@euroavia.eu' || a.sponsor !== 'Sponsorluk') throw new Error(JSON.stringify(a));
+    if (a.zemin !== 'rgb(26, 26, 26)' || a.logolar.length !== 2 || !a.logolar.every((l) => l[1] && l[0].includes('beyaz')) || !a.adres || a.eposta !== 'mailto:istanbul@euroavia.eu' || !/Sponsorluk ve iş birliği/.test(a.sponsor || '') || a.logoAs < 72) throw new Error(JSON.stringify(a));
     if (!a.site.includes('kvkk.html') || a.kanal.length !== 4 || a.hedef < 44 || !a.dip || kvkk !== 200) throw new Error(JSON.stringify(a) + ' kvkk ' + kvkk);
     console.log(`      footer: gece İstanbul'u ${gece.blok} blok, pencere ${isikOnce} → ${gece.yanik} · zemin ${a.zemin} (#1a1a1a), ${a.logolar.length} beyaz logo, adres + ${a.eposta}, site ${a.site.length} · kanal ${a.kanal.length} bağlantı (en küçük ${Math.round(a.hedef)} px), kvkk.html ${kvkk}`);
   },
@@ -564,19 +551,25 @@ const SENARYO = {
     }
     console.log('      ' + sonuc.join(' · '));
   },
-  async 'kabin uçağı: masaüstünde 6 bölme gövdenin içinde, ışıklar ve izler canlı; telefonda burun, kanat, kuyruk'(s) {
+  async 'kabin maketi: 6 numaralı ekip; GPU yoksa poster, WebGL ile 2,5B maket çizilir ve liste numarayı vurgular; telefonda taşma yok'(s) {
     await s.git('./', 1440, 900);
-    await s.js(`document.querySelector('#ucak').scrollIntoView({ block: 'center', behavior: 'instant' })`); await bekle(1400);
-    const m = await s.js(`(() => { const isik = getComputedStyle(document.querySelector('.ucak__isik--iskele')).animationName, iz = getComputedStyle(document.querySelector('.ucak__iz')).animationName; document.querySelectorAll('.ucak, .ucak__ic').forEach((e) => { e.style.animation = 'none'; }); document.querySelectorAll('.kabin > li').forEach((e) => { e.style.transition = 'none'; }); const g = document.querySelector('.ucak__yatay .ucak__govde').getBoundingClientRect(), li = [...document.querySelectorAll('.kabin > li')].map((e) => e.getBoundingClientRect());
-      const icinde = li.every((q) => q.top >= g.top - 2 && q.bottom <= g.bottom + 2 && q.left >= g.left - 2 && q.right <= g.right + 2) || JSON.stringify([[g.left, g.top, g.right, g.bottom], li.map((q) => [q.left, q.top, q.right, q.bottom])].map((x) => JSON.stringify(x)));
-      const tasma = [...document.querySelectorAll('.kabin > li')].filter((e) => e.scrollHeight > e.clientHeight + 1).length;
-      return { icinde, tasma, n: li.length, isik, iz, dikey: getComputedStyle(document.querySelector('.ucak__burun')).display }; })()`);
+    await s.js(`document.querySelector('#maket').scrollIntoView({ block: 'center', behavior: 'instant' })`);
+    const poster = await kosulBekle(s, `(() => { const i = document.querySelector('.maket__poster'); return i.complete && i.naturalWidth > 0; })()`, 6000);
+    const a = await s.js(`({ n: document.querySelectorAll('.kabin > li').length, cizici: document.querySelector('#maket').dataset.cizici || 'yok', posterOp: getComputedStyle(document.querySelector('.maket__poster')).opacity, sigar: document.querySelector('.maket').getBoundingClientRect().height <= innerHeight })`);
+    /* yazılımsal GPU'da maketi zorla kur (?webgl=1): tuval dolar, listeye gelince numara vurgulanır */
+    await s.git('./?webgl=1&az=1', 1440, 900);
+    await s.js(`document.querySelector('#maket').scrollIntoView({ block: 'center', behavior: 'instant' })`);
+    const kuruldu = await kosulBekle(s, `document.querySelector('#maket').dataset.cizici === '3b'`, 20000);
+    let b = {};
+    if (kuruldu) {
+      await s.js(`document.querySelectorAll('.kabin > li')[2].dispatchEvent(new PointerEvent('pointerenter'))`); await bekle(400);
+      b = await s.js(`({ li: document.querySelectorAll('.kabin > li[data-secili]').length, im: [...document.querySelectorAll('.maket__imler li')].findIndex((e) => e.hasAttribute('data-secili')), imKonum: [...document.querySelectorAll('.maket__imler li')].every((e) => /translate\\(/.test(e.style.transform)) })`);
+    }
     await s.git('./', 390, 844);
-    await s.js(`document.querySelector('#ucak').scrollIntoView({ behavior: 'instant' })`); await bekle(600);
-    const t = await s.js(`(() => { const b = document.querySelector('.ucak__burun').getBoundingClientRect(), k = document.querySelector('.kabin').getBoundingClientRect(), w = document.querySelector('.ucak__kanat-d').getBoundingClientRect(), q = document.querySelector('.ucak__kuyruk').getBoundingClientRect();
-      return { yatay: getComputedStyle(document.querySelector('.ucak__yatay')).display, burunUst: Math.round(k.top - b.bottom), kanatTasar: Math.round(k.left - w.left), kuyrukAlt: Math.round(q.top - k.bottom), sw: document.documentElement.scrollWidth }; })()`);
-    if (m.icinde !== true || m.tasma || m.n !== 6 || m.isik !== 'isik-yan' || m.iz !== 'iz-ak' || m.dikey !== 'none' || t.yatay !== 'none' || Math.abs(t.burunUst) > 3 || t.kanatTasar < 40 || Math.abs(t.kuyrukAlt) > 3 || t.sw > 390) throw new Error(JSON.stringify({ m, t }));
-    console.log(`      kabin: 6 bölme gövdede, taşma 0, ışık "${m.isik}", iz "${m.iz}" · telefonda kanat gövdeden ${t.kanatTasar} px taşar, burun/kuyruk bitişik`);
+    await s.js(`document.querySelector('#maket').scrollIntoView({ behavior: 'instant' })`); await bekle(400);
+    const t = await s.js(`({ sw: document.documentElement.scrollWidth, gen: Math.round(document.querySelector('.maket__sahne').getBoundingClientRect().width) })`);
+    if (!poster || a.n !== 6 || a.cizici !== 'yok' || a.posterOp !== '1' || !a.sigar || !kuruldu || b.li !== 1 || b.im !== 2 || !b.imKonum || t.sw > 390) throw new Error(JSON.stringify({ poster, a, kuruldu, b, t }));
+    console.log(`      kabin: 6 ekip, GPU yokken poster görünür · ?webgl=1 ile maket kuruldu, 3. ekibe gelince 3. numara vurgulandı · telefonda ${t.gen} px, taşma yok`);
   },
   async 'üst şerit: bayraklı dil anahtarı etkin dili gösterir; 320–414 px telefonda menü ve hesap düğmesi ekranda, hedefler ≥ 44 px'(s) {
     await s.git('./', 1440, 900);
@@ -617,6 +610,40 @@ const SENARYO = {
     })()`);
     if (!kapak || r.kapaklar.length !== 3 || !r.kapaklar.every(([ad], i) => ad.startsWith(`sayi-${i + 1}-`)) || r.kart < 6 || r.eksik.length) throw new Error(JSON.stringify({ kapak, r }));
     console.log(`      yazılar: kapaklar ${r.kapaklar.map(([a, g, y]) => `${a} ${g}×${y}`).join(', ')} · kartpostal sembolleri ${r.kullan} (${r.kart} sahne), eksik ${r.eksik.length}`);
+  },
+  async 'giriş sonrası: profil menüsü, profili düzenle (dolu gelir, kaydeder), parola değiştir, sorun bildir (yönetim adresine), alt bilgiden bildirim bağlantısı'(s) {
+    await s.git('./?az=1#hesap', 1440, 900);
+    if (!(await kosulBekle(s, `!document.querySelector('#giris-form fieldset').disabled`, 6000))) throw new Error('sunucu yok');
+    const k = { ad: 'Profil', soyad: 'Deneme', eposta: `prf.${DAMGA}@itu.edu.tr`, okul_no: `15${DAMGA}`, parola: 'profil-parola-1' };
+    await s.js(`document.querySelector('#sekme-kayit').click()`);
+    await doldur(s, '#kayit-form', { ...k, kvkk: true });
+    await s.js(`document.querySelector('#kayit-form button[type=submit]').click()`);
+    if (!(await kosulBekle(s, `!document.querySelector('.profil').hidden`, 6000))) throw new Error('profil açılmadı: ' + await s.js(`[document.querySelector('#kayit-form .form__durum').textContent, ...[...document.querySelectorAll('#kayit-form .alan__hata')].map((p) => p.textContent).filter(Boolean), document.querySelector('#hesap-dugme').textContent].join(' | ')`));
+    const p = await s.js(`({ menu: [...document.querySelectorAll('.profil__menu li:not([hidden]) b')].map((b) => b.textContent), rozet: document.querySelector('[data-profil="durum"]').textContent, giris: [document.querySelector('[data-i18n="hesapGiris"]').hidden, document.querySelector('#hesap-girisli').textContent] })`);
+    await s.js(`document.querySelector('[data-git="duzenle"]').click()`); await bekle(200);
+    const d = await s.js(`(() => { const f = document.querySelector('#duzenle-form'); return { gorunur: !f.closest('[data-gorunum-blok]').hidden, ad: f.elements.ad.value, no: f.elements.okul_no.value }; })()`);
+    await doldur(s, '#duzenle-form', { ad: 'Profil Yeni' });
+    await s.js(`document.querySelector('#duzenle-form button[type=submit]').click()`);
+    const kaydetti = await kosulBekle(s, `!document.querySelector('.profil').hidden && document.querySelector('[data-profil="ad"]').textContent === 'Profil Yeni Deneme'`, 5000);
+    await s.js(`document.querySelector('[data-git="duzenle"]').click()`); await bekle(150);
+    await doldur(s, '#parola-form', { eski: 'yanlis-parola', yeni: 'profil-parola-2' });
+    await s.js(`document.querySelector('#parola-form button[type=submit]').click()`);
+    const parolaHata = await kosulBekle(s, `document.querySelector('#parola-form-eski').getAttribute('aria-invalid') === 'true'`, 4000);
+    await doldur(s, '#parola-form', { eski: k.parola, yeni: 'profil-parola-2' });
+    await s.js(`document.querySelector('#parola-form button[type=submit]').click()`);
+    const parolaTamam = await kosulBekle(s, `/Parolan değiştirildi/.test(document.querySelector('#duyuru').textContent)`, 5000);
+    await s.js(`document.querySelector('#duzenle-form [data-git="profil"]').click(); document.querySelector('[data-git="bildir"]').click()`); await bekle(150);
+    await s.js(`document.querySelector('#bildir-form-konu').value = 'site'`);
+    await doldur(s, '#bildir-form', { mesaj: 'Sınama: profil sayfasındaki bildirim formu çalışıyor mu?' });
+    await s.js(`document.querySelector('#bildir-form-mesaj').dispatchEvent(new Event('input'))`);
+    const sayac = await s.js(`document.querySelector('#bildir-form-sayac').textContent`);
+    await s.js(`document.querySelector('#bildir-form button[type=submit]').click()`);
+    const gitti = await kosulBekle(s, `!document.querySelector('.profil').hidden && /yönetim ekibine/.test(document.querySelector('#duyuru').textContent)`, 5000);
+    await s.js(`location.hash = '#bildir-form'`); await bekle(300);
+    const bag = await s.js(`!document.querySelector('#bildir-form').hidden`);
+    if (p.menu.length !== 2 || !/doğrulanmadı/.test(p.rozet) || !p.giris[0] || !/doğrula/.test(p.giris[1]) || !d.gorunur || d.ad !== k.ad || d.no !== k.okul_no || !kaydetti || !parolaHata || !parolaTamam || !/\d+ \/ 2000/.test(sayac) || sayac.startsWith('0 ') || !gitti || !bag)
+      throw new Error(JSON.stringify({ p, d, kaydetti, parolaHata, parolaTamam, sayac, gitti, bag }));
+    console.log(`      giriş sonrası: menü [${p.menu.join(' · ')}], rozet "${p.rozet}" · düzenle dolu geldi, ad kaydedildi · yanlış parola reddedildi, yeni parola kaydedildi · bildirim gönderildi (${sayac}) · alt bilgi bağlantısı formu açar`);
   },
   async 'tarihçe ayrıntısı: şerite basınca kaydın sayfası açılır; önceki/sonraki, ← →, dil, kapatınca odak şeride döner, #tarih- bağlantısı doğrudan açar'(s) {
     await s.git('./?az=1', 1440, 900);

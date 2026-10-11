@@ -4,11 +4,12 @@
  * CSRF: durum değiştiren her istek (POST/DELETE) "X-UUMK: 1" başlığı ister. Bu başlık başka bir siteden ön kontrolsüz
  * gönderilemez; çerez de SameSite=Lax. Origin başlığı varsa sitenin kendisi olmalıdır.
  *
- * Hesap:    POST /api/hesap/kayit · /giris · /cikis · /dogrulama-gonder · /sifre-unuttum · /sifre-yenile · DELETE /api/hesap
+ * Hesap:    POST /api/hesap/kayit · /giris · /cikis · /dogrulama-gonder · /sifre-unuttum · /sifre-yenile · /profil · /parola · DELETE /api/hesap
+ * Bildirim: POST /api/bildirim (oturum ister; yönetim adresine e-posta, yanıt adresi üyenin e-postası)
  *           GET  /api/hesap/ben · /api/hesap/dogrula?t=… (e-postadaki bağlantı; siteye yönlendirir)
  * Etkinlik: GET  /api/etkinlikler · POST|DELETE /api/etkinlikler/:id/kayit
  * Yazı:     GET  /api/yazilar
- * Yönetim:  GET|POST /api/yonetim/etkinlikler · GET /api/yonetim/etkinlikler/:id/kayitlar[?bicim=csv]
+ * Yönetim:  GET|POST /api/yonetim/etkinlikler · GET /api/yonetim/etkinlikler/:id/kayitlar[?bicim=csv] · GET /api/yonetim/bildirimler
  *           POST /api/yonetim/yazilar · DELETE /api/yonetim/yazilar/:id          (rol: yonetici) */
 import { AYAR } from './ayar.mjs';
 import { islem, simdi } from './vt.mjs';
@@ -19,6 +20,8 @@ const CEREZ = 'uumk_oturum';
 const girisSiniri = hizSiniri(AYAR.girisSiniri, 10 * 60e3);   // IP başına 10 dakikada giriş/kayıt denemesi (varsayılan 10)
 const postaSiniri = hizSiniri(3, 15 * 60e3);        // adres başına 15 dakikada 3 e-posta
 const kayitSiniri = hizSiniri(AYAR.girisSiniri * 2, 10 * 60e3);   // IP başına 10 dakikada etkinlik kaydı
+const bildirimSiniri = hizSiniri(3, 15 * 60e3);     // üye başına 15 dakikada 3 bildirim
+const KONU = { site: ['Site sorunu', 'Website problem'], etkinlik: ['Etkinlik ve kayıt', 'Events and registration'], uyelik: ['Üyelik ve hesap', 'Membership and account'], diger: ['Diğer soru', 'Other question'] };
 
 class ApiHata extends Error { constructor(durum, kod, alanlar) { super(kod); this.durum = durum; this.kod = kod; this.alanlar = alanlar; } }
 const hata = (durum, kod, alanlar) => { throw new ApiHata(durum, kod, alanlar); };
@@ -57,6 +60,10 @@ export function apiKur(vt) {
     dogrula: vt.prepare('UPDATE kullanici SET dogrulandi = 1 WHERE id = ?'),
     parolaYaz: vt.prepare('UPDATE kullanici SET parola = ? WHERE id = ?'),
     oturumlariSil: vt.prepare('DELETE FROM oturum WHERE kullanici_id = ?'),
+    profilYaz: vt.prepare('UPDATE kullanici SET ad = ?, soyad = ?, okul_no = ? WHERE id = ?'),
+    okulNoBaskasi: vt.prepare('SELECT 1 FROM kullanici WHERE okul_no = ? AND id != ?'),
+    bildirimEkle: vt.prepare('INSERT INTO bildirim (kullanici_id, ad, eposta, konu, mesaj, olusturma) VALUES (?, ?, ?, ?, ?, ?)'),
+    bildirimler: vt.prepare('SELECT id, ad, eposta, konu, mesaj, olusturma FROM bildirim ORDER BY olusturma DESC LIMIT 200'),
     etkinlikler: vt.prepare(`SELECT e.*, (SELECT COUNT(*) FROM kayit k WHERE k.etkinlik_id = e.id) AS dolu FROM etkinlik e WHERE e.yayinda = 1 ORDER BY e.baslangic`),
     etkinlik: vt.prepare(`SELECT e.*, (SELECT COUNT(*) FROM kayit k WHERE k.etkinlik_id = e.id) AS dolu FROM etkinlik e WHERE e.id = ?`),
     kullaniciKayitlari: vt.prepare('SELECT etkinlik_id FROM kayit WHERE kullanici_id = ?'),
@@ -187,6 +194,31 @@ export function apiKur(vt) {
       yanit.setHeader('Set-Cookie', cerezYaz(istek, CEREZ, '', 0));
       return { tamam: true };
     }],
+    ['POST', /^\/api\/hesap\/profil$/, async (istek) => {
+      /* ad, soyad, okul numarası; e-posta değişmez (doğrulanmış okul adresi kimliğin kendisi) */
+      const k = kimlik(istek);
+      if (!k) hata(401, 'oturum-yok');
+      const g = await govdeOku(istek);
+      const { veri, hata: alanlar } = kisiDenetle({ ...g, eposta: k.eposta, kvkk: true });
+      if (Object.keys(alanlar).length) hata(400, 'alan-hatasi', alanlar);
+      if (S.okulNoBaskasi.get(veri.okul_no, k.id)) hata(409, 'alan-hatasi', { okul_no: 'okul-no-kayitli' });
+      S.profilYaz.run(veri.ad, veri.soyad, veri.okul_no, k.id);
+      return { kullanici: { ...disa(k), ad: veri.ad, soyad: veri.soyad, okul_no: veri.okul_no } };
+    }],
+    ['POST', /^\/api\/hesap\/parola$/, async (istek, yanit) => {
+      /* parola değiştir: mevcut parola ister; diğer oturumlar kapanır, bu tarayıcıda yeni oturum açılır */
+      const k = kimlik(istek);
+      if (!k) hata(401, 'oturum-yok');
+      const g = await govdeOku(istek);
+      const tam = S.kullaniciEposta.get(k.eposta);
+      if (!parolaDogru(String(g.eski ?? ''), tam.parola)) hata(400, 'alan-hatasi', { eski: 'parola-yanlis' });
+      const ph = parolaDenetle(g.yeni);
+      if (ph) hata(400, 'alan-hatasi', { yeni: ph });
+      S.parolaYaz.run(parolaOzetle(String(g.yeni)), k.id);
+      S.oturumlariSil.run(k.id);
+      oturumAc(istek, yanit, k.id);
+      return { tamam: true };
+    }],
     ['POST', /^\/api\/hesap\/sifre-unuttum$/, async (istek) => {
       if (!girisSiniri(ipAl(istek))) hata(429, 'cok-istek');
       const g = await govdeOku(istek);
@@ -206,6 +238,27 @@ export function apiKur(vt) {
       S.dogrula.run(r.kullanici_id);                            // sıfırlama bağlantısı e-postaya ulaşıldığını da kanıtlar
       oturumAc(istek, yanit, r.kullanici_id);
       return { tamam: true };
+    }],
+
+    /* ── bildirim: sorun bildir / soru sor → yönetim adresi ── */
+    ['POST', /^\/api\/bildirim$/, async (istek) => {
+      const k = kimlik(istek);
+      if (!k) hata(401, 'oturum-yok');
+      if (!bildirimSiniri(String(k.id))) hata(429, 'cok-istek');
+      const g = await govdeOku(istek);
+      const konu = String(g.konu ?? ''), mesaj = metin(g.mesaj, 2000);
+      const alanlar = {};
+      if (!KONU[konu]) alanlar.konu = 'konu-gecersiz';
+      if (mesaj.length < 10) alanlar.mesaj = 'mesaj-kisa';
+      if (Object.keys(alanlar).length) hata(400, 'alan-hatasi', alanlar);
+      const ad = `${k.ad} ${k.soyad}`;
+      S.bildirimEkle.run(k.id, ad, k.eposta, konu, mesaj, simdi());
+      const p = await postaGonder({
+        kime: AYAR.yonetimEposta, yanitla: k.eposta,
+        konu: `[UUMK sitesi] ${KONU[konu][0]} — ${ad}`,
+        metin: `Konu: ${KONU[konu][0]}\nGönderen: ${ad} <${k.eposta}>, okul no ${k.okul_no}\nTarih: ${simdi()}\n\n${mesaj}\n\n— Bu ileti sitenin "Sorun bildir / soru sor" formundan geldi; yanıtla dersen doğrudan üyeye gider.`,
+      });
+      return { tamam: true, posta: p.tamam };
     }],
 
     /* ── etkinlik ── */
@@ -281,6 +334,10 @@ export function apiKur(vt) {
       yanit.setHeader('Content-Type', 'text/csv; charset=utf-8');
       yanit.setHeader('Content-Disposition', `attachment; filename="kayitlar-${id}.csv"`);
       return { ham: csv };
+    }],
+    ['GET', /^\/api\/yonetim\/bildirimler$/, (istek) => {
+      yonetici(istek);
+      return { bildirimler: S.bildirimler.all().map((b) => ({ ...b, konuAd: KONU[b.konu]?.[0] || b.konu })) };
     }],
     ['POST', /^\/api\/yonetim\/yazilar$/, async (istek, yanit) => {
       yonetici(istek);

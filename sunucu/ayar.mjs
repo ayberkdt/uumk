@@ -10,6 +10,7 @@
  *   POSTA_GONDEREN       "İTÜ UUMK <istanbul@euroavia.eu>"
  *   GUVENILIR_VEKIL      1 ise istemci IP'si X-Forwarded-For'dan alınır (yalnız nginx/Caddy arkasında; yoksa başlık sahtelenip hız sınırı atlanabilir)
  *   GIRIS_SINIRI         IP başına 10 dakikada giriş/hesap açma denemesi (varsayılan 10; --deneme modunda 200)
+ *   YONETIM_EPOSTA       istanbul@euroavia.eu          (üyelerin "sorun bildir / soru sor" mesajlarının gittiği yönetim adresi; kulüpçe teyit edilmeli)
  */
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -31,6 +32,7 @@ export const AYAR = {
   vekilGuven: e.GUVENILIR_VEKIL === '1',
   girisSiniri: Number(e.GIRIS_SINIRI || (process.argv.includes('--deneme') ? 200 : 10)),
   postaGonderen: e.POSTA_GONDEREN || 'İTÜ UUMK <istanbul@euroavia.eu>',
+  yonetimEposta: e.YONETIM_EPOSTA || 'istanbul@euroavia.eu',
   oturumGun: 30,
   dogrulamaSaat: 48,
   sifirlamaSaat: 2,

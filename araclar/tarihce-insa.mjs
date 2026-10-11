@@ -16,6 +16,7 @@ export const anahtar = (k) => 'r' + k.id.replace(/-/g, '');
 const KAPAK_Y = { 1: 509, 2: 509, 3: 521 };
 
 function resim(r) {
+  if (r.cizim) return `<span class="serit__resim serit__resim--cizim" aria-hidden="true"><svg viewBox="0 0 64 64" focusable="false"><use href="gorseller/semboller.svg#tarih-${r.cizim}"/></svg></span>`;
   if (r.ikon) return `<span class="serit__resim" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path pathLength="1" d="${r.ikon}"/></svg></span>`;
   if (r.logo) return `<span class="serit__resim serit__resim--logo" aria-hidden="true"><img src="${r.logo}" width="${r.g}" height="${r.y}" alt="" loading="lazy"></span>`;
   if (r.foto) return `<span class="serit__resim serit__resim--foto" aria-hidden="true"><img src="gorseller/foto/${r.foto}-480.jpg" width="480" height="360" alt="" loading="lazy"></span>`;

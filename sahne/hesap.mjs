@@ -18,11 +18,10 @@ const tarihBicim = () => new Intl.DateTimeFormat(etkinDil() === 'en' ? 'en-GB' :
 const yerelTarih = (s) => new Date(/T\d\d:\d\d$/.test(s) ? `${s}:00+03:00` : s);
 
 export function hesapKur({ panel, ustDugme, liste, durumAlani }) {
-  let kullanici = null, sunucuVar = false, etkinlikler = [], okulAlani = 'itu.edu.tr', tumu = false;
+  let kullanici = null, sunucuVar = false, etkinlikler = [], okulAlani = 'itu.edu.tr', tumu = false, sonGorunum = '';
   const ILK = 4;
   const duyur = (m, tur = 'bilgi') => { durumAlani.textContent = m; durumAlani.dataset.tur = tur; };
 
-  /* ── alan hataları ── */
   function hatalariGoster(form, veri) {
     for (const g of form.querySelectorAll('[aria-invalid]')) { g.removeAttribute('aria-invalid'); }
     for (const p of form.querySelectorAll('.alan__hata')) p.textContent = '';
@@ -47,9 +46,9 @@ export function hesapKur({ panel, ustDugme, liste, durumAlani }) {
   };
   function mesgul(form, b) { for (const d of form.querySelectorAll('button')) d.disabled = b; form.setAttribute('aria-busy', String(b)); }
 
-  /* ── panel ── */
   function paneliCiz() {
-    const gorunum = kullanici ? 'profil' : panel.dataset.gorunum === 'kayit' ? 'kayit' : panel.dataset.gorunum === 'sifre' ? 'sifre' : panel.dataset.gorunum === 'yenile' ? 'yenile' : 'giris';
+    const ister = panel.dataset.gorunum;
+    const gorunum = kullanici ? (['duzenle', 'bildir'].includes(ister) ? ister : 'profil') : ister === 'kayit' ? 'kayit' : panel.dataset.gorunum === 'sifre' ? 'sifre' : panel.dataset.gorunum === 'yenile' ? 'yenile' : 'giris';
     for (const b of panel.querySelectorAll('[data-gorunum-blok]')) b.hidden = b.dataset.gorunumBlok !== gorunum;
     for (const s of panel.querySelectorAll('[role="tab"]')) { const sec = s.dataset.sekme === gorunum; s.setAttribute('aria-selected', String(sec)); s.tabIndex = sec ? 0 : -1; }
     panel.querySelector('.hesap__sekmeler').hidden = !!kullanici || gorunum === 'sifre' || gorunum === 'yenile';
@@ -57,15 +56,18 @@ export function hesapKur({ panel, ustDugme, liste, durumAlani }) {
     for (const f of panel.querySelectorAll('form fieldset')) f.disabled = !sunucuVar;
     if (kullanici) {
       $('[data-profil="ad"]', panel).textContent = `${kullanici.ad} ${kullanici.soyad}`;
-      $('[data-profil="eposta"]', panel).textContent = kullanici.eposta;
+      for (const e of panel.querySelectorAll('[data-profil="eposta"]')) e.textContent = kullanici.eposta;
+      const rozet = $('[data-profil="durum"]', panel); rozet.textContent = metin(kullanici.rol === 'yonetici' ? 'rozetYonetici' : kullanici.dogrulandi ? 'rozetDogrulandi' : 'rozetBekliyor'); rozet.dataset.durum = kullanici.dogrulandi ? 'tamam' : 'bekliyor';
+      if (gorunum === 'duzenle' && sonGorunum !== 'duzenle') { const f = $('#duzenle-form', panel); f.elements.ad.value = kullanici.ad; f.elements.soyad.value = kullanici.soyad; f.elements.okul_no.value = kullanici.okul_no; }
       $('[data-profil="okul_no"]', panel).textContent = kullanici.okul_no;
       $('.profil__dogrula', panel).hidden = kullanici.dogrulandi;
       const kl = $('.profil__kayitlar', panel);
       const benim = etkinlikler.filter((e) => e.kayitli);
       kl.replaceChildren(...(benim.length ? benim.map((e) => Object.assign(document.createElement('li'), { textContent: `${e.baslik[etkinDil()]} · ${tarihBicim().format(yerelTarih(e.baslangic))}` }))
-        : [Object.assign(document.createElement('li'), { textContent: metin('kayitYok'), className: 'bos' })]));
+        : [Object.assign(document.createElement('li'), { textContent: metin('kayitYok'), className: 'profil__bos' })]));
       $('.profil__yonetim', panel).hidden = kullanici.rol !== 'yonetici';
     }
+    sonGorunum = gorunum;
     ustDugme.textContent = kullanici ? kullanici.ad : metin('girisYap');
     ustDugme.setAttribute('aria-label', kullanici ? metin('hesabim') : metin('girisYap'));
     ustDugme.toggleAttribute('data-giris', !!kullanici);
@@ -80,13 +82,23 @@ export function hesapKur({ panel, ustDugme, liste, durumAlani }) {
     const s = [...panel.querySelectorAll('[role="tab"]')], i = s.findIndex((x) => x.getAttribute('aria-selected') === 'true');
     const y = s[(i + (e.key === 'ArrowRight' ? 1 : s.length - 1)) % s.length]; panel.dataset.gorunum = y.dataset.sekme; paneliCiz(); y.focus();
   });
-  for (const a of panel.querySelectorAll('[data-git]')) a.addEventListener('click', (e) => { e.preventDefault(); panel.dataset.gorunum = a.dataset.git; paneliCiz(); panel.querySelector(`[data-gorunum-blok="${a.dataset.git}"] input`)?.focus(); });
+  for (const a of panel.querySelectorAll('[data-git]')) a.addEventListener('click', (e) => { e.preventDefault(); git(a.dataset.git); });
+  function git(g) {
+    panel.dataset.gorunum = g; paneliCiz();
+    const hedef = panel.querySelector(`[data-gorunum-blok="${g}"]`);
+    (hedef?.querySelector('input, select, textarea') || (g === 'profil' ? panel.querySelector('[data-git="duzenle"]') : null))?.focus();
+    panel.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+  }
+  const adresBak = () => { if (location.hash === '#bildir-form') { panel.dataset.gorunum = 'bildir'; paneliCiz(); document.getElementById('hesap')?.scrollIntoView(); } };
+  addEventListener('hashchange', adresBak);
+  const sayac = $('#bildir-form-sayac', panel), mesaj = $('#bildir-form-mesaj', panel);
+  mesaj.addEventListener('input', () => { sayac.textContent = `${mesaj.value.length} / 2000`; });
 
   const gonderici = (form, yol, sonra) => form.addEventListener('submit', async (e) => {
     e.preventDefault();
     mesgul(form, true);
     let r;
-    try { await hazir; r = await api(yol, { yontem: 'POST', govde: formVeri(form) }); }   /* geç gelen "oturum yok" yeni girişi ezmesin */
+    try { await hazir; r = await api(yol, { yontem: 'POST', govde: formVeri(form) }); }
     catch { r = { durum: 0, veri: null }; } finally { mesgul(form, false); }
     if (r.durum === 0) { hatalariGoster(form, { hata: 'sunucu-hatasi' }); return; }
     if (r.durum >= 400) { hatalariGoster(form, r.veri); return; }
@@ -96,6 +108,9 @@ export function hesapKur({ panel, ustDugme, liste, durumAlani }) {
   gonderici($('#kayit-form', panel), '/api/hesap/kayit', async (v, f) => { f.reset(); kullanici = v.kullanici; await etkinlikleriYukle(); duyur(metin('hesapAcildi', { eposta: v.kullanici.eposta }), 'tamam'); paneliCiz(); });
   gonderici($('#giris-form', panel), '/api/hesap/giris', async (v, f) => { f.reset(); kullanici = v.kullanici; await etkinlikleriYukle(); duyur(metin('merhaba', { ad: v.kullanici.ad }), 'tamam'); paneliCiz(); });
   gonderici($('#sifre-form', panel), '/api/hesap/sifre-unuttum', async () => { duyur(metin('sifreGitti'), 'tamam'); });
+  gonderici($('#duzenle-form', panel), '/api/hesap/profil', async (v) => { kullanici = v.kullanici; duyur(metin('profilKaydedildi'), 'tamam'); git('profil'); });
+  gonderici($('#parola-form', panel), '/api/hesap/parola', async (v, f) => { f.reset(); duyur(metin('parolaDegisti'), 'tamam'); });
+  gonderici($('#bildir-form', panel), '/api/bildirim', async (v, f) => { f.reset(); sayac.textContent = '0 / 2000'; duyur(metin(v.posta ? 'bildirimGitti' : 'bildirimKaydedildi'), 'tamam'); git('profil'); });
   gonderici($('#yenile-form', panel), '/api/hesap/sifre-yenile', async () => { history.replaceState(null, '', location.pathname + location.search + '#hesap'); await benYukle(); await etkinlikleriYukle(); duyur(metin('sifreYenilendi'), 'tamam'); panel.dataset.gorunum = ''; paneliCiz(); });
   $('.profil__cikis', panel).addEventListener('click', async () => { await api('/api/hesap/cikis', { yontem: 'POST' }); kullanici = null; await etkinlikleriYukle(); paneliCiz(); duyur(''); });
   $('.profil__dogrula button', panel).addEventListener('click', async (e) => {
@@ -103,7 +118,6 @@ export function hesapKur({ panel, ustDugme, liste, durumAlani }) {
     duyur(r.durum < 400 ? metin('dogrulamaGitti') : hataMetni(r.veri?.hata), r.durum < 400 ? 'tamam' : 'hata');
   });
 
-  /* ── etkinlik kartları ── */
   function kartCiz(e) {
     const li = document.createElement('li');
     li.className = 'etkinlik'; li.id = `etkinlik-kart-${e.id}`;
@@ -112,7 +126,6 @@ export function hesapKur({ panel, ustDugme, liste, durumAlani }) {
     const kalan = e.kalan === null ? metin('kontenjansiz') : metin('kalan', { n: e.kalan });
     li.innerHTML = `<p class="etkinlik__gun" aria-hidden="true"><b></b><span></span></p><p class="etkinlik__tarih"></p><h3 class="etkinlik__ad"></h3><p class="etkinlik__yer"></p><p class="etkinlik__ozet"></p>
       <p class="etkinlik__durum" data-durum="${e.kayitli ? 'kayitli' : e.durum}"><span></span> · <span></span></p><div class="etkinlik__eylem"></div><p class="etkinlik__mesaj" role="status"></p>`;
-    /* gün/ay kutuda; satırda yalnız ekran okuyucuya */
     const p = tarihBicim().formatToParts(yerelTarih(e.baslangic)), k = (t) => p.find((x) => x.type === t)?.value || '';
     li.querySelector('.etkinlik__tarih').replaceChildren(Object.assign(document.createElement('span'), { className: 'gorunmez', textContent: `${k('day')} ${k('month')}, ` }), `${k('weekday')} · ${k('hour')}:${k('minute')}`);
     const gunB = new Intl.DateTimeFormat(d === 'en' ? 'en-GB' : 'tr-TR', { day: 'numeric', month: 'short', timeZone: 'Europe/Istanbul' }).formatToParts(yerelTarih(e.baslangic));
@@ -122,7 +135,6 @@ export function hesapKur({ panel, ustDugme, liste, durumAlani }) {
     li.querySelector('.etkinlik__yer').textContent = e.yer[d];
     li.querySelector('.etkinlik__ozet').textContent = e.ozet[d];
     const [s1, s2] = li.querySelectorAll('.etkinlik__durum span'); s1.textContent = durum; s2.textContent = kalan;
-    /* doluluk çubuğu */
     if (e.kontenjan) {
       const cubuk = Object.assign(document.createElement('div'), { className: 'etkinlik__doluluk' }); cubuk.setAttribute('aria-hidden', 'true');
       const ic = document.createElement('span'); ic.style.setProperty('--oran', Math.min(1, Math.max(0, (e.kontenjan - (e.kalan ?? e.kontenjan)) / e.kontenjan)).toFixed(3));
@@ -148,11 +160,9 @@ export function hesapKur({ panel, ustDugme, liste, durumAlani }) {
     dugme(metin('takvimeEkle'), 'dugme--ikincil', () => icsIndir(e, d));
     return li;
   }
-  /* .ics: İstanbul → UTC; bitiş yoksa 2 saat */
   function icsIndir(e, d) {
     const utc = (s) => yerelTarih(s).toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
     const bas = yerelTarih(e.baslangic), bit = e.bitis ? yerelTarih(e.bitis) : new Date(bas.getTime() + 2 * 3600e3);
-    /* RFC 5545 satır katlama (75 sekizli) */
     const katla = (l) => { let o = '', n = 0; for (const c of l) { const b = new TextEncoder().encode(c).length; if (n + b > 75) { o += '\r\n '; n = 1; } o += c; n += b; } return o; };
     const kac = (t) => String(t || '').replace(/[\\;,]/g, (m) => '\\' + m).replace(/\n/g, '\\n');
     const metinIcs = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//ITU UUMK//TR', 'BEGIN:VEVENT', `UID:${e.id}@uumk`, `DTSTAMP:${utc(new Date().toISOString())}`,
@@ -187,12 +197,23 @@ export function hesapKur({ panel, ustDugme, liste, durumAlani }) {
     li.querySelector('.etkinlik__eylem').after(f);
     f.querySelector('input').focus();
   }
+  function bos(baslik, aciklama) {
+    const li = document.getElementById('bos-sablon').content.firstElementChild.cloneNode(true);
+    li.querySelector('.bos__baslik').textContent = metin(baslik); li.querySelector('.bos__metin').textContent = metin(aciklama); li.querySelector('a').textContent = metin('bosTakip');
+    const io = new IntersectionObserver(async ([g]) => {
+      if (!g.isIntersecting) return; io.disconnect();
+      if (!(await import('./gpu.mjs')).donanimGpu()) return;
+      if ((await import('./bekleme3b.mjs')).beklemeKur(li.querySelector('canvas'), { az: document.documentElement.classList.contains('az') })) li.dataset.cizici = '3b';
+    });
+    io.observe(li);
+    return li;
+  }
+  queueMicrotask(adresBak);
   function listeyiCiz() {
-    const not = document.querySelector('.gundem__not'); if (not) not.hidden = !sunucuVar;   /* hesaplı/misafir notu yalnız kayıt açıkken anlamlı */
-    if (!sunucuVar) { liste.replaceChildren(Object.assign(document.createElement('li'), { className: 'etkinlik etkinlik--bos', textContent: metin('sunucuYok') })); return; }
+    const not = document.querySelector('.gundem__not'); if (not) not.hidden = !sunucuVar;
+    if (!sunucuVar) { liste.replaceChildren(bos('bosKapali', 'bosKapaliNot')); return; }
     const gorunen = etkinlikler.filter((e) => yerelTarih(e.baslangic) > new Date());
     const kartlar = gorunen.map(kartCiz);
-    /* ilk 4 kart; kalanı tek düğmeyle açılır (Hick) */
     kartlar.forEach((k, i) => { if (i >= ILK && !tumu) k.hidden = true; });
     if (kartlar.length > ILK && !tumu) {
       const li = Object.assign(document.createElement('li'), { className: 'etkinlik__daha' });
@@ -200,10 +221,10 @@ export function hesapKur({ panel, ustDugme, liste, durumAlani }) {
       b.addEventListener('click', () => { tumu = true; listeyiCiz(); liste.children[ILK]?.querySelector('button')?.focus(); });
       li.append(b); kartlar.push(li);
     }
-    liste.replaceChildren(...(kartlar.length ? kartlar : [Object.assign(document.createElement('li'), { className: 'etkinlik etkinlik--bos', textContent: metin('etkinlikYok') })]));
+    liste.replaceChildren(...(kartlar.length ? kartlar : [bos('bosBekleme', 'bosBeklemeNot')]));
   }
 
-  async function benYukle() { const r = await api('/api/hesap/ben'); kullanici = r.durum === 200 ? r.veri.kullanici : null; }   /* oturum yoksa kullanici: null */
+  async function benYukle() { const r = await api('/api/hesap/ben'); kullanici = r.durum === 200 ? r.veri.kullanici : null; }
   async function etkinlikleriYukle() { const r = await api('/api/etkinlikler'); etkinlikler = r.durum === 200 ? r.veri.etkinlikler : []; listeyiCiz(); if (kullanici) paneliCiz(); }
 
   const hazir = (async () => {
@@ -218,7 +239,6 @@ export function hesapKur({ panel, ustDugme, liste, durumAlani }) {
     await etkinlikleriYukle();
     paneliCiz();
   })();
-  /* açık misafir formu varsa kartları yeniden kurma (girilen bilgiler silinmesin) */
   addEventListener('dil-degisti', () => { if (!liste.querySelector('form.misafir')) listeyiCiz(); paneliCiz(); });
   return { yenile: etkinlikleriYukle };
 }

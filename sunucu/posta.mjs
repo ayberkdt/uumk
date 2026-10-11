@@ -14,11 +14,13 @@ function adresKodla(a) {
   return m ? `${baslikKodla(m[1].trim())} <${m[2]}>` : a;
 }
 
-function ileti({ kime, konu, metin }) {
+const adresTemiz = (a) => String(a ?? '').replace(/[\r\n<>"]/g, '').trim();
+function ileti({ kime, konu, metin, yanitla }) {
   const kimden = AYAR.postaGonderen;
   const alan = (kimden.match(/@([^>]+)/) || [, 'uumk.local'])[1];
   return [
     `From: ${adresKodla(kimden)}`, `To: ${kime}`, `Subject: ${baslikKodla(konu)}`,
+    ...(yanitla ? [`Reply-To: ${adresTemiz(yanitla)}`] : []),
     `Date: ${new Date().toUTCString()}`, `Message-ID: <${randomBytes(12).toString('hex')}@${alan}>`,
     'MIME-Version: 1.0', 'Content-Type: text/plain; charset=utf-8', 'Content-Transfer-Encoding: base64', '',
     b64(metin).replace(/.{76}/g, '$&\r\n'),
@@ -53,8 +55,8 @@ function smtpGonder(url, kimden, kime, govde) {
 }
 
 /** Gönder; hata yutulmaz ama çağıranın akışını da kırmaz: sonuç { tamam, yol? , hata? } */
-export async function postaGonder({ kime, konu, metin }) {
-  const govde = ileti({ kime, konu, metin });
+export async function postaGonder({ kime, konu, metin, yanitla }) {
+  const govde = ileti({ kime, konu, metin, yanitla });
   try {
     if (AYAR.smtpUrl) { await smtpGonder(AYAR.smtpUrl, AYAR.postaGonderen, kime, govde); return { tamam: true }; }
     mkdirSync(AYAR.postaKutusu, { recursive: true });

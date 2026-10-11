@@ -1,5 +1,4 @@
 /* PANO — kalkış panosu ve biniş kartı. Ayrıntı: notlar/tasarim.md. */
-import { code128Svg } from '../lib/sunumatik/boarding_pass/code128.mjs';
 import { metin } from '../ceviri.mjs';
 
 const HARF = 'ABCÇDEFGĞHIİJKLMNOÖPRSŞTUÜVYZ0123456789';
@@ -17,17 +16,16 @@ export function panoKur({ tablo, pencere, az = false }) {
     if (az) return;
     const benim = ++nesil;
     const abc = document.documentElement.lang === 'en' ? HARF.replace(/[ÇĞİÖŞÜ]/g, '') : HARF;
-    asil = hucreler.map((h) => h.textContent);      /* o anki dilde */
+    asil = hucreler.map((h) => h.textContent);
     tablo.setAttribute('aria-busy', 'true');
     tablo.classList.add('flap-dondu');
     const bas = performance.now();
-    /* her hücre: satır sırasına göre gecikme, her karakter kendi süresinde yerine oturur */
     const plan = hucreler.map((h, i) => {
       const satir = [...tablo.tBodies[0].rows].indexOf(h.closest('tr'));
       return { h, metin: asil[i], gecikme: satir * 45, sure: 380 + 14 * asil[i].length };
     });
     function kare(t) {
-      if (benim !== nesil) return;   /* dil değişti: çeviri hücreleri yazdı, animasyon durur */
+      if (benim !== nesil) return;
       let bitmedi = false;
       for (const p of plan) {
         const g = t - bas - p.gecikme;
@@ -45,7 +43,6 @@ export function panoKur({ tablo, pencere, az = false }) {
     requestAnimationFrame(kare);
   }
 
-  /* biniş kartı */
   const metinler = new Map([...document.querySelectorAll('.bilet-metinleri article')].map((a) => [a.dataset.id, a]));
   const alan = (ad) => pencere.querySelector(`[data-alan="${ad}"]`);
   let acan = null;
@@ -63,7 +60,6 @@ export function panoKur({ tablo, pencere, az = false }) {
     alan('tur').textContent = metin('tur' + m.dataset.tur.charAt(0).toUpperCase() + m.dataset.tur.slice(1));
     alan('ucus').textContent = `UUMK ${String([...tablo.tBodies[0].rows].reverse().indexOf(tr) + 1).padStart(3, '0')}`;
     alan('metin').innerHTML = m.innerHTML;
-    /* fotoğrafı olan etkinlik: galerideki görsel (dile göre alt metniyle) */
     const kaynakFoto = m.dataset.foto && document.querySelector(`#fotolar img[src*="${m.dataset.foto}"]`), f = alan('foto');
     f.hidden = !kaynakFoto;
     f.replaceChildren(...(kaynakFoto ? [Object.assign(document.createElement('img'), { src: kaynakFoto.currentSrc || kaynakFoto.src, alt: kaynakFoto.alt, width: 480, height: 360 })] : []));
@@ -71,7 +67,7 @@ export function panoKur({ tablo, pencere, az = false }) {
     k.setAttribute('aria-label', en ? `Open the post on ${m.dataset.kaynakAd} (new tab)` : `Gönderiyi ${m.dataset.kaynakAd}'da aç (yeni sekme)`);
     const kod = `UUMK-${id.toUpperCase()}`;
     alan('kod').textContent = kod;
-    alan('barkod').innerHTML = code128Svg(kod, { height: 60, label: `Barkod: ${kod}` });
+    import('../lib/sunumatik/boarding_pass/code128.mjs').then(({ code128Svg }) => { alan('barkod').innerHTML = code128Svg(kod, { height: 60, label: `Barkod: ${kod}` }); });
     acan = document.activeElement;
     if (!pencere.open) pencere.showModal();
     if (gecmis) history.replaceState(null, '', `#etkinlik-${id}`);
@@ -80,17 +76,15 @@ export function panoKur({ tablo, pencere, az = false }) {
   function kapat() { if (pencere.open) pencere.close(); }
   pencere.addEventListener('close', () => {
     if (location.hash.startsWith('#etkinlik-')) history.replaceState(null, '', '#etkinlikler');
-    /* derin bağlantıyla açıldıysa: kart kapanınca pano görünsün (gündem sonradan yüklenip konumu kaydırmış olabilir) */
     if (derinden) { derinden = false; document.getElementById('etkinlikler')?.scrollIntoView({ behavior: 'instant' }); }
     acan?.focus?.({ preventScroll: true });
   });
   pencere.querySelector('.bilet__kapat').addEventListener('click', kapat);
-  pencere.addEventListener('click', (e) => { if (e.target === pencere) kapat(); });       /* arka plana tıklama */
+  pencere.addEventListener('click', (e) => { if (e.target === pencere) kapat(); });
   tablo.addEventListener('click', (e) => {
     const tr = e.target.closest('tr[data-bilet]');
     if (tr && !e.target.closest('a')) ac(tr.dataset.bilet);
   });
-  /* derin bağlantı */
   const h = location.hash.match(/^#etkinlik-([a-z0-9]+)$/);
   if (h) { derinden = true; document.getElementById('etkinlikler')?.scrollIntoView({ behavior: 'instant' }); ac(h[1], { gecmis: false }); }
 

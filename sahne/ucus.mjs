@@ -73,7 +73,8 @@ const KISA = globalThis.matchMedia?.('(max-height: 520px) and (orientation: land
 export function ucusKur(tuval, { az = false, metinAlt = null, sehirUst = null } = {}) {
   const g = tuval.getContext('2d');
   let gen = 0, yuk = 0, dpr = 1, S = 100, hw = 4, anahtar = GENIS, olcek = 0.85, yer = true, sehirY = 0, metinY = 0;
-  let p = 0, zaman = 0, gorunur = true, dongu = 0, girisT0 = null, girisVar = !az;
+  let p = 0, zaman = 0, gorunur = true, dongu = 0, girisT0 = null, girisVar = !az, oto = false, otoT0 = null;
+  const OTO_SURE = 40;   /* yörüngenin bir turu (sn); sonda 2,4 sn ekran dışı, sonra sağ üstten yeniden girer */
   let hafif = new URLSearchParams(location.search).has('hafif'), sonKare = 0;
   const aralik = [];
   const fare = { x: 0, y: 0, hx: 0, hy: 0 };
@@ -239,6 +240,12 @@ export function ucusKur(tuval, { az = false, metinAlt = null, sehirUst = null } 
   function kare(t) {
     zaman = t / 1000;
     if (girisT0 === null) girisT0 = zaman;
+    if (oto) {
+      if (otoT0 === null) otoT0 = zaman;
+      const u = (zaman - otoT0) / OTO_SURE;
+      if (u >= 1.06) { otoT0 = zaman; girisVar = true; girisT0 = zaman; }
+      p = sinir(u);
+    }
     ciz();
     if (!hafif && aralik.length < 30 && sonKare && zaman - girisT0 > 1.5 && document.visibilityState === 'visible') {
       aralik.push(t - sonKare);
@@ -258,6 +265,7 @@ export function ucusKur(tuval, { az = false, metinAlt = null, sehirUst = null } 
   ciz();
   return {
     ciz(yeniP) { p = sinir(yeniP); if (p > 0.02) girisVar = false; if (az || !dongu) ciz(); },
+    oto() { if (!az) oto = true; },
     olc(q = p) { const e = eksen(q); const [x, y] = izdus(e.o); return { x, y, yatis: Math.atan2(e.sag[1], e.yukari[1]), ters: e.yukari[1] < 0 }; },
     renk: RENK.petrol,
   };

@@ -6,12 +6,13 @@
 import { readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { istanbulSvg, pulSembolleri, sembolDosyasi } from '../sahne/istanbul.mjs';
+import { istanbulSvg, pulSembolleri, sembolDosyasi, kiyiSvg } from '../sahne/istanbul.mjs';
 
 const yol = join(dirname(fileURLToPath(import.meta.url)), '..', 'index.html');
 export const PARCALAR = {
   gun: () => istanbulSvg({ tema: 'gun', kimlik: 'istanbul' }),
   pul: () => pulSembolleri(),
+  kiyi: () => kiyiSvg(),
 };
 export function yerlestir(html) {
   let sonuc = html;

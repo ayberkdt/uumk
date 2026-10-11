@@ -130,7 +130,7 @@ for (const m of html.matchAll(/href="gorseller\/semboller\.svg#([a-z-]+)"/g)) si
 sina('panorama blokları: Galata, cami, köprü, Kız Kulesi, martılar, vapur, dalgalar', ['blok--galata', 'blok--cami', 'blok--kopru', 'blok--kiz', 'blok--martilar', 'class="vapur"', 'dalga--4'].every((k) => html.includes(k)));
 sina('panorama v5: Ayasofya, Galata Köprüsü, yıldızlar, fener ışığı, tarama deseni', ['blok--ayasofya', 'blok--galata-koprusu', 'blok--yildizlar', 'fener-hale', 'id="tarama-gun"', 'id="tarama-gece"'].every((k) => html.includes(k)));
 { const ist = await ice('sahne/istanbul.mjs'); sina('panorama sahne genişliği site.mjs ile aynı (-400…2000)', ist.SOL === -400 && ist.SAG === 2000 && /SAHNE_SOL = -400, SAHNE_SAG = 2000/.test(oku('site.mjs'))); }
-sina('kabin: üstten uçak (yatay SVG + dikey burun/kanat/kuyruk) ve 6 bölme gövdede', ['ucak__yatay', 'ucak__burun', 'ucak__kanat-d', 'ucak__kuyruk', 'ucak__isik--iskele', 'ucak__isik--sancak'].every((k) => html.includes(k)) && (html.match(/<div class="ucak" id="ucak">[\s\S]*?<\/ol>/)?.[0].match(/<li class="kabin__/g) || []).length === 6);
+sina('kabin: 2,5B maket (tembel three.js, GPU yoksa poster) ve 6 numaralı ekip', html.includes('id="maket-tuval"') && html.includes('class="maket__poster" src="gorseller/kabin-maket-1200.jpg"') && statSync(join(KOK, 'gorseller/kabin-maket-1200.jpg')).size > 20000 && (html.match(/<ol class="kabin">[\s\S]*?<\/ol>/)?.[0].match(/<li class="kabin__/g) || []).length === 6 && /<ol class="maket__imler"[^>]*>(<li>\d<\/li>){6}<\/ol>/.test(html) && oku('sahne/maket3b.mjs').includes("from '../vendor/three-r184/three.module.min.js'") && !/^import .*maket3b/m.test(oku('site.mjs')));
 sina('dil seçici: TR ve EN bayrağı', /<button class="dil" id="dil-dugme"[^>]*>[\s\S]*?data-dil="tr"[\s\S]*?<svg class="bayrak"[\s\S]*?data-dil="en"[\s\S]*?<svg class="bayrak"/.test(html));
 sina('menüde numara yok', !html.includes('menu__no'));
 { const { KAYITLAR } = await ice('veri/tarihce.mjs'), insa = await ice('araclar/tarihce-insa.mjs');
@@ -142,6 +142,19 @@ sina('menüde numara yok', !html.includes('menu__no'));
     for (const [u] of k.kaynak) sina(`tarihçe ${k.id}: kaynak notlarda (${u.slice(0, 70)})`, notlar.replace(/:80\//g, '/').includes(u.replace(/^https?:\/\/(web\.archive\.org\/web\/\d+\/)?/, '').replace(/^https?:\/\//, '').replace(/\/$/, '')));
     sina(`tarihçe ${k.id}: kendini pazarlayan dil yok`, !/(eşsiz|benzersiz|muhteşem|harika|unique|amazing|world-class)/i.test(JSON.stringify(k)));
   }
+  /* v8: resimli kayıtlar, fotoğraf galerisi (dosyalar diskte, kaynak notlarda), kıyı ve boş gündem */
+  const sem = oku('gorseller/semboller.svg'), notN = notlar.replace(/:80\//g, '/');
+  for (const k of KAYITLAR) {
+    if (k.resim.cizim) sina(`tarihçe ${k.id}: çizimi sembol dosyasında`, sem.includes(`<symbol id="tarih-${k.resim.cizim}"`));
+    for (const [ad, tr, en, u] of k.galeri || []) {
+      sina(`galeri ${ad}: 480 ve 960 px dosyası, TR/EN altyazı`, [480, 960].every((g) => statSync(join(KOK, `gorseller/tarihce/${ad}-${g}.jpg`)).size > 3000) && tr.length > 3 && en.length > 3);
+      sina(`galeri ${ad}: fotoğrafın kaynağı notlarda`, notN.includes(u.replace(/^https?:\/\/(web\.archive\.org\/web\/\d+\/)?/, '').replace(/^https?:\/\//, '').replace(/\/$/, '')));
+    }
+  }
+  sina('kıyı: zemin ve vapur sembolleri dosyada, sayfada yalnız use', ['kiyi-su', 'kiyi-rihtim', 'kiyi-vapur'].every((k) => sem.includes(`<symbol id="${k}"`)) && /<svg class="kiyi" id="kiyi"[^>]*><use href="gorseller\/semboller\.svg#kiyi-su"/.test(html));
+  sina('boş gündem: 2,5B havaalanı (tembel three.js, GPU yoksa poster), Instagram bağlantısı', /<template id="bos-sablon">[\s\S]*?class="bos__poster" src="gorseller\/bekleme-800\.jpg"[\s\S]*?<canvas class="bos__tuval"[\s\S]*?href="https:\/\/www\.instagram\.com\/ituuumk\/"[\s\S]*?<\/template>/.test(html) && oku('sahne/hesap.mjs').includes("import('./bekleme3b.mjs')") && statSync(join(KOK, 'gorseller/bekleme-800.jpg')).size > 10000);
+  sina('sponsorluk: rakam şeridi ve kurumlar', (html.match(/<dl class="rakamlar">[\s\S]*?<\/dl>/)?.[0].match(/<dt>/g) || []).length === 4 && (html.match(/<div class="kurumlar">[\s\S]*?<\/ul>/)?.[0].match(/<li>/g) || []).length === 5);
+  sina('footer: AS Istanbul vektör amblemi (EUROAVIA ist.svg, beyaz)', html.includes('src="gorseller/logo-as-istanbul-beyaz.svg"') && /viewBox="134 112 756 800"/.test(oku('gorseller/logo-as-istanbul-beyaz.svg')) && !oku('gorseller/logo-as-istanbul-beyaz.svg').includes('#003366'));
   sina('tarihçe ayrıntısı: pencere ve tembel modül', html.includes('<dialog class="bilet ayrinti" id="ayrinti"') && oku('site.mjs').includes("import('./sahne/ayrinti.mjs')") && !/^import .*ayrinti/m.test(oku('site.mjs')));
 }
 sina('panorama: her parça blok içinde sıralı (data-s, data-k)', (html.match(/<g class="parca" data-k="\d+">/g) || []).length > 150);
@@ -228,8 +241,8 @@ sina('form alanlarında autocomplete', [...html.matchAll(/<input ([^>]*)>/g)].fi
 bolum('11. Metin (kendini pazarlayan dil yasak)');
 const gorunurTR = metinSaf(html.replace(/<head>[\s\S]*<\/head>/, '')) + ' ' + Object.values(ceviri.JS_TR).join(' ') + ' ' + metinSaf(oku('kvkk.html'));
 const gorunurEN = Object.values(enS).join(' ') + ' ' + Object.values(enJ).join(' ');
-const YASAK_TR = ['gerçekleştirilmiştir', 'sağlanmaktadır', 'söz konusu', 'kapsamında', 'bulunmaktadır', 'sınıfta bitmez', 'kapısını aç', 'hayalin', 'tutku', 'eşsiz', 'muhteşem', 'en iyi', 'fırsatı kaçırma', 'harika', 'unutulmaz', 'dünya standartlarında', 'öncü', 'vizyoner', 'heyecan verici', 'seni bekliyor', 'sınırları zorla', 'geleceği şekillendir', 'yolculuğa', 'benzersiz', 'olağanüstü', 'mükemmel'];
-const YASAK_EN = ['unforgettable', 'exciting', 'journey', 'passion', 'cutting-edge', 'world-class', 'unlock', 'empower', 'join us', 'amazing', 'awesome', 'unique', 'best-in-class', 'innovative', 'revolution', 'seamless', 'next-level'];
+const YASAK_TR = ['bekleme turundayız', 'kayıt masası', 'yeni kuşağıyla', 'öğrencilerle tanış', 'ekibini seç', 'her şerit bir kayıt', 'gerçekleştirilmiştir', 'sağlanmaktadır', 'söz konusu', 'kapsamında', 'bulunmaktadır', 'sınıfta bitmez', 'kapısını aç', 'hayalin', 'tutku', 'eşsiz', 'muhteşem', 'en iyi', 'fırsatı kaçırma', 'harika', 'unutulmaz', 'dünya standartlarında', 'öncü', 'vizyoner', 'heyecan verici', 'seni bekliyor', 'sınırları zorla', 'geleceği şekillendir', 'yolculuğa', 'benzersiz', 'olağanüstü', 'mükemmel'];
+const YASAK_EN = ['holding pattern', 'registration desk', 'next generation', 'meet the students', 'pick your', 'unforgettable', 'exciting', 'journey', 'passion', 'cutting-edge', 'world-class', 'unlock', 'empower', 'join us', 'amazing', 'awesome', 'unique', 'best-in-class', 'innovative', 'revolution', 'seamless', 'next-level'];
 for (const y of YASAK_TR) sina(`TR'de yok: "${y}"`, !gorunurTR.toLocaleLowerCase('tr').includes(y));
 for (const y of YASAK_EN) sina(`EN'de yok: "${y}"`, !gorunurEN.toLowerCase().includes(y));
 sina('yer tutucu yok', !/lorem|ipsum|TODO|XXX|KURULUS_|YAZILAR|FOTOLAR|TAKVIM</.test(html));
@@ -252,7 +265,8 @@ sina('sunucu/notlar/araclar/kaynak/.db dışarıya kapalı', /sunucu\|notlar\|ar
 const vi = (() => { try { return oku('.vercelignore'); } catch { return ''; } })();
 sina('.vercelignore: sunucu/, notlar/, araclar/, kaynak/', ['sunucu', 'notlar', 'araclar', 'kaynak'].every((k) => vi.includes(k)));
 const boyut = (p) => statSync(join(KOK, p)).size;
-const acilis = ['site.mjs', 'ceviri.mjs', 'sahne/pano.mjs', 'sahne/hesap.mjs', 'sahne/ucus.mjs', 'sahne/renk.mjs', 'lib/sunumatik/boarding_pass/code128.mjs'];
+const acilis = ['site.mjs', 'ceviri.mjs', 'sahne/pano.mjs', 'sahne/hesap.mjs', 'sahne/ucus.mjs', 'sahne/renk.mjs'];   /* code128 (barkod) v9'dan beri biniş kartı açılınca iner */
+sina('barkod modülü tembel (biniş kartı açılınca)', oku('sahne/pano.mjs').includes("import('../lib/sunumatik/boarding_pass/code128.mjs')") && !/^import .*code128/m.test(oku('sahne/pano.mjs')));
 const acilisKB = acilis.reduce((s, p) => s + boyut(p), 0) / 1024;
 sina('açılış JS ≤ 72 kB (ham; v4 bütçesi)', acilisKB <= 72, acilisKB.toFixed(1) + ' kB');
 const cssGz = gzipSync(readFileSync(join(KOK, 'site.css'))).length / 1024;

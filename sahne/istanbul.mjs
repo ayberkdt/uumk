@@ -7,6 +7,7 @@
  * site.mjs görüş kutusunu (viewBox) ekranın oranına göre bu aralıkta açar. Renkler sınıflarla (site.css .ist / .ist--gece). */
 
 import { KART_SAHNE } from './kartpostal.mjs';
+import { TARIH_IKON } from './tarih-ikon.mjs';
 
 export const W = 1600, H = 480, SU = 396, SOL = -400, SAG = 2000;
 
@@ -264,16 +265,70 @@ export function simgeler() {
 export function istanbulSvg({ tema = 'gun', kimlik = 'istanbul' } = {}) {
   const B = sahne();
   const katmanlar = { gok: [], uzak: [], orta: [], yakin: [] };
+  const vapurG = `<g class="vapur-yol"><g class="vapur" transform="translate(560 420)">${vapur()}</g></g>`;
   B.forEach((b, s) => {
     const parca = b.parcalar.map((p, k) => `<g class="parca" data-k="${k}">${p}</g>`).join('');
+    /* vapur (tabanı y 436) Kız Kulesi'nin (ada tabanı y 452) ve kayıkların arkasından geçer */
+    if (b.katman === 'yakin' && b.sinif === 'kiz') katmanlar.yakin.push(vapurG);
     katmanlar[b.katman].push(`<g class="blok${b.sinif ? ' blok--' + b.sinif : ''}" data-s="${s}">${parca}</g>`);
   });
   const dalgalar = [[414, 64, 3.2, 0], [430, 92, 4, 30], [448, 120, 5, 10], [468, 150, 6, 60]]
     .map(([y, l, g, o], i) => `<path class="dalga dalga--${i + 1}" d="${dalga(y, l, g, o)}"/>`).join('');
-  const vapurG = `<g class="vapur-yol"><g class="vapur" transform="translate(560 420)">${vapur()}</g></g>`;
   return `<svg class="ist ist--${tema}" id="${kimlik}" viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMax slice" aria-hidden="true" focusable="false">`
     + `<g class="ist__gok">${katmanlar.gok.join('')}</g><g class="ist__uzak">${katmanlar.uzak.join('')}</g><g class="ist__orta">${katmanlar.orta.join('')}</g>`
-    + `<g class="ist__yakin">${katmanlar.yakin.join('')}<g class="ist__dalgalar">${dalgalar}</g>${vapurG}</g></svg>`;
+    + `<g class="ist__yakin">${katmanlar.yakin.join('')}<g class="ist__dalgalar">${dalgalar}</g></g></svg>`;
+}
+
+/** Bizim kıyı: açılıştaki denizin devamı ve rıhtım. Aşağı inerken deniz yakınlaşır (dalga izleri büyür), vapur kaydırmayla
+ * karşıya geçer (site.css .kiyi__vapur, --gecis), deniz rıhtımda biter; içerik bu kıyıda başlar. viewBox 1600 × 260, panoramanın sınıf paletiyle. */
+function kiyiParcalar() {
+  const r = rastgele(1453), SU2 = 168;
+  let su = R(SOL - 40, 0, SAG - SOL + 80, SU2, 's');
+  /* yakınlaştıkça uzayan ve kalınlaşan dalga izleri (dolgulu ince mercekler) */
+  for (const [y, uz, ara, k] of [[12, 16, 18, 1.2], [30, 22, 22, 1.6], [52, 30, 26, 2], [80, 40, 32, 2.6], [112, 52, 38, 3.2], [146, 66, 44, 4]]) {
+    let d = '';
+    for (let x = SOL - 40 + r() * ara; x < SAG + 40; x += uz + ara + r() * ara) d += `M${f(x)} ${y}q${f(uz / 2)} ${f(-k)} ${f(uz)} 0q${f(-uz / 2)} ${f(k * 0.6)} ${f(-uz)} 0z`;
+    su += P(d, 'ys');
+  }
+  /* şamandıra ve martı, olta kayığı */
+  su += P('M1196 86h20l-3 14h-14z', 'g') + R(1197, 90, 18, 4, 'c') + P('M1206 86v-12', 'l') + O(1206, 72, 2.5, 'c') + marti(1206, 60, 1.1) + marti(1240, 40, 0.8) + marti(520, 28, 0.9);
+  su += `<g transform="translate(360 70) scale(1.25)">${kayik(0, 0)}</g>`;
+  /* karşıya geçen vapur ve köpük izi: tabanı y≈123, balıkçının misinasının suya girdiği yerden (y≈127) uzakta */
+  const vapurG = `<g class="kiyi__vapur"><g transform="translate(0 100) scale(1.45)">${vapur()}</g>${P('M-8 122q-36 5-80 3M-5 116q-44 2-96-5', 'ys2')}</g>`;
+  /* rıhtım: su çizgisinde gölge, taş duvar yüzü (derzler), üstte korkuluk; kıyıda fener direği, bank, balıkçı, simitçi, kedi, yürüyenler */
+  let rihtim = R(SOL - 40, SU2 - 4, SAG - SOL + 80, 6, 'a') + R(SOL - 40, SU2, SAG - SOL + 80, 28, 'g');
+  let derz = `M${SOL - 40} ${SU2 + 14}H${SAG + 40}`;
+  for (let x = SOL - 40; x < SAG + 40; x += 48) derz += `M${x} ${SU2}v14M${x + 24} ${SU2 + 14}v14`;
+  rihtim += P(derz, 'uc ince');
+  let kor = `M${SOL - 40} ${SU2 - 30}H${SAG + 40}M${SOL - 40} ${SU2 - 16}H${SAG + 40}`;
+  for (let x = SOL - 32; x < SAG + 40; x += 40) kor += `M${x} ${SU2}V${SU2 - 32}`;
+  rihtim += P(kor, 'l') + P(`M${SOL - 40} ${SU2 + 40}H${SAG + 40}`, 'uc ince');
+  const yakin = (x, ic) => `<g transform="translate(${x} 196) scale(1.5) translate(${-x} -196)">${ic}</g>`;
+  /* fener direği */
+  rihtim += yakin(300, R(298, 98, 5, 98, 'vg') + R(292, 192, 17, 6, 'vg') + P('M300 108h22v4', 'l') + P('M312 112h20l-3 18h-14z', 'g') + R(314, 108, 16, 4, 'vg') + O(322, 121, 3, 'v'));
+  /* bank */
+  rihtim += yakin(540, R(500, 182, 80, 4, 'g') + R(500, 172, 80, 4, 'g') + P('M506 186v10M574 186v10M506 176v6M574 176v6', 'l'));
+  /* korkuluğa yaslanmış balıkçı, olta ve misina */
+  rihtim += yakin(904, R(898, 160, 12, 22, 'c') + O(904, 154, 6, 'g') + P('M904 184v12M900 196h10', 'l') + P('M908 166L1000 96', 'l') + P('M1000 96L1006 150', 'uc ince') + R(912, 186, 10, 10, 'k'));
+  /* simitçi arabası */
+  rihtim += yakin(1190, R(1150, 150, 70, 36, 'c') + R(1154, 140, 62, 12, 'k') + P('M1150 150h70', 'l') + O(1162, 196, 7, 'vg') + O(1208, 196, 7, 'vg') + O(1172, 145, 4, 'kaya') + O(1185, 144, 4, 'kaya') + O(1198, 145, 4, 'kaya') + P('M1220 160h18v-6', 'l')
+    + R(1240, 156, 10, 22, 'g') + O(1245, 150, 5, 'g') + P('M1243 178v18M1248 178v18', 'l'));
+  /* kedi */
+  rihtim += yakin(1395, P('M1380 196c-2-12 4-18 12-18l2-6 3 6h4l3-6 2 6c6 2 8 10 6 18zM1408 192q12 0 10-12', 'vg'));
+  /* yürüyenler */
+  rihtim += yakin(772, R(760, 158, 11, 26, 'c') + O(765.5, 151, 6, 'g') + P('M763 184v12M768 184v12', 'l') + R(776, 162, 10, 22, 'k') + O(781, 156, 5.5, 'g') + P('M779 184v12M784 184v12', 'l')) + yakin(1565, R(1560, 160, 11, 24, 'g') + O(1565.5, 153, 6, 'g') + P('M1563 184v12M1568 184v12', 'l'));
+  return { su, rihtim, vapur: vapurG.replace('<g class="kiyi__vapur">', '<g>') };
+}
+/* kıyı sembolü dış dosyada: panoramanın gündüz sınıf paleti sunum özniteliklerine (use gölge ağacına belge seçicileri işlemez) */
+const KIYI_BOYA = { g: 'fill="#f8f8f6" stroke="#141414" stroke-width="1.1" stroke-linejoin="round"', c: 'fill="#056b7a" stroke="#141414" stroke-width="1.1" stroke-linejoin="round"',
+  k: 'fill="#dfeaeb" stroke="#141414" stroke-width="1.1" stroke-linejoin="round"', kaya: 'fill="#b3b3ae" stroke="#141414" stroke-width="1.1"', gy: 'fill="url(#tarama-gun)" stroke="#141414" stroke-width="1.1"',
+  l: 'fill="none" stroke="#141414" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"', mk: 'fill="none" stroke="#141414" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"',
+  'uc ince': 'fill="none" stroke="#85837e" stroke-width="0.6"', a: 'fill="#03525e"', s: 'fill="#056b7a"', v: 'fill="#056b7a"', vg: 'fill="#141414"', p: 'fill="#141414"',
+  ys: 'fill="#dfeaeb" opacity="0.7"', ys2: 'fill="none" stroke="#f8f8f6" stroke-width="1.2" opacity="0.6"' };
+const kiyiBoya = (x) => x.replace(/class="([^"]+)"/g, (_, k) => KIYI_BOYA[k] ?? KIYI_BOYA[k.split(' ')[0]] ?? '');
+/** sayfaya giden kıyı: zemin ve vapur sembolleri; vapur grubu kaydırmayla kayar (site.css .kiyi__vapur) */
+export function kiyiSvg() {
+  return `<svg class="kiyi" id="kiyi" viewBox="0 0 1600 260" preserveAspectRatio="xMidYMin slice" aria-hidden="true" focusable="false"><use href="gorseller/semboller.svg#kiyi-su" width="1600" height="260"/><g class="kiyi__vapur"><use href="gorseller/semboller.svg#kiyi-vapur" width="1600" height="260"/></g><use href="gorseller/semboller.svg#kiyi-rihtim" width="1600" height="260"/></svg>`;
 }
 
 /** pul sembolleri (<symbol id="pul-…">, sunum öznitelikleriyle: use gölge ağacında belge seçicileri eşleşmez) ve tarama desenleri */
@@ -289,6 +344,6 @@ export function pulSembolleri() {
 }
 /** gorseller/semboller.svg: pullar ve kartpostal sahneleri (<use href="gorseller/semboller.svg#…">) */
 export function sembolDosyasi() {
-  return `<svg xmlns="http://www.w3.org/2000/svg"><defs>${DESEN}${simgeler().map(([k, vb, p]) => `<symbol id="pul-${k}" viewBox="${vb}">${pulBoya(p.join(''))}</symbol>`).join('')}${Object.entries(KART_SAHNE).map(([k, s]) => `<symbol id="kart-${k}" viewBox="0 0 160 120">${s}</symbol>`).join('')}</defs></svg>\n`;
+  return `<svg xmlns="http://www.w3.org/2000/svg"><defs>${DESEN}${simgeler().map(([k, vb, p]) => `<symbol id="pul-${k}" viewBox="${vb}">${pulBoya(p.join(''))}</symbol>`).join('')}${Object.entries(KART_SAHNE).map(([k, s]) => `<symbol id="kart-${k}" viewBox="0 0 160 120">${s}</symbol>`).join('')}${(() => { const k = kiyiParcalar(); return `<symbol id="kiyi-su" viewBox="0 0 1600 260" overflow="visible">${kiyiBoya(k.su)}</symbol><symbol id="kiyi-rihtim" viewBox="0 0 1600 260" overflow="visible">${kiyiBoya(k.rihtim)}</symbol><symbol id="kiyi-vapur" viewBox="0 0 1600 260" overflow="visible">${kiyiBoya(k.vapur)}</symbol>`; })()}${Object.entries(TARIH_IKON).map(([k, s]) => `<symbol id="tarih-${k}" viewBox="0 0 64 64">${s}</symbol>`).join('')}</defs></svg>\n`;
 }
 

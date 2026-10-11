@@ -3,7 +3,6 @@
 export const DILLER = ['tr', 'en'];
 const ANAHTAR = 'uumk-dil';
 
-/** JS'in kullandığı Türkçe metinler (İngilizceleri dil/en.mjs → JS) */
 export const JS_TR = {
   kayitAcik: 'Kayıt açık', kayitKapali: 'Kayıt kapalı', kontenjanDoldu: 'Kontenjan doldu', kalan: '{n} yer kaldı', kontenjansiz: 'Kontenjan sınırı yok',
   kaydol: 'Kaydol', kayitlisin: 'Kayıtlısın', iptalEt: 'Kaydı iptal et', gonder: 'Kaydı gönder', vazgec: 'Vazgeç',
@@ -19,12 +18,12 @@ export const JS_TR = {
   kayitlarim: 'Kayıtlı olduğun etkinlikler', kayitYok: 'Henüz bir etkinliğe kaydolmadın.',
   yukleniyor: 'Yükleniyor…', okuDevam: 'Yazıyı aç', disBaglanti: '{kaynak} sayfasında açılır',
   menuAc: 'Menüyü aç', menuKapat: 'Menüyü kapat',
-  ayrintiKaynak: 'Kaynaklar', ayrintiOnceki: 'Önceki kayıt', ayrintiSonraki: 'Sonraki kayıt',
+  bosBekleme: 'Şu an kayda açık etkinlik yok', bosBeklemeNot: 'Yeni etkinlikler kayda açıldığında burada listelenir; Instagram\'da da duyurulur.', bosKapali: 'Etkinlik kaydı bu sitede şu an kapalı', bosKapaliNot: 'Etkinliklere Instagram duyurusundaki formdan kaydolabilirsin.', bosTakip: 'Instagram: @ituuumk ↗',
+  ayrintiKaynak: 'Kaynaklar', ayrintiOnceki: 'Önceki kayıt', ayrintiSonraki: 'Sonraki kayıt', ayrintiGaleri: 'Fotoğraflar ({n})', ayrintiFotoKaynak: 'Fotoğrafın kaynağı',
   sponsorKonu: 'Sponsorluk — İTÜ UUMK', sponsorGovde: 'Merhaba,\n\n[Şirket] adına İTÜ UUMK ile sponsorluk ya da iş birliği hakkında görüşmek istiyoruz.\n\nAd soyad:\nŞirket:\nTelefon:\n',
   adresKopyalandi: '{adres} kopyalandı.', adresKopyalanamadi: 'Kopyalanamadı; adres: {adres}', parolaGoster: 'Göster', parolaGizle: 'Gizle',
   turGezi: 'Teknik gezi', turAtolye: 'Atölye', turKurs: 'Kurs', turYarisma: 'Yarışma', turSosyal: 'Sosyal', ucusKod: 'Uçuş',
   dahaFazla: 'Diğer {n} etkinliği göster', takvimeEkle: 'Takvime ekle', kartAd: 'Ad Soyad', kartTaslak: 'Henüz hesap yok', kartCanli: 'Hesap açılıyor', kartDogrulandi: 'Doğrulandı', kartBekliyor: 'Doğrulama bekliyor',
-  /* sunucu hata kodları */
   'h-ad-gerekli': 'Adını yaz.', 'h-soyad-gerekli': 'Soyadını yaz.', 'h-eposta-gecersiz': 'Geçerli bir e-posta adresi yaz.',
   'h-eposta-okul': 'Okul e-postanı yaz (@{alan}).', 'h-okul-no-gecersiz': 'Okul numaran yalnız rakamlardan oluşmalı.',
   'h-kvkk-gerekli': 'Aydınlatma metnini okuduğunu işaretle.', 'h-parola-kisa': 'Parola en az 8 karakter olmalı.', 'h-parola-uzun': 'Parola çok uzun.',
@@ -33,16 +32,20 @@ export const JS_TR = {
   'h-dogrulanmamis': 'Önce e-postanı doğrula.', 'h-zaten-kayitli': 'Bu etkinliğe bu bilgilerle zaten kayıt var.',
   'h-kayit-kapali': 'Bu etkinliğin kaydı kapandı.', 'h-kontenjan-doldu': 'Kontenjan doldu.', 'h-etkinlik-yok': 'Etkinlik bulunamadı.',
   'h-belirtec-gecersiz': 'Bağlantı geçersiz ya da süresi dolmuş.', 'h-oturum-yok': 'Oturumun kapanmış. Yeniden giriş yap.',
+  'h-parola-yanlis': 'Mevcut parola yanlış.', 'h-konu-gecersiz': 'Bir konu seç.', 'h-mesaj-kisa': 'Mesajın en az 10 karakter olmalı.',
+  hesapGirisli: 'Hesabın açık. Kayda açık etkinliklere gündemden tek tıkla kaydolursun; bilgilerin karttan gelir.', hesapGirisliBekliyor: 'Hesabın açıldı. Tek tıkla kayıt için önce okul e-postana gelen bağlantıyla hesabını doğrula.',
+  rozetDogrulandi: 'E-posta doğrulandı', rozetBekliyor: 'E-posta doğrulanmadı', rozetYonetici: 'Yönetici',
+  profilKaydedildi: 'Profilin güncellendi.', parolaDegisti: 'Parolan değiştirildi; diğer cihazlardaki oturumlar kapandı.',
+  bildirimGitti: 'Mesajın yönetim ekibine gönderildi. Yanıt okul e-posta adresine gelir.', bildirimKaydedildi: 'Mesajın kaydedildi; e-posta şu an gönderilemedi, yönetim ekibi siteden görecek.',
   'h-sunucu-hatasi': 'Sunucuda bir hata oldu. Biraz sonra tekrar dene.', 'h-genel': 'İşlem tamamlanamadı.',
 };
 
 let dil = 'tr', sozluk = null, ilkHal = null;
 export const etkinDil = () => dil;
 
-/** Baş betiğiyle aynı karar (araclar/dogrula.mjs eşitliği sınar) */
 export function dilSec() {
   const p = new URLSearchParams(location.search).get('dil');
-  let k = null; try { k = localStorage.getItem(ANAHTAR); } catch { /* gizli pencere */ }
+  let k = null; try { k = localStorage.getItem(ANAHTAR); } catch { }
   if (/bot|crawl|spider|slurp/i.test(navigator.userAgent)) return 'tr';
   if (DILLER.includes(p)) return p;
   if (DILLER.includes(k)) return k;
@@ -55,7 +58,6 @@ export function metin(anahtar, d = {}) {
 }
 export const hataMetni = (kod, d) => metin('h-' + kod, d) === 'h-' + kod ? metin('h-genel') : metin('h-' + kod, d);
 
-/* İngilizce metinler sitenin kendi statik dosyasından (dil/en.mjs) gelir; dışarıdan girdi değildir. */
 function anlik() {
   if (!ilkHal) {
     ilkHal = new Map([['baslik', document.title]]);
@@ -77,7 +79,7 @@ function uygula(s) {
 }
 
 export async function dilKur({ dugme }) {
-  anlik();   /* Türkçe asıl metin, hiçbir animasyon DOM'a dokunmadan kaydedilir */
+  anlik();
   const yaz = async (yeni, kaydet) => {
     if (yeni === 'en' && !sozluk) sozluk = await import('./dil/en.mjs');
     dil = yeni;
@@ -85,7 +87,7 @@ export async function dilKur({ dugme }) {
     uygula(yeni === 'en' ? sozluk : null);
     document.documentElement.classList.remove('dil-bekle');
     if (dugme) { dugme.dataset.etkin = yeni; dugme.setAttribute('aria-label', yeni === 'en' ? 'Türkçeye geç' : 'Switch to English'); }
-    if (kaydet) { try { localStorage.setItem(ANAHTAR, yeni); } catch { /* yok */ } }
+    if (kaydet) { try { localStorage.setItem(ANAHTAR, yeni); } catch { } }
     const u = new URL(location.href);
     if (kaydet) { if (yeni === 'en') u.searchParams.set('dil', 'en'); else u.searchParams.delete('dil'); history.replaceState(null, '', u); }
     dispatchEvent(new CustomEvent('dil-degisti', { detail: yeni }));

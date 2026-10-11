@@ -1,3 +1,11 @@
+# YASA DENETİMİ — UUMK v9 · 2026-10-11 · denetleyici index 0 HATA · 5 UYARI (değişmedi), yonetim.html 0 · 0. axe 0 ihlal (1440 TR, 390 EN). Değişen satırlar: Zirve-Son — boş gündem 2,5B maket + düz bilgi metni (slogan yok), bildirim gönderilince "yönetim ekibine gönderildi; yanıt okul e-postana gelir" duyurusu · Hick — hesabım ekranında 2 menü satırı (+ yöneticiye 1) ve tek çıkış · Fitts — menü satırları tam genişlik, ≥ 44 px · Tesler — profil düzenle dolu gelir, gönderen bilgisi oturumdan (formda sorulmaz), yanıt adresi otomatik · Parkinson — bildirim formunda 2 alan (konu varsayılan seçili) · Postel — mesaj 2000 karakter, sayaçla; okul no boşluklar atılarak · Jakob — Esc/geri yok, "Hesabıma dön" düğmesi; alt bilgide "Sorun bildir" bağlantısı.
+
+---
+
+# YASA DENETİMİ — UUMK v8 · 2026-10-11 · denetleyici index 0 HATA · 5 UYARI (4 eski gerekçeli + Hick: ayrıntı penceresinde statik 6 eylem — ışık kutusunun 3 düğmesi yalnız fotoğraf açıkken görünür; bir anda görünen en çok 3 eylem + fotoğraf kareleri). axe 0 ihlal (5 görünüm: 1440 TR/EN, 390, ayrıntı + galeri 1440 TR ve 390 EN; tek BELİRSİZ: afişin üstündeki kapat düğmesi — yarı saydam koyu zemin, ölçüldü değil). Değişen satırlar: Hick — açılış tek ekran, kaydırma hikâyesi yok · Fitts — maket listesinde satırın tamamı hedef, footer kartları 2 büyük hedef · Von Restorff — footer'da tek sarı kart (sponsor), sponsorlukta tek birincil eylem (E-posta yaz) · Doherty — maket three.js yalnız GPU'da ve bölüme 700 px kala; poster anında · Tesler — hafif kip ve WebGL kararı otomatik · Zirve-Son — boş gündem tasarlandı (bekleme turu + Instagram) · Prägnanz — kıyı ve maketlerde süs ışıma yok · Benzerlik — tek uçak dili (açılış, maket, harita, boş gündem).
+
+---
+
 # YASA DENETİMİ — UUMK v7 · 2026-10-11 · denetleyici index 0 HATA · 4 UYARI (değişmedi: Occam ×3 çizim yoğunluğu, Parkinson kayıt formu). axe 0 (1440 TR/EN, 390). Değişen satırlar: Prägnanz — kulüp kartında rota çizgisi metne binmiyor (kendi satırı), dekor öğesi metin üstünde 0 · Doherty — açılış tuvali GPU'da kare ortancası 6,9 ms (< 16,7), yavaşta hafif kip otomatik (Tesler) · Benzerlik — haritada tek uçak dili (açılış, kart, harita: uçak silüeti), yeni punto ve gölge yok.
 
 ---

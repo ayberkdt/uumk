@@ -155,3 +155,31 @@ Minho = University of Minho (Braga); Forlì-Bologna = Forlì; Kocaeli = İzmit; 
 | Lustrum & EMEAC 2024 akışı (blog): 29 Mart varış, 30 Mart 65. yıl (sunumlar, mezun panelleri, akşam Boğaz turu + gala), Kadıköy, 1 Nisan EMEAC başlangıcı, 3 Nisan şehir turu (Kapalıçarşı, Sultanahmet, Ayasofya, Sultanahmet Camii, Kabataş, Dolmabahçe) ve IGA Academy sunumu, 4 Nisan DIB adayları Elia Ghisellini ve Stamatios Moriatis seçildi, 5 Nisan veda yemeği | https://blog.euroavia.eu/2024/05/02/lustrum-emeac-2024-from-as-istanbul/ |
 | AESTRO kapakları (görsel, gözle okundu): 1. sayı "ŞUBAT 2021 SAYI 01", özel röportajlar Doç. Dr. Nazım Kemal Üre, Prof. Dr. Alim Rüstem Aslan; 2. sayı "MART 2022 SAYI 02", özel röportaj Doç. Dr. Hülya Cebeci; 3. sayı "NİSAN 2025 SAYI 03", özel röportaj Cem Doğut, kapakta Starship Projesi, Airbus, Türk Havacılık Tarihi, Ralli Araçlarında Aerodinamik | https://online.fliphtml5.com/efsnq/bwyj/files/large/1.webp · https://online.fliphtml5.com/efsnq/pqfn/files/large/1.webp · https://blog.euroavia.eu/wp-content/uploads/2025/05/image-13-708x1024.png (AESTRO yazısının içinde) → gorseller/aestro/ |
 | Ajan raporunda olup kaynakta bulamadığım: Lustrum'da dekan konuşması (Patras blog yazısında aramada çıkmadı) — kullanılmadı | — |
+
+## v8 eki — 11 Ekim 2026 öğleden sonra (bu oturumda kaynağından okundu)
+
+| Olgu | Kaynak (okunan kopya) |
+|---|---|
+| 2001 etkinlik sayfası: ilk seminerin (11 Ocak) konuşmacısı Arş. Gör. Alper Akyüz; KSB'den kaynaklanan teknik aksaklıklara rağmen "sohbet havasında" geçti; 2 Şubat Cuma Cafe Guitar'da canlı müzikli toplantı; Cosy Classic semineri iki bölüm: 1. kısım 28 Şubat, 2. kısım 22 Mart (Fen Edebiyat Fakültesi Y1 amfisi, 40+ kişi). Önceki notta yalnız 22 Mart vardı; çelişki değil, iki bölüm | https://web.archive.org/web/20011103093209/http://www.uumk.itu.edu.tr/etkinlik/index.htm (yerel: .cekim-gecici/uumk/indirme/v8/html/etk2001.htm, cp1254) |
+| İlk büyük parti: 13 Ocak Cumartesi 19:30, giriş ücretsiz, 40–50 kişilik yer ayrılmış, 70'e yakın İTÜ'lü ve dışından katılımcı; pasta, DJ, canlı müzik, son saatte "açık sahne"; UUMK başkanı ilk kez bas gitar çaldı; yer Cafe Guitar (Gitar Bar), Ayhan Işık Sok. no:11 | https://web.archive.org/web/20020623144834/http://www.uumk.itu.edu.tr/etkinlik/ilk_buyuk_parti.htm |
+| Cosy semineri sayfası: "Amatör Uçak İmalatı ve Cosy Classic Projesi Semineri, 28 Şubat 2001"; Cevat Sunol 1996'da İTÜ Uçak Mühendisliği'nden mezun | https://web.archive.org/web/20020623144956/http://www.uumk.itu.edu.tr/etkinlik/uumk_seminer2.htm |
+| Lustrum günü 30 Mart 2024'te İTÜ Süleyman Demirel Kültür Merkezi'nde (UUBF haberi, 29 Kasım 2024) | https://uubf.itu.edu.tr/en/home/2024/11/29/euroavia-election-meeting-(emeac)-and-lustrum-emeac-2024 (yerel: indirme/html/uubf_emeac_haber.html) |
+| Temmuz 2025 bülteni: Turkish Technic atölyesinde Kahoot bilgi yarışması, kazananlara ödül | https://blog.euroavia.eu/2025/07/31/july-2025-update-from-as-istanbul/ |
+| Mayıs 2026 bülteni görsel sırası: 1 kulüpler festivali, 2 model uçak atölyesi, 3 kutu oyunu gecesi; Temmuz 2026 bülteni: tişört görseli tasarım yarışması paragrafından sonra; imza "Ahmet Buğra Çalışkan & The AS Istanbul Local Board" | https://blog.euroavia.eu/2026/05/31/as-istanbul-may-2026-updates/ · https://blog.euroavia.eu/2026/07/29/as-istanbul-july-2026-updates/ |
+| EMEAC 2003 grup fotoğrafı: kongre sitesi ana sayfasına Ağustos 2003 kopyasında eklenmiş (Şubat ve Mayıs 2003 kopyalarında yok), fotoğraf albümüne bağlanıyor; görsel 326×160 | https://web.archive.org/web/20030809042458/http://www.uumk.itu.edu.tr/emeac/main.htm |
+| Eski sitede Fly-In ve Lizbon EMEAC fotoğraf albümleri var (foto/foto_flyin, foto/foto_lisbon) ama tam boy görseller arşivlenmemiş (Wayback 404 sayfası döndü) — kullanılmadı | CDX: http://web.archive.org/cdx/search/cdx?url=uumk.itu.edu.tr/foto* |
+
+### Tarihçe galerisi — fotoğrafların kaynağı ve içerik kontrolü (her biri gözle bakıldı)
+| Dosya (gorseller/tarihce/) | Kaynak | İçerik / altyazının dayanağı |
+|---|---|---|
+| 2003-1 | https://web.archive.org/web/20030809042458/http://www.uumk.itu.edu.tr/emeac/main.htm (images/grup.jpg) | "EMEAC PHOTOS" yazılı grup görseli |
+| 2012-1…6 | https://web.archive.org/web/20240919102423/https://uumk.itu.edu.tr/ata-iha-takimi/ ("Son dönem başarılarımız" kaydırıcısı: 2006-ekibi, ata7-yarisma-2, ata8-ekibi, ata9-ekibi, ATA10, ATA10-IMALAT) | altyazılar dosya adlarından; ATA-8 karesinde "14/02/2007" damgası |
+| 2018-1…4 | https://web.archive.org/web/20240919102246/https://uumk.itu.edu.tr/euroavia/ ("AMEAC & EMEAC" bölümündeki 4 WhatsApp görseli, Ekim 2020 yüklemesi) | görünen: Sultanahmet Camii, fakülte bahçesindeki jet + EUROAVIA bayrağı, Dassault Systèmes perdesi, gala. Yıl görselde yok; bölümün metni İstanbul'daki EMEAC'ı (2018) anlatıyor |
+| 2019-1…3 | https://web.archive.org/web/20241109192624/https://uumk.itu.edu.tr/etkinliklerimiz/ (DSCN2231, DSCN2211, IMG_0362) | 2019-1 perdede "Dört Bir Yandan Havacılık Paneli"; 2-3 aynı salon. Merdivendeki grup fotoğrafı (IMG_0067) etkinliği belirsiz, kullanılmadı |
+| 2021-1…5 | ATA sayfası, "ATA'21" kaydırıcısı (ata1–ata5, 2021/09 yüklemesi) | 2021-1'de TEKNOFEST "İnsansız Hava Araçları Yarışması" pankartı |
+| 2024-1…5 | https://blog.euroavia.eu/2024/05/02/lustrum-emeac-2024-from-as-istanbul/ | tekne, kongre salonu (2), Ayasofya, Dolmabahçe Saat Kulesi |
+| 2024-6 | UUBF haberi (yukarıda) | "LUSTRUM&EMEAC ISTANBUL 2024 · 29 March 6 April" afişi |
+| 2025-1, 2025-2 | https://blog.euroavia.eu/2025/07/31/july-2025-update-from-as-istanbul/ | atölye ve sonu |
+| 2026-1…4 | Mayıs ve Temmuz 2026 bültenleri (yukarıdaki sırayla) | festival, model uçak atölyesi, kutu oyunu, tişört |
+| 2026-5 | https://www.instagram.com/ituuumk/p/DXzDI6JDebW/ (önceden indirilmiş) | Pegasus hangarı |
+| logo-as-istanbul-beyaz.svg | https://euroavia.eu/wp-content/uploads/ist.svg (notlar/logo-foto-kurulus.md #6) | renk #003366 → #f2f2ef, görüş kutusu çizim sınırına (134 112 756 800) |

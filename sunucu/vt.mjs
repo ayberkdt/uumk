@@ -60,6 +60,15 @@ const GOCLER = [
      yayinda INTEGER NOT NULL DEFAULT 1
    );
    CREATE INDEX kayit_etkinlik ON kayit(etkinlik_id);`,
+  /* 2 — üyelerin "sorun bildir / soru sor" mesajları (yönetim adresine e-postayla da gider) */
+  `CREATE TABLE bildirim (
+     id INTEGER PRIMARY KEY,
+     kullanici_id INTEGER REFERENCES kullanici(id) ON DELETE SET NULL,
+     ad TEXT NOT NULL, eposta TEXT NOT NULL,
+     konu TEXT NOT NULL CHECK (konu IN ('site', 'etkinlik', 'uyelik', 'diger')),
+     mesaj TEXT NOT NULL,
+     olusturma TEXT NOT NULL
+   );`,
 ];
 
 export function vtAc(yol) {

@@ -60,6 +60,20 @@ async function yazilariCiz() {
   }));
 }
 
+async function bildirimleriCiz() {
+  const r = await api('/api/yonetim/bildirimler'), liste = r.veri?.bildirimler || [];
+  if (!liste.length) { $('#bildirim-liste').replaceChildren(Object.assign(document.createElement('li'), { textContent: 'Henüz mesaj yok.' })); return; }
+  $('#bildirim-liste').replaceChildren(...liste.map((b) => {
+    const li = document.createElement('li');
+    li.innerHTML = '<p class="ybildirim__ust"><b></b> · <span></span> · <time></time></p><p class="ybildirim__mesaj"></p><a class="dugme dugme--ikincil">Yanıtla</a>';
+    li.querySelector('b').textContent = b.konuAd; li.querySelector('span').textContent = `${b.ad} <${b.eposta}>`;
+    li.querySelector('time').textContent = new Date(b.olusturma).toLocaleString('tr-TR', { timeZone: 'Europe/Istanbul' }); li.querySelector('time').dateTime = b.olusturma;
+    li.querySelector('.ybildirim__mesaj').textContent = b.mesaj;
+    li.querySelector('a').href = `mailto:${encodeURIComponent(b.eposta)}?subject=${encodeURIComponent('Re: ' + b.konuAd)}`;
+    return li;
+  }));
+}
+
 for (const [form, yol, sonra] of [[$('#etkinlik-form'), '/api/yonetim/etkinlikler', etkinlikleriCiz], [$('#yazi-form'), '/api/yonetim/yazilar', yazilariCiz]]) {
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -75,6 +89,6 @@ else if (!ben.veri?.kullanici) durum.innerHTML = 'Bu sayfa için yönetici hesab
 else if (ben.veri.kullanici.rol !== 'yonetici') durum.textContent = 'Bu hesabın yönetim yetkisi yok.';
 else {
   durum.textContent = `${ben.veri.kullanici.ad} ${ben.veri.kullanici.soyad} olarak giriş yapıldı.`;
-  $('#etkinlik-bolum').hidden = false; $('#yazi-bolum').hidden = false;
-  etkinlikleriCiz(); yazilariCiz();
+  $('#etkinlik-bolum').hidden = false; $('#yazi-bolum').hidden = false; $('#bildirim-bolum').hidden = false;
+  etkinlikleriCiz(); yazilariCiz(); bildirimleriCiz();
 }

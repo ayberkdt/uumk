@@ -1,0 +1,439 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>İTÜ UUMK — Uçak Uzay Mühendisliği Kulübü</title>
+<meta name="description" content="İTÜ Uçak Uzay Mühendisliği Kulübü (UUMK), EUROAVIA'da AS Istanbul: gündem, etkinlik kayıtları, son etkinlikler, yazılar ve kulübün ekipleri.">
+<meta name="theme-color" content="#ecebe7">
+<meta property="og:type" content="website">
+<meta property="og:title" content="İTÜ UUMK — Uçak Uzay Mühendisliği Kulübü">
+<meta property="og:description" content="Gündem, etkinlik kayıtları, son etkinlikler ve yazılar.">
+<meta property="og:locale" content="tr_TR">
+<meta property="og:locale:alternate" content="en_GB">
+<link rel="alternate" hreflang="tr" href="./">
+<link rel="alternate" hreflang="en" href="./?dil=en">
+<link rel="icon" href="gorseller/favicon.svg" type="image/svg+xml">
+<link rel="preload" href="yazitipleri/instrument-sans/instrument-sans-latin-wdth-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="yazitipleri/source-serif-4/source-serif-4.woff2" as="font" type="font/woff2" crossorigin>
+<script>(function(){var h=document.documentElement;if(location.protocol==='file:')return;h.classList.add('js');try{var q=new URLSearchParams(location.search);if(q.get('az')==='1'||matchMedia('(prefers-reduced-motion: reduce)').matches)h.classList.add('az');var p=q.get('dil'),k=null;try{k=localStorage.getItem('uumk-dil')}catch(e){}var d=/bot|crawl|spider|slurp/i.test(navigator.userAgent)?'tr':(p==='tr'||p==='en')?p:(k==='tr'||k==='en')?k:(String(navigator.language||'tr').slice(0,2).toLowerCase()==='tr'?'tr':'en');if(d==='en'){h.lang='en';h.classList.add('dil-bekle');setTimeout(function(){h.classList.remove('dil-bekle')},1500)}}catch(e){}})()</script>
+<script type="importmap">{"imports":{"three":"./vendor/three-r184/three.module.min.js"}}</script>
+<link rel="stylesheet" href="site.css">
+<script type="module" src="site.mjs"></script>
+</head>
+<body>
+<a class="atla" href="#icerik" data-i18n="atla">İçeriğe geç</a>
+
+<header class="ust" id="ust">
+  <div class="ust__ic">
+    <a class="ust__logo" href="#giris"><img src="gorseller/logo-uumk-360.png" width="96" height="40" alt="İTÜ UUMK — Uçak Uzay Mühendisliği Kulübü, başa dön" data-i18n-alt="logoAlt"></a>
+    <nav class="menu" id="menu" aria-label="Ana menü" data-i18n-aria="menuEtiket">
+      <ul>
+        <li><a href="#gundem" data-i18n="navGundem">Gündem</a></li>
+        <li><a href="#etkinlikler" data-i18n="navEtkinlikler">Son etkinlikler</a></li>
+        <li><a href="#yazilar" data-i18n="navYazilar">Yazılar</a></li>
+        <li><a href="#kulup" data-i18n="navKulup">Kulüp</a></li>
+        <li><a href="#ag">EUROAVIA</a></li>
+      </ul>
+    </nav>
+    <div class="ust__sag">
+      <button class="dil" id="dil-dugme" type="button" lang="en" aria-label="Switch to English">EN</button>
+      <a class="dugme dugme--ikincil hesap-dugme" id="hesap-dugme" href="#hesap">Giriş yap</a>
+      <button class="menu-dugme" id="menu-dugme" type="button" aria-expanded="false" aria-controls="menu" aria-label="Menüyü aç"><span></span></button>
+    </div>
+  </div>
+</header>
+
+<main id="icerik">
+
+<!-- ───────────── Açılış: kâğıt uçak ───────────── -->
+<section class="hikaye" id="giris" aria-labelledby="giris-baslik">
+  <div class="hikaye__iz" id="hikaye-iz">
+    <div class="hikaye__sahne">
+      <canvas class="hikaye__tuval" id="kagit-tuval" role="img" aria-label="Kulübün kâğıt uçak şablonu kaydırdıkça katlanıp uçağa dönüşür." data-i18n-aria="kagitEtiket"></canvas>
+      <div class="hikaye__metin">
+        <ol class="hikaye__adimlar">
+          <li class="hikaye__adim" data-adim="0" data-etkin>
+            <h1 id="giris-baslik" data-i18n="h0">İTÜ Uçak Uzay Mühendisliği Kulübü</h1>
+            <p data-i18n="h0p">UUMK, İTÜ Uçak ve Uzay Bilimleri Fakültesi öğrencilerinin kulübüdür. EUROAVIA'daki adı AS Istanbul.</p>
+            <a class="dugme dugme--birincil" href="#gundem" data-i18n="h4cta">Gündeme git</a>
+          </li>
+          <li class="hikaye__adim" data-adim="1">
+            <p class="hikaye__no" data-i18n="h1no">Kuruluş</p>
+            <h2 data-i18n="h1">2001'de kuruldu, aynı yıl EUROAVIA'ya katıldı</h2>
+            <p data-i18n="h1p">Kulüp 4 Ocak 2001'de İTÜ'de kuruldu. 7 Mayıs 2001'de Varşova'daki kongrede EUROAVIA ağına aday üye olarak katıldı; bugün tam üyedir.</p>
+          </li>
+          <li class="hikaye__adim" data-adim="2">
+            <p class="hikaye__no" data-i18n="h2no">Ekipler</p>
+            <h2 data-i18n="h2">Beş ekip, her yıl iki teknik gezi</h2>
+            <p data-i18n="h2p">Etkinlik, Ar-Ge, Sponsorluk, Tanıtım ve Tasarım ekipleri; yılda iki teknik gezi, iki model uçak atölyesi, seminerler, müze gezisi.</p>
+          </li>
+          <li class="hikaye__adim" data-adim="3">
+            <p class="hikaye__no" data-i18n="h3no">EUROAVIA</p>
+            <h2 data-i18n-html="h3"><span data-ag="ulke">15</span> ülkede <span data-ag="grup">40</span> öğrenci grubu</h2>
+            <p data-i18n="h3p">EUROAVIA, Avrupa'daki havacılık ve uzay öğrencilerinin ağıdır.</p>
+          </li>
+          <li class="hikaye__adim" data-adim="4">
+            <p class="hikaye__no" data-i18n="h4no">Gündem</p>
+            <h2 data-i18n="h4">Bu dönemin gündemi</h2>
+            <a class="dugme dugme--birincil" href="#gundem" data-i18n="h4cta">Gündeme git</a>
+          </li>
+        </ol>
+      </div>
+      <ol class="hikaye__ilerleme" aria-hidden="true"><li data-gecti></li><li></li><li></li><li></li><li></li></ol>
+    </div>
+  </div>
+</section>
+
+<!-- ───────────── 01 Gündem ───────────── -->
+<section class="bolum" id="gundem" aria-labelledby="gundem-baslik">
+  <div class="kap">
+    <header class="bolum__bas">
+      <p class="bolum__ust" data-i18n="gundemUst">Gündem</p>
+      <h2 id="gundem-baslik" data-i18n="gundemBaslik">Kayda açık etkinlikler ve duyurular</h2>
+      <p class="bolum__giris" data-i18n="gundemGiris">Hesabınla giriş yaptıysan etkinliğe tek tıkla kaydolursun. Hesabın yoksa misafir olarak kaydolabilirsin; bu durumda bilgilerini her etkinlikte yeniden girersin.</p>
+    </header>
+    <div class="gundem">
+      <div>
+        <h3 class="gundem__baslik" data-i18n="etkinlikBaslik">Etkinlikler</h3>
+        <ul class="etkinlikler" id="etkinlik-listesi" aria-live="polite">
+          <li class="etkinlik etkinlik--bos" data-i18n="etkinlikJsYok">Etkinlik kaydı için JavaScript gerekir. Duyurular Instagram'da: @ituuumk.</li>
+        </ul>
+      </div>
+      <div>
+        <h3 class="gundem__baslik" data-i18n="duyuruBaslik">Duyurular</h3>
+        <ul class="duyurular">
+          <li><time datetime="2026-07-29" data-i18n="d1t">Temmuz 2026</time><h4 data-i18n="d1">2026–27 programı hazırlanıyor</h4><p data-i18n-html="d1p">Mayıs 2026'da seçilen yönetim yeni dönemin etkinliklerini planlıyor. Tarihler belli olunca burada ve <a href="https://www.instagram.com/ituuumk/" target="_blank" rel="noopener">@ituuumk</a> hesabında duyurulur.</p></li>
+          <li><time datetime="2026-08-19" data-i18n="d2t">19 Ağustos 2026</time><h4 data-i18n="d2">Yeni öğrenciler: fakülte WhatsApp grupları</h4><p data-i18n="d2p">Fakülteye yeni gelenler gruplara katılmak için yerleştirme sonucunu kulübün Instagram hesabına mesajla gönderebilir.</p></li>
+          <li><time datetime="2026-11-03" data-i18n="d3t">3–8 Kasım 2026</time><h4 data-i18n="d3">EUROAVIA Ideathon 2026 · Brugge</h4><p data-i18n-html="d3p">Başvurular EUROAVIA üzerinden: <a href="https://euroavia.eu/events/" target="_blank" rel="noopener">euroavia.eu/events</a>.</p></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ───────────── 02 Son etkinlikler ───────────── -->
+<section class="bolum bolum--koyu" id="etkinlikler" aria-labelledby="etk-baslik">
+  <div class="kap">
+    <header class="bolum__bas">
+      <p class="bolum__ust" data-i18n="etkUst">Son etkinlikler</p>
+      <h2 id="etk-baslik" data-i18n="etkBaslik">2025 ve 2026'da neler yaptık</h2>
+      <p class="bolum__giris" data-i18n="etkGiris">Tarihler kaynak gönderideki gibi; bazılarında yalnız ay ya da dönem var. Bir satırı açınca ayrıntı ve kaynak görünür.</p>
+    </header>
+    <div class="pano-kap">
+      <table class="pano" id="pano">
+        <caption class="gorunmez" data-i18n="panoBaslik">UUMK ve AS Istanbul etkinlikleri, 2025 ve 2026</caption>
+        <thead><tr><th scope="col" data-i18n="sTarih">Tarih</th><th scope="col" data-i18n="sEtkinlik">Etkinlik</th><th scope="col" class="pano__kapi" data-i18n="sKapi">Yer</th><th scope="col" data-i18n="sDurum">Durum</th></tr></thead>
+        <tbody>
+          <tr data-bilet="pegasus"><td data-flap data-i18n="pBahar">Bahar 26</td><th scope="row"><button type="button" data-flap data-i18n="p10">Pegasus teknik gezisi</button></th><td class="pano__kapi" data-flap data-i18n="p10k">Hangar</td><td><span class="durum" data-flap data-i18n="yapildi">Yapıldı</span></td></tr>
+          <tr data-bilet="tusas"><td data-flap data-i18n="pBahar">Bahar 26</td><th scope="row"><button type="button" data-flap data-i18n="p9">TUSAŞ teknik gezisi</button></th><td class="pano__kapi" data-flap>TUSAŞ</td><td><span class="durum" data-flap data-i18n="yapildi">Yapıldı</span></td></tr>
+          <tr data-bilet="muze"><td data-flap data-i18n="pBahar">Bahar 26</td><th scope="row"><button type="button" data-flap data-i18n="p8">Havacılık müzesi gezisi</button></th><td class="pano__kapi" data-flap data-i18n="p8k">Müze</td><td><span class="durum" data-flap data-i18n="yapildi">Yapıldı</span></td></tr>
+          <tr data-bilet="atolye"><td data-flap data-i18n="pBahar">Bahar 26</td><th scope="row"><button type="button" data-flap data-i18n="p7">Model uçak atölyesi</button></th><td class="pano__kapi" data-flap data-i18n="p7k">Fakülte</td><td><span class="durum" data-flap data-i18n="yapildi">Yapıldı</span></td></tr>
+          <tr data-bilet="oyun"><td data-flap data-i18n="p6t">Mar 26</td><th scope="row"><button type="button" data-flap data-i18n="p6">Kutu oyunu gecesi</button></th><td class="pano__kapi" data-flap>İTÜ Genç Ofis</td><td><span class="durum" data-flap data-i18n="yapildi">Yapıldı</span></td></tr>
+          <tr data-bilet="sully"><td data-flap>03.03.26</td><th scope="row"><button type="button" data-flap data-i18n="p5">Film gösterimi: Sully</button></th><td class="pano__kapi" data-flap>Bisikletevi</td><td><span class="durum" data-flap data-i18n="duyuruldu">Duyuruldu</span></td></tr>
+          <tr data-bilet="tisort"><td data-flap>02.03.26</td><th scope="row"><button type="button" data-flap data-i18n="p4">Tişört tasarım yarışması</button></th><td class="pano__kapi" data-flap data-i18n="p4k">Çevrimiçi</td><td><span class="durum" data-flap data-i18n="yapildi">Yapıldı</span></td></tr>
+          <tr data-bilet="rckurs"><td data-flap>17.02.26</td><th scope="row"><button type="button" data-flap data-i18n="p3">Model uçak ve RC kursu</button></th><td class="pano__kapi" data-flap>SİVEK × UUMK</td><td><span class="durum" data-flap data-i18n="duyuruldu">Duyuruldu</span></td></tr>
+          <tr data-bilet="modelleme"><td data-flap data-i18n="p2t">Oca 26</td><th scope="row"><button type="button" data-flap data-i18n="p2">Uçak modelleme</button></th><td class="pano__kapi" data-flap data-i18n="p2k">SİVEK ile</td><td><span class="durum" data-flap data-i18n="yapildi">Yapıldı</span></td></tr>
+          <tr data-bilet="ttechnic"><td data-flap>13.05.25</td><th scope="row"><button type="button" data-flap>Turkish Technic workshop</button></th><td class="pano__kapi" data-flap>İTÜ</td><td><span class="durum" data-flap data-i18n="yapildi">Yapıldı</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="fotolar" id="fotolar">
+      <figure><img src="gorseller/foto/pegasus-2026-480.jpg" srcset="gorseller/foto/pegasus-2026-480.jpg 480w, gorseller/foto/pegasus-2026-960.jpg 960w" sizes="(max-width: 860px) 50vw, 23rem" width="480" height="360" loading="lazy" alt="Pegasus bakım hangarında bir A320neo önünde kulüp üyeleri" data-i18n-alt="f1a"><figcaption data-i18n="f1">Pegasus teknik gezisi, bahar 2026</figcaption></figure>
+      <figure><img src="gorseller/foto/modelleme-2026-480.jpg" srcset="gorseller/foto/modelleme-2026-480.jpg 480w, gorseller/foto/modelleme-2026-960.jpg 960w" sizes="(max-width: 860px) 50vw, 23rem" width="480" height="360" loading="lazy" alt="Masada model uçak planı üzerinde çalışan öğrenciler" data-i18n-alt="f2a"><figcaption data-i18n="f2">Uçak modelleme, Ocak 2026</figcaption></figure>
+      <figure><img src="gorseller/foto/kutu-oyun-2026-480.jpg" srcset="gorseller/foto/kutu-oyun-2026-480.jpg 480w, gorseller/foto/kutu-oyun-2026-960.jpg 960w" sizes="(max-width: 860px) 50vw, 23rem" width="480" height="360" loading="lazy" alt="Masa başında kart oyunu oynayan öğrenciler" data-i18n-alt="f3a"><figcaption data-i18n="f3">Kutu oyunu gecesi, Mart 2026</figcaption></figure>
+      <p class="kaynak fotolar__kaynak" data-i18n="fKaynak">Fotoğraflar: İTÜ UUMK Instagram.</p>
+    </div>
+
+    <div class="bilet-metinleri" hidden>
+      <article data-id="ttechnic" data-kaynak="https://blog.euroavia.eu/2025/07/31/july-2025-update-from-as-istanbul/" data-kaynak-ad="EUROAVIA" data-tarih="13 Mayıs 2025 · 13.30–16.30" data-i18n-html="b1">Turkish Technic'ten Kerem Said Gürman (Ar-Ge, kabin iç modifikasyonu) ve Dr. Yusuf Kahraman (kabin güvenliği tasarım ve sertifikasyon mühendisi) İTÜ'de konuştu. Yaklaşık 30 kişi katıldı.</article>
+      <article data-id="modelleme" data-kaynak="https://www.instagram.com/ituuumk/p/DTa3I9dDdm_/" data-kaynak-ad="Instagram" data-tarih="Ocak 2026" data-i18n-html="b2">İsmet İlhan Hoca ile uçak modelleme etkinliği; SİVEK ile ortak.</article>
+      <article data-id="rckurs" data-kaynak="https://www.instagram.com/itusivek/p/DU2pGNejJbm/" data-kaynak-ad="Instagram" data-tarih="17 Şubat 2026" data-i18n-html="b3">SİVEK × UUMK: model uçak tekâmül sertifikası ve RC eğitimi veren kursun kayıtları açıldı.</article>
+      <article data-id="tisort" data-kaynak="https://www.instagram.com/ituuumk/p/DW32iunDXrl/" data-kaynak-ad="Instagram" data-tarih="2 Mart – 8 Nisan 2026" data-i18n-html="b4">Kulübün 2026 tişörtü yarışmayla seçildi. Ön yüz: yarışmanın kazananı Kağan Köseoğlu. Arka yüz: gönüllü katkıyla Ayberk Demirkanat.</article>
+      <article data-id="sully" data-kaynak="https://www.instagram.com/itusivek/p/DVD9Tq9jEch/" data-kaynak-ad="Instagram" data-tarih="3 Mart 2026 · 20.00–22.00" data-i18n-html="b5">SİVEK ve UUMK, Sully filminin Bisikletevi'nde gösterileceğini duyurdu; gösterim tüm İTÜ öğrencilerine açıktı.</article>
+      <article data-id="oyun" data-kaynak="https://www.instagram.com/ituuumk/p/DWPJUaADvpb/" data-kaynak-ad="Instagram" data-tarih="Mart 2026 · 18.00" data-i18n-html="b6">İTÜ Oyun Kulübü ile kutu oyunu gecesi, İTÜ Genç Ofis'te.</article>
+      <article data-id="atolye" data-kaynak="https://blog.euroavia.eu/2026/05/31/as-istanbul-may-2026-updates/" data-kaynak-ad="EUROAVIA" data-tarih="Bahar 2026" data-i18n-html="b7">Üyeler sıfırdan model uçak yaptı.</article>
+      <article data-id="muze" data-kaynak="https://blog.euroavia.eu/2026/05/31/as-istanbul-may-2026-updates/" data-kaynak-ad="EUROAVIA" data-tarih="Bahar 2026" data-i18n-html="b8">Üyeler havacılık müzesini gezdi.</article>
+      <article data-id="tusas" data-kaynak="https://blog.euroavia.eu/2026/05/31/as-istanbul-may-2026-updates/" data-kaynak-ad="EUROAVIA" data-tarih="Bahar 2026" data-i18n-html="b9">Üyeler TUSAŞ'ın üretim hatlarını gezdi.</article>
+      <article data-id="pegasus" data-kaynak="https://www.instagram.com/ituuumk/p/DXzDI6JDebW/" data-kaynak-ad="Instagram" data-tarih="Bahar 2026 (1 Mayıs'ta paylaşıldı)" data-i18n-html="b10">Üyeler Pegasus'un bakım hangarında bakım ve onarım işlerini izledi, mühendislerle konuştu.</article>
+    </div>
+  </div>
+</section>
+
+<!-- ───────────── 03 Yazılar ───────────── -->
+<section class="bolum" id="yazilar" aria-labelledby="yazi-baslik">
+  <div class="kap">
+    <header class="bolum__bas">
+      <p class="bolum__ust" data-i18n="yaziUst">Yazılar</p>
+      <h2 id="yazi-baslik" data-i18n="yaziBaslik">Kulübün yazdıkları</h2>
+      <p class="bolum__giris" data-i18n="yaziGiris">AS Istanbul'un EUROAVIA blogundaki dönem yazıları ve AESTRO dergisi.</p>
+    </header>
+    <ul class="yazilar" id="yazi-listesi">
+      <li class="yazi"><p class="yazi__ust"><time datetime="2026-07-29">29 Temmuz 2026</time> · EUROAVIA</p><h3><a href="https://blog.euroavia.eu/2026/07/29/as-istanbul-july-2026-updates/" target="_blank" rel="noopener">AS Istanbul Temmuz 2026 güncellemesi</a></h3><p>Mayıs 2026 yerel kurul seçimi, Pegasus Airlines teknik gezisi ve tişört tasarım yarışması.</p></li>
+      <li class="yazi"><p class="yazi__ust"><time datetime="2026-05-31">31 Mayıs 2026</time> · EUROAVIA</p><h3><a href="https://blog.euroavia.eu/2026/05/31/as-istanbul-may-2026-updates/" target="_blank" rel="noopener">AS Istanbul Mayıs 2026 güncellemesi</a></h3><p>Bahar 2026: kulüpler festivali, tanışma toplantısı, model uçak atölyesi, havacılık müzesi, TUSAŞ gezisi, kutu oyunu gecesi.</p></li>
+      <li class="yazi"><p class="yazi__ust"><time datetime="2025-07-31">31 Temmuz 2025</time> · EUROAVIA</p><h3><a href="https://blog.euroavia.eu/2025/07/31/july-2025-update-from-as-istanbul/" target="_blank" rel="noopener">AS Istanbul Temmuz 2025 güncellemesi</a></h3><p>13 Mayıs 2025&#x27;te İTÜ&#x27;de Turkish Technic mühendisleriyle yapılan workshop; yaklaşık 30 katılımcı.</p></li>
+      <li class="yazi"><p class="yazi__ust"><time datetime="2025-05-25">25 Mayıs 2025</time> · EUROAVIA</p><h3><a href="https://blog.euroavia.eu/2025/05/25/the-journey-of-the-aestro-magazine-from-as-istanbul/" target="_blank" rel="noopener">AESTRO dergisi: 1., 2. ve 3. sayı</a></h3><p>1. sayı Şubat 2021, 2. sayı Mart 2022; salgın ve 2023 depremi yüzünden ara; 3. sayı Nisan 2025, 19 gönüllü yazarla.</p></li>
+      <li class="yazi"><p class="yazi__ust"><time datetime="2024-09-28">28 Eylül 2024</time> · EUROAVIA</p><h3><a href="https://blog.euroavia.eu/2024/09/28/wrapping-up-the-academic-year-from-as-istanbul/" target="_blank" rel="noopener">Akademik yılın kapanışı</a></h3><p>Yıl sonu genel kurulu, yeni yerel kurulun seçimi ve kapanış mangalı.</p></li>
+      <li class="yazi"><p class="yazi__ust"><time datetime="2024-08-27">27 Ağustos 2024</time> · EUROAVIA</p><h3><a href="https://blog.euroavia.eu/2024/08/27/turkish-technic-field-trip-from-as-istanbul/" target="_blank" rel="noopener">Turkish Technic teknik gezisi</a></h3><p>30 öğrenci Sabiha Gökçen&#x27;deki Turkish Technic tesisini gezdi: dar ve geniş gövde hangarları, Ar-Ge ve inovasyon ofisleri.</p></li>
+      <li class="yazi"><p class="yazi__ust"><time datetime="2024-05-02">2 Mayıs 2024</time> · EUROAVIA</p><h3><a href="https://blog.euroavia.eu/2024/05/02/lustrum-emeac-2024-from-as-istanbul/" target="_blank" rel="noopener">Lustrum ve EMEAC 2024</a></h3><p>AS Istanbul&#x27;un ağırladığı hafta: 30 Mart&#x27;ta EUROAVIA&#x27;nın 65. yılı, 1–5 Nisan&#x27;da EMEAC seçim kongresi.</p></li>
+      <li class="yazi"><p class="yazi__ust"><time datetime="2022-03">Mart 2022</time> · AESTRO</p><h3><a href="https://online.fliphtml5.com/efsnq/pqfn/" target="_blank" rel="noopener">AESTRO, 2. sayı</a></h3><p>Kulübün havacılık ve uzay dergisinin ikinci sayısı (Türkçe).</p></li>
+      <li class="yazi"><p class="yazi__ust"><time datetime="2021-02">Şubat 2021</time> · AESTRO</p><h3><a href="https://online.fliphtml5.com/efsnq/bwyj/" target="_blank" rel="noopener">AESTRO, 1. sayı</a></h3><p>Kulübün havacılık ve uzay dergisinin ilk sayısı (Türkçe).</p></li>
+    </ul>
+  </div>
+</section>
+
+<!-- ───────────── 04 Kulüp ───────────── -->
+<section class="bolum" id="kulup" aria-labelledby="kulup-baslik">
+  <div class="kap">
+    <header class="bolum__bas">
+      <p class="bolum__ust" data-i18n="kulupUst">Kulüp</p>
+      <h2 id="kulup-baslik" data-i18n="kulupBaslik">Ekipler, tarihçe, yıllık program</h2>
+      <p class="bolum__giris" data-i18n-html="kulupGiris">Üye olan herkes ilgisine göre bir ekipte görev alabilir. Üye olmak için <a href="https://forms.gle/NcRygayZjb2JumV77" target="_blank" rel="noopener">üyelik formunu</a> doldur.</p>
+    </header>
+    <div class="kulup">
+      <div>
+        <h3 class="gundem__baslik" data-i18n="tarihce">Tarihçe</h3>
+        <ol class="kurulus">
+          <li><time>1983</time><p data-i18n="k1">İTÜ Uçak ve Uzay Bilimleri Fakültesi kuruldu.</p></li>
+          <li><time>2001</time><p data-i18n="k2">4 Ocak: kulüp İTÜ'de kuruldu. 7 Mayıs: Varşova'daki kongrede EUROAVIA ağına aday üye (Prospective Affiliated Society) olarak katıldı.</p></li>
+          <li><time>2003</time><p data-i18n="k3">AS Istanbul, EUROAVIA'nın EMEAC kongresini İstanbul'da düzenledi.</p></li>
+          <li><time>2024</time><p data-i18n="k4">EUROAVIA'nın 65. yılı (Lustrum) ve EMEAC kongresi İstanbul'da.</p></li>
+        </ol>
+        <p class="kaynak" data-i18n-html="kurulusKaynak">Kaynak: kulübün 2001–2003 sayfaları (<a href="https://web.archive.org/web/20020202032911/http://www.uumk.itu.edu.tr/aboutist.htm" target="_blank" rel="noopener">arşiv</a>), <a href="https://uubf.itu.edu.tr/en/about-us/history" target="_blank" rel="noopener">uubf.itu.edu.tr</a>. EUROAVIA'nın bugünkü sitesi grubu "1999'dan beri" diye gösteriyor; EUROAVIA'nın Eylül 2000 grup listesinde İstanbul yer almıyor.</p>
+      </div>
+      <div>
+        <ul class="ekipler">
+          <li class="ekip"><h3 data-i18n="e1">Etkinlik</h3><p data-i18n="e1p">Seminer, panel, atölye ve teknik gezileri; açılış mangalı, film gecesi gibi buluşmaları hazırlar.</p></li>
+          <li class="ekip"><h3 data-i18n="e2">Ar-Ge</h3><p data-i18n="e2p">Teknik eğitimleri düzenler: MATLAB, SolidWorks, LaTeX, Abaqus, ANSYS, XFLR5.</p></li>
+          <li class="ekip"><h3 data-i18n="e3">Sponsorluk</h3><p data-i18n="e3p">Şirketlerle iş birliği kurar; üyeler bu anlaşmalarla ürün, eğitim ve hizmet alır.</p></li>
+          <li class="ekip"><h3 data-i18n="e4">Tanıtım</h3><p data-i18n="e4p">Kulübün sosyal medyasını yürütür.</p></li>
+          <li class="ekip"><h3 data-i18n="e5">Tasarım</h3><p data-i18n="e5p">Afişleri, kulübe özel ürünleri ve paylaşım görsellerini tasarlar.</p></li>
+        </ul>
+        <div class="ritim">
+          <h3 data-i18n="ritim">Her yıl tekrarlananlar</h3>
+          <ul>
+            <li data-i18n-html="r1"><b>2 teknik gezi:</b> biri İstanbul'daki bakım ve motor şirketlerine, biri Ankara ve Eskişehir'deki savunma ve uzay şirketlerine.</li>
+            <li data-i18n-html="r2"><b>2 model uçak atölyesi</b> (güz ve bahar), Türk Hava Kurumu eğitmenleriyle fakülte atölyesinde.</li>
+            <li data-i18n-html="r3"><b>Ayrıca:</b> açılış ve kapanış mangalı, Yeşilköy Havacılık Müzesi gezisi, seminerler.</li>
+          </ul>
+        </div>
+        <p class="kaynak" data-i18n-html="kulupKaynak">Kaynak: kulübün eski sitesi (arşiv kopyası, Kasım 2024).</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ───────────── 05 EUROAVIA ───────────── -->
+<section class="bolum" id="ag" aria-labelledby="ag-baslik">
+  <div class="kap">
+    <header class="bolum__bas">
+      <p class="bolum__ust">EUROAVIA</p>
+      <h2 id="ag-baslik" data-i18n-html="agBaslik"><span data-ag="ulke">15</span> ülkede <span data-ag="grup">40</span> yerel grup</h2>
+      <p class="bolum__giris" data-i18n="agGiris">EUROAVIA (The European Association of Aerospace Students) 1959'dan beri havacılık ve uzay öğrencilerini bir araya getiriyor. AS Istanbul ağın etkinliklerine katılır ve etkinlik düzenler; 2024'te EUROAVIA'nın 65. yılını (Lustrum) ve EMEAC kongresini İstanbul'da ağırladı.</p>
+    </header>
+    <figure class="ag__foto"><img src="gorseller/foto/lustrum-2024-480.jpg" srcset="gorseller/foto/lustrum-2024-480.jpg 480w, gorseller/foto/lustrum-2024-960.jpg 960w" sizes="(max-width: 860px) 100vw, 26rem" width="480" height="360" loading="lazy" alt="Lustrum 2024 katılımcıları Boğaz'da bir teknenin güvertesinde" data-i18n-alt="f4a"><figcaption data-i18n="f4">Lustrum 2024, Boğaz turu. Fotoğraf: EUROAVIA blogu.</figcaption></figure>
+    <div class="ag">
+      <figure class="kure" id="kure">
+        <canvas class="kure__tuval" id="kure-tuval" tabindex="0" role="img" aria-label="EUROAVIA yerel gruplarını gösteren küre. Ok tuşlarıyla döner; şehir seçmek için yandaki listeyi kullan." data-i18n-aria="kureEtiket"></canvas>
+        <div class="kure__etiketler" aria-hidden="true"></div>
+        <figcaption class="kure__lejant"><span class="lej lej--ana">İstanbul</span><span class="lej lej--grup" data-i18n="lejGrup">Yerel grup</span><span class="lej lej--ulke" data-i18n="lejUlke">Grubu olan ülke</span></figcaption>
+      </figure>
+      <div>
+        <div class="ag__secim" id="ag-secim" aria-live="polite">
+          <p class="ag__secim-ad">İstanbul · <span>AS</span></p>
+          <p class="ag__secim-alt">En yakın grup Kocaeli (84 km), en uzak Lagos (4.614 km).</p>
+        </div>
+        <h3 class="ag__takvim-baslik" data-i18n="takvimBaslik">Ağın 2025–26 takvimi</h3>
+        <p class="ag__takvim-not" data-i18n-html="takvimNot"><span data-ag="grupsehri">14</span>/<span data-ag="etkinlik">19</span> etkinlik bir grubun şehrinde. Bir etkinlik seçince küre oraya döner.</p>
+        <ol class="takvim" id="takvim" role="listbox" tabindex="0" aria-label="Ağın 2025–26 takvimi; seçilen etkinliğin yeri kürede gösterilir" data-i18n-aria="takvimEtiket">
+          <li role="option" id="olay-18" data-olay="18" aria-selected="false"><time datetime="2026-11-03">3–8 Kas 2026</time><span>Ideathon 2026</span><small>Brugge · 2.266 km</small></li>
+          <li role="option" id="olay-17" data-olay="17" aria-selected="false"><time datetime="2026-09-20">20–27 Eyl 2026</time><span>ExMEAC &amp; AMEAC 2026</span><small>Dresden · 1.611 km</small></li>
+          <li role="option" id="olay-16" data-olay="16" aria-selected="false"><time datetime="2026-08-17">17–23 Ağu 2026</time><span>Airbus Sloshing 2026</span><small>Rzeszów · 1.132 km</small></li>
+          <li role="option" id="olay-15" data-olay="15" aria-selected="false"><time datetime="2026-07-20">20–24 Tem 2026</time><span>EUROAVIA at Farnborough International Airshow 2026</span><small>Farnborough · 2.532 km</small></li>
+          <li role="option" id="olay-14" data-olay="14" aria-selected="false"><time datetime="2026-07-12">12–17 Tem 2026</time><span>Formation Workshop Izmir</span><small>İzmir · 339 km</small></li>
+          <li role="option" id="olay-13" data-olay="13" aria-selected="false"><time datetime="2026-06-22">22–28 Haz 2026</time><span>Fly-in Minho</span><small>Braga · 3.103 km</small></li>
+          <li role="option" id="olay-12" data-olay="12" aria-selected="false"><time datetime="2026-06-10">10–14 Haz 2026</time><span>EUROAVIA at ILA Berlin 2026</span><small>Berlin · 1.732 km</small></li>
+          <li role="option" id="olay-11" data-olay="11" aria-selected="false"><time datetime="2026-05-26">26–28 May 2026</time><span>EUROAVIA at Airspace World 2026</span><small>Lizbon · 3.240 km</small></li>
+          <li role="option" id="olay-10" data-olay="10" aria-selected="false"><time datetime="2026-05-20">20–22 May 2026</time><span>Rapid Response Challenge by Student AirRace</span><small>Münih · 1.582 km</small></li>
+          <li role="option" id="olay-9" data-olay="9" aria-selected="false"><time datetime="2026-05-18">18–22 May 2026</time><span>Symposium: Hot Wings 3</span><small>Kocaeli · 84 km</small></li>
+          <li role="option" id="olay-8" data-olay="8" aria-selected="false"><time datetime="2026-04-20">20–26 Nis 2026</time><span>EMEAC 2026</span><small>Bükreş · 440 km</small></li>
+          <li role="option" id="olay-7" data-olay="7" aria-selected="false"><time datetime="2025-11-25">25–28 Kas 2025</time><span>GEN Days</span><small>Köln (EASA) · 2.013 km</small></li>
+          <li role="option" id="olay-6" data-olay="6" aria-selected="false"><time datetime="2025-11-18">18–19 Kas 2025</time><span>Rotorthon 2025</span><small>Köln · 2.013 km</small></li>
+          <li role="option" id="olay-5" data-olay="5" aria-selected="false"><time datetime="2025-11-10">10 Kas 2025</time><span>Aviation 4 Girls 2025</span><small>Brüksel · 2.178 km</small></li>
+          <li role="option" id="olay-4" data-olay="4" aria-selected="false"><time datetime="2025-10-14">14–16 Eki 2025</time><span>Student AirRace 2025</span><small>Münih · 1.582 km</small></li>
+          <li role="option" id="olay-3" data-olay="3" aria-selected="false"><time datetime="2025-10-06">6–10 Eki 2025</time><span>Symposium Braunschweig 2025</span><small>Braunschweig · 1.870 km</small></li>
+          <li role="option" id="olay-2" data-olay="2" aria-selected="false"><time datetime="2025-09-20">20–27 Eyl 2025</time><span>ExMEAC &amp; AMEAC 2025</span><small>Patras · 700 km</small></li>
+          <li role="option" id="olay-1" data-olay="1" aria-selected="false"><time datetime="2025-08-25">25–30 Ağu 2025</time><span>Airbus Sloshing 2025</span><small>Forlì · 1.428 km</small></li>
+          <li role="option" id="olay-0" data-olay="0" aria-selected="false"><time datetime="2025-07-15">15–20 Tem 2025</time><span>Fly-In Leuven 2025</span><small>Leuven · 2.156 km</small></li>
+        </ol>
+        <p class="kaynak" data-i18n-html="agKaynak">Kaynak: <a href="https://euroavia.eu/lg/" target="_blank" rel="noopener">euroavia.eu/lg</a> ve <a href="https://euroavia.eu/events/" target="_blank" rel="noopener">euroavia.eu/events</a>, 10 Ekim 2026. Mesafeler İstanbul'dan, büyük daire üzerinden.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ───────────── 06 Hesap ───────────── -->
+<section class="bolum" id="hesap" aria-labelledby="hesap-baslik">
+  <div class="kap hesap">
+    <header class="bolum__bas">
+      <p class="bolum__ust" data-i18n="hesapUst">Hesap</p>
+      <h2 id="hesap-baslik" data-i18n="hesapBaslik">Hesapla etkinlik kaydı</h2>
+      <ol class="hesap__ozellik">
+        <li><p data-i18n-html="o1">Hesap açarken ad, soyad, <b>okul e-postası</b> ve <b>okul numarası</b> istenir.</p></li>
+        <li><p data-i18n="o2">E-postana gelen bağlantıyla hesabını doğrularsın.</p></li>
+        <li><p data-i18n="o3">Etkinlik kayda açılınca "Kaydol" düğmesiyle kaydolursun.</p></li>
+      </ol>
+    </header>
+    <div class="hesap__panel" id="hesap-panel" data-gorunum="giris">
+      <p class="hesap__sunucu-yok" data-i18n="sunucuYokPanel" hidden>Kayıt sunucusu şu an çalışmıyor; hesap açılamıyor, giriş yapılamıyor. Etkinlik kayıtları Instagram duyurusundaki formla alınıyor.</p>
+      <div class="hesap__sekmeler" role="tablist" aria-label="Hesap" data-i18n-aria="hesapUst">
+        <button type="button" role="tab" id="sekme-giris" data-sekme="giris" aria-controls="giris-panel" aria-selected="true" data-i18n="girisYap">Giriş yap</button>
+        <button type="button" role="tab" id="sekme-kayit" data-sekme="kayit" aria-controls="kayit-panel" aria-selected="false" tabindex="-1" data-i18n="hesapAc">Hesap aç</button>
+      </div>
+
+      <div id="giris-panel" data-gorunum-blok="giris" role="tabpanel" aria-labelledby="sekme-giris">
+      <form id="giris-form" novalidate>
+        <fieldset>
+          <div class="alan"><label for="giris-form-kim" data-i18n="lKim">Okul e-postası ya da okul numarası</label><input id="giris-form-kim" name="kim" autocomplete="username" required aria-describedby="giris-form-kim-hata"><p class="alan__hata" id="giris-form-kim-hata"></p></div>
+          <div class="alan alan--ara"><label for="giris-form-parola" data-i18n="lParola">Parola</label><input id="giris-form-parola" name="parola" type="password" autocomplete="current-password" required aria-describedby="giris-form-parola-hata"><p class="alan__hata" id="giris-form-parola-hata"></p></div>
+          <p class="form__durum" role="alert"></p>
+          <div class="form__eylem"><button class="dugme dugme--birincil" type="submit" data-i18n="girisYap">Giriş yap</button></div>
+          <p class="hesap__alt"><a href="#hesap" data-git="sifre" data-i18n="unuttum">Parolanı mı unuttun?</a></p>
+        </fieldset>
+      </form>
+      </div>
+
+      <div id="kayit-panel" data-gorunum-blok="kayit" role="tabpanel" aria-labelledby="sekme-kayit" hidden>
+      <form id="kayit-form" novalidate>
+        <fieldset>
+          <div class="alanlar">
+            <div class="alan"><label for="kayit-form-ad" data-i18n="lAd">Ad</label><input id="kayit-form-ad" name="ad" autocomplete="given-name" required aria-describedby="kayit-form-ad-hata"><p class="alan__hata" id="kayit-form-ad-hata"></p></div>
+            <div class="alan"><label for="kayit-form-soyad" data-i18n="lSoyad">Soyad</label><input id="kayit-form-soyad" name="soyad" autocomplete="family-name" required aria-describedby="kayit-form-soyad-hata"><p class="alan__hata" id="kayit-form-soyad-hata"></p></div>
+            <div class="alan"><label for="kayit-form-eposta"><span data-i18n="lEposta">Okul e-postası</span> (@<span data-okul-alani>itu.edu.tr</span>)</label><input id="kayit-form-eposta" name="eposta" type="email" inputmode="email" autocomplete="email" required aria-describedby="kayit-form-eposta-hata"><p class="alan__hata" id="kayit-form-eposta-hata"></p></div>
+            <div class="alan"><label for="kayit-form-okul_no" data-i18n="lOkulNo">Okul numarası</label><input id="kayit-form-okul_no" name="okul_no" inputmode="numeric" autocomplete="off" required aria-describedby="kayit-form-okul_no-hata"><p class="alan__hata" id="kayit-form-okul_no-hata"></p></div>
+            <div class="alan"><label for="kayit-form-parola" data-i18n="lParolaYeni">Parola (en az 8 karakter)</label><input id="kayit-form-parola" name="parola" type="password" autocomplete="new-password" required minlength="8" aria-describedby="kayit-form-parola-hata"><p class="alan__hata" id="kayit-form-parola-hata"></p></div>
+          </div>
+          <div class="alan alan--onay"><input id="kayit-form-kvkk" name="kvkk" type="checkbox" required aria-describedby="kayit-form-kvkk-hata"><label for="kayit-form-kvkk" data-i18n-html="lKvkk"><a href="kvkk.html" target="_blank" rel="noopener">Aydınlatma metnini</a> okudum.</label><p class="alan__hata" id="kayit-form-kvkk-hata"></p></div>
+          <p class="form__durum" role="alert"></p>
+          <div class="form__eylem"><button class="dugme dugme--birincil" type="submit" data-i18n="hesapAc">Hesap aç</button></div>
+        </fieldset>
+      </form>
+      </div>
+
+      <form id="sifre-form" data-gorunum-blok="sifre" novalidate hidden aria-labelledby="sifre-baslik">
+        <fieldset>
+          <h3 id="sifre-baslik" data-i18n="sifreBaslik">Parola yenileme bağlantısı iste</h3>
+          <div class="alan alan--ara"><label for="sifre-form-eposta" data-i18n="lEposta">Okul e-postası</label><input id="sifre-form-eposta" name="eposta" type="email" inputmode="email" autocomplete="email" required aria-describedby="sifre-form-eposta-hata"><p class="alan__hata" id="sifre-form-eposta-hata"></p></div>
+          <p class="form__durum" role="alert"></p>
+          <div class="form__eylem"><button class="dugme dugme--birincil" type="submit" data-i18n="baglantiGonder">Bağlantı gönder</button><button class="dugme dugme--ikincil" type="button" data-git="giris" data-i18n="geri">Girişe dön</button></div>
+        </fieldset>
+      </form>
+
+      <form id="yenile-form" data-gorunum-blok="yenile" novalidate hidden aria-labelledby="yenile-baslik">
+        <fieldset>
+          <h3 id="yenile-baslik" data-i18n="yenileBaslik">Yeni parola</h3>
+          <input type="hidden" name="t">
+          <div class="alan alan--ara"><label for="yenile-form-parola" data-i18n="lParolaYeni">Parola (en az 8 karakter)</label><input id="yenile-form-parola" name="parola" type="password" autocomplete="new-password" required minlength="8" aria-describedby="yenile-form-parola-hata"><p class="alan__hata" id="yenile-form-parola-hata"></p></div>
+          <p class="form__durum" role="alert"></p>
+          <div class="form__eylem"><button class="dugme dugme--birincil" type="submit" data-i18n="parolaKaydet">Parolayı kaydet</button></div>
+        </fieldset>
+      </form>
+
+      <div class="profil" data-gorunum-blok="profil" hidden>
+        <h3 data-profil="ad">—</h3>
+        <dl>
+          <dt data-i18n="lEposta">Okul e-postası</dt><dd data-profil="eposta">—</dd>
+          <dt data-i18n="lOkulNo">Okul numarası</dt><dd data-profil="okul_no">—</dd>
+        </dl>
+        <div class="profil__dogrula" hidden><p data-i18n="dogrulaBekliyor">E-postan henüz doğrulanmadı. Gelen kutundaki bağlantıyı aç.</p><button class="dugme dugme--ikincil" type="button" data-i18n="dogrulamaGonder">Doğrulama e-postasını yeniden gönder</button></div>
+        <h3 data-i18n="kayitlarim">Kayıtlı olduğun etkinlikler</h3>
+        <ul class="profil__kayitlar"></ul>
+        <div class="profil__eylem">
+          <button class="dugme dugme--ikincil profil__cikis" type="button" data-i18n="cikis">Çıkış yap</button>
+          <a class="dugme dugme--ikincil profil__yonetim" href="yonetim.html" hidden data-i18n="yonetimGit">Yönetim sayfası</a>
+        </div>
+        <details class="profil__sil">
+          <summary data-i18n="silBaslik">Hesabımı sil</summary>
+          <form id="sil-form" novalidate>
+            <p data-i18n="silNot">Hesabın ve başlamamış etkinliklerdeki kayıtların silinir. Bu geri alınamaz.</p>
+            <div class="alan alan--ara"><label for="sil-form-parola" data-i18n="lParola">Parola</label><input id="sil-form-parola" name="parola" type="password" autocomplete="current-password" required aria-describedby="sil-form-parola-hata"><p class="alan__hata" id="sil-form-parola-hata"></p></div>
+            <p class="form__durum" role="alert"></p>
+            <div class="form__eylem"><button class="dugme dugme--ikincil" type="submit" data-i18n="silOnay">Hesabı kalıcı olarak sil</button></div>
+          </form>
+        </details>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer class="alt">
+  <div class="kap">
+    <div class="alt__ic">
+      <div>
+        <div class="alt__logolar">
+          <img src="gorseller/logo-uumk-beyaz-360.png" width="124" height="52" alt="İTÜ UUMK" loading="lazy">
+          <img src="gorseller/logo-as-istanbul-beyaz-120.png" width="53" height="52" alt="EUROAVIA AS Istanbul" loading="lazy">
+        </div>
+        <p class="alt__adres" data-i18n="adres">İTÜ Uçak ve Uzay Bilimleri Fakültesi · Merkezi Derslik C Blok, Reşitpaşa Mah. Katar Cad. No: 2/8A, Sarıyer, İstanbul</p>
+        <p class="alt__adres"><a href="mailto:istanbul@euroavia.eu">istanbul@euroavia.eu</a></p>
+      </div>
+      <nav aria-labelledby="alt-site">
+        <h2 id="alt-site" data-i18n="altSite">Site</h2>
+        <ul>
+          <li><a href="#gundem" data-i18n="navGundem">Gündem</a></li>
+          <li><a href="#yazilar" data-i18n="navYazilar">Yazılar</a></li>
+          <li><a href="#hesap" data-i18n="hesapUst">Hesap</a></li>
+          <li><a href="kvkk.html" data-i18n="aydinlatma">Aydınlatma metni</a></li>
+        </ul>
+      </nav>
+      <nav aria-labelledby="alt-kanal">
+        <h2 id="alt-kanal" data-i18n="altKanal">Kanallar</h2>
+        <ul>
+          <li><a href="https://www.instagram.com/ituuumk/" target="_blank" rel="noopener">Instagram</a></li>
+          <li><a href="https://www.linkedin.com/company/itu-uumk-euroavia-istanbul" target="_blank" rel="noopener">LinkedIn</a></li>
+          <li><a href="https://youtube.com/c/%C4%B0T%C3%9CUUMK" target="_blank" rel="noopener">YouTube</a></li>
+          <li><a href="https://open.spotify.com/show/5ATrbmkihyAyKLzuLzJlJe" target="_blank" rel="noopener" data-i18n="podcast1">Masabaşı Seminerleri (podcast)</a></li>
+        </ul>
+      </nav>
+    </div>
+    <div class="alt__dip">
+      <p>© 2026 İTÜ UUMK · EUROAVIA AS Istanbul</p>
+      <p data-i18n="altNot">İçerik kulübün ve EUROAVIA'nın kamuya açık kaynaklarından; son kontrol 10 Ekim 2026.</p>
+    </div>
+  </div>
+</footer>
+
+<p class="duyuru" id="duyuru" role="status" aria-live="polite"></p>
+
+<dialog class="bilet" id="bilet" aria-labelledby="bilet-ad">
+  <article class="bilet__kart">
+    <div class="bilet__ana">
+      <header class="bilet__bas"><span>UUMK · AS IST</span><span data-i18n="binisKarti">Biniş kartı</span></header>
+      <h2 class="bilet__ad" id="bilet-ad">—</h2>
+      <dl class="bilet__alanlar">
+        <div><dt data-i18n="sTarih">Tarih</dt><dd data-alan="tarih">—</dd></div>
+        <div><dt data-i18n="sKapi">Yer</dt><dd data-alan="kapi">—</dd></div>
+        <div><dt data-i18n="sDurum">Durum</dt><dd data-alan="durum">—</dd></div>
+      </dl>
+      <div class="bilet__metin" data-alan="metin"></div>
+      <p class="bilet__eylem"><a class="dugme dugme--birincil" data-alan="kaynak" href="#" target="_blank" rel="noopener">—</a></p>
+    </div>
+    <div class="bilet__kocan">
+      <p class="bilet__kisa"><small data-i18n="kalkis">Kalkış</small><span data-alan="kisa">—</span></p>
+      <div><div class="bilet__barkod" data-alan="barkod"></div><p class="bilet__kod" data-alan="kod">—</p></div>
+    </div>
+    <button class="bilet__kapat" type="button" aria-label="Kartı kapat" data-i18n-aria="kartKapat">×</button>
+  </article>
+</dialog>
+<dialog class="bilet okuyucu" id="okuyucu" aria-labelledby="okuyucu-baslik">
+  <article class="okuyucu__kart">
+    <p class="okuyucu__ust"></p>
+    <h2 id="okuyucu-baslik">—</h2>
+    <div class="okuyucu__govde"></div>
+    <button class="bilet__kapat okuyucu__kapat" type="button" aria-label="Yazıyı kapat" data-i18n-aria="yaziKapat">×</button>
+  </article>
+</dialog>
+</body>
+</html>

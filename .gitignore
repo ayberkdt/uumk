@@ -1,0 +1,9 @@
+# yerel veri: deneme veritabanı (sınama hesapları, parola özetleri) ve yerel e-posta kutusu (doğrulama/parola bağlantıları)
+sunucu/veri/*.db
+sunucu/veri/*.db-*
+sunucu/posta-kutusu/
+
+# araçlar
+node_modules/
+.vercel/
+*.log

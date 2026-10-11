@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Yönetim — İTÜ UUMK</title>
+<link rel="icon" href="gorseller/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="site.css">
+<script type="module" src="yonetim.mjs"></script>
+</head>
+<body class="yonetim">
+<header class="ust ust--dolu ust--sabit">
+  <div class="ust__ic">
+    <a class="ust__logo" href="./"><img src="gorseller/logo-uumk-360.png" width="96" height="40" alt="İTÜ UUMK — siteye dön"></a>
+    <h1 class="ust__baslik">Yönetim</h1>
+  </div>
+</header>
+<main class="kap yonetim__ic" id="icerik">
+  <p class="yonetim__durum" id="durum" role="status">Oturum denetleniyor…</p>
+
+  <section class="ybolum" id="etkinlik-bolum" hidden aria-labelledby="etk-b">
+    <h2 id="etk-b">Etkinlikler</h2>
+    <div class="tablo-kap"><table class="ytablo"><caption class="gorunmez">Etkinlikler ve kayıt sayıları</caption>
+      <thead><tr><th scope="col">Etkinlik</th><th scope="col">Başlangıç</th><th scope="col">Kayıt</th><th scope="col">Dolu</th><th scope="col"><span class="gorunmez">İşlemler</span></th></tr></thead>
+      <tbody id="etkinlik-tablo"></tbody></table></div>
+
+    <form class="yform" id="etkinlik-form" novalidate>
+      <h2 id="etkinlik-form-baslik">Etkinlik ekle ya da düzenle</h2>
+      <fieldset><legend>Temel bilgi</legend>
+        <div class="alan"><label for="e-id">Kısa ad (adreste görünür)</label><input id="e-id" name="id" required pattern="[a-z0-9-]{3,64}" placeholder="teknik-gezi-2026-11" aria-describedby="e-id-yardim"><p class="alan__yardim" id="e-id-yardim">Küçük harf, rakam ve tire. Var olan kısa ad yazılırsa o etkinlik güncellenir.</p></div>
+        <div class="alan"><label for="e-baslangic">Başlangıç (İstanbul saati)</label><input id="e-baslangic" name="baslangic" type="datetime-local" required></div>
+        <div class="alan"><label for="e-bitis">Bitiş (isteğe bağlı)</label><input id="e-bitis" name="bitis" type="datetime-local"></div>
+      </fieldset>
+      <fieldset><legend>Türkçe</legend>
+        <div class="alan"><label for="e-baslik_tr">Başlık</label><input id="e-baslik_tr" name="baslik_tr" required maxlength="140"></div>
+        <div class="alan"><label for="e-yer_tr">Yer</label><input id="e-yer_tr" name="yer_tr" maxlength="120"></div>
+        <div class="alan"><label for="e-ozet_tr">Kısa açıklama</label><textarea id="e-ozet_tr" name="ozet_tr" rows="3" maxlength="600"></textarea></div>
+      </fieldset>
+      <fieldset><legend>English</legend>
+        <div class="alan"><label for="e-baslik_en">Title</label><input id="e-baslik_en" name="baslik_en" maxlength="140" lang="en"></div>
+        <div class="alan"><label for="e-yer_en">Place</label><input id="e-yer_en" name="yer_en" maxlength="120" lang="en"></div>
+        <div class="alan"><label for="e-ozet_en">Short description</label><textarea id="e-ozet_en" name="ozet_en" rows="3" maxlength="600" lang="en"></textarea></div>
+      </fieldset>
+      <fieldset><legend>Kayıt</legend>
+        <div class="alan alan--onay"><input id="e-kayit_acik" name="kayit_acik" type="checkbox"><label for="e-kayit_acik">Kayıt açık</label></div>
+        <div class="alan"><label for="e-kontenjan">Kontenjan (boş: sınırsız)</label><input id="e-kontenjan" name="kontenjan" type="number" min="1" inputmode="numeric"></div>
+        <div class="alan"><label for="e-kayit_son">Son kayıt anı (boş: etkinlik başlayana kadar)</label><input id="e-kayit_son" name="kayit_son" type="datetime-local"></div>
+        <div class="alan alan--onay"><input id="e-yayinda" name="yayinda" type="checkbox" checked><label for="e-yayinda">Sitede görünsün</label></div>
+      </fieldset>
+      <p class="form__durum" role="alert"></p>
+      <div class="form__eylem"><button class="dugme dugme--birincil" type="submit">Etkinliği kaydet</button><button class="dugme dugme--metin" type="reset">Formu temizle</button></div>
+    </form>
+  </section>
+
+  <section class="ybolum" id="yazi-bolum" hidden aria-labelledby="yazi-b">
+    <h2 id="yazi-b">Yazılar</h2>
+    <ul class="yliste" id="yazi-liste"></ul>
+    <form class="yform" id="yazi-form" novalidate>
+      <h3>Yazı ekle ya da düzenle</h3>
+      <fieldset><legend>Temel bilgi</legend>
+        <div class="alan"><label for="y-id">Kısa ad</label><input id="y-id" name="id" required pattern="[a-z0-9-]{3,80}" aria-describedby="y-id-yardim"><p class="alan__yardim" id="y-id-yardim">Küçük harf, rakam ve tire. Var olan kısa ad yazılırsa o yazı güncellenir.</p></div>
+        <div class="alan"><label for="y-tarih">Tarih</label><input id="y-tarih" name="tarih" type="date" required></div>
+        <div class="alan"><label for="y-kaynak">Kaynak (ör. EUROAVIA blogu, AESTRO)</label><input id="y-kaynak" name="kaynak" maxlength="80"></div>
+        <div class="alan"><label for="y-baglanti">Dış bağlantı (yazı başka sitedeyse, https://…)</label><input id="y-baglanti" name="baglanti" type="url" inputmode="url"></div>
+      </fieldset>
+      <fieldset><legend>Türkçe</legend>
+        <div class="alan"><label for="y-baslik_tr">Başlık</label><input id="y-baslik_tr" name="baslik_tr" required maxlength="160"></div>
+        <div class="alan"><label for="y-ozet_tr">Özet</label><textarea id="y-ozet_tr" name="ozet_tr" rows="2" maxlength="500"></textarea></div>
+        <div class="alan"><label for="y-govde_tr">Metin (dış bağlantı yoksa; paragraflar boş satırla)</label><textarea id="y-govde_tr" name="govde_tr" rows="8"></textarea></div>
+      </fieldset>
+      <fieldset><legend>English</legend>
+        <div class="alan"><label for="y-baslik_en">Title</label><input id="y-baslik_en" name="baslik_en" maxlength="160" lang="en"></div>
+        <div class="alan"><label for="y-ozet_en">Summary</label><textarea id="y-ozet_en" name="ozet_en" rows="2" maxlength="500" lang="en"></textarea></div>
+        <div class="alan"><label for="y-govde_en">Text</label><textarea id="y-govde_en" name="govde_en" rows="8" lang="en"></textarea></div>
+      </fieldset>
+      <p class="form__durum" role="alert"></p>
+      <div class="form__eylem"><button class="dugme dugme--birincil" type="submit">Yazıyı kaydet</button><button class="dugme dugme--metin" type="reset">Formu temizle</button></div>
+    </form>
+  </section>
+</main>
+</body>
+</html>

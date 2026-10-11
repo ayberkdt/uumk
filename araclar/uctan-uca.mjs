@@ -1,0 +1,512 @@
+#!/usr/bin/env node
+/* UÇTAN UCA — başsız Chrome'da gerçek etkileşim sınamaları (CDP, bağımlılık yok).
+ *   node araclar/uctan-uca.mjs [adres]      (varsayılan http://127.0.0.1:4210/; sunucu açık olmalı)
+ * Her senaryo temiz bir sekmede koşar; konsol hatası da düşüş sayılır. Çıkış 1 = en az biri düştü.
+ * CEKIM_GPU=1 gerçek GPU ile koşturur (varsayılan swiftshader). Altyapı Antra Tech araclar/uctan-uca.mjs ile aynı.
+ * Sunucu deneme veritabanıyla açık olmalı: node araclar/ornek-veri.mjs && node sunucu/sunucu.mjs --deneme
+ */
+import { spawn } from 'node:child_process';
+import { mkdirSync, existsSync, rmSync, readdirSync } from 'node:fs';
+import { join, dirname, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+const ADRES = process.argv[2] || 'http://127.0.0.1:4210/';
+const ADAY = ['C:/Program Files/Google/Chrome/Application/chrome.exe', 'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe'];
+const chrome = ADAY.find(existsSync);
+const port = 9700 + Math.floor(Math.random() * 200);
+const gecici = resolve(dirname(fileURLToPath(import.meta.url)), '..', '..', '.cekim-gecici');
+if (existsSync(gecici)) for (const ad of readdirSync(gecici)) if (ad.startsWith('profil-')) { try { rmSync(join(gecici, ad), { recursive: true, force: true }); } catch { /* kilitli */ } }
+const profil = join(gecici, `profil-${port}`);
+mkdirSync(profil, { recursive: true });
+const gpu = process.env.CEKIM_GPU === '1' ? ['--use-angle=d3d11'] : ['--use-angle=swiftshader', '--enable-unsafe-swiftshader'];
+const surec = spawn(chrome, ['--headless=new', `--remote-debugging-port=${port}`, `--user-data-dir=${profil}`, '--hide-scrollbars', '--enable-webgl', '--ignore-gpu-blocklist', ...gpu, '--window-size=1440,900', 'about:blank'], { stdio: 'ignore' });
+const bekle = (ms) => new Promise((r) => setTimeout(r, ms));
+
+async function sekmeAc() {
+  for (let i = 0; i < 200; i++) {
+    try { await fetch(`http://127.0.0.1:${port}/json/version`); break; } catch { await bekle(150); }
+  }
+  const h = await (await fetch(`http://127.0.0.1:${port}/json/new?about:blank`, { method: 'PUT' })).json();
+  const ws = new WebSocket(h.webSocketDebuggerUrl);
+  await new Promise((r) => ws.addEventListener('open', r, { once: true }));
+  let no = 0; const bekleyen = new Map(); const hatalar = [];
+  ws.addEventListener('message', (e) => {
+    const m = JSON.parse(e.data);
+    if (m.id && bekleyen.has(m.id)) { bekleyen.get(m.id)(m); bekleyen.delete(m.id); }
+    if (m.method === 'Runtime.exceptionThrown') hatalar.push(m.params.exceptionDetails.exception?.description || m.params.exceptionDetails.text);
+    if (m.method === 'Runtime.consoleAPICalled' && ['error', 'warning'].includes(m.params.type)) hatalar.push(m.params.args.map((a) => a.value ?? a.description).join(' '));
+    if (m.method === 'Log.entryAdded' && m.params.entry.level === 'error' && !/favicon/.test(m.params.entry.url || '')) hatalar.push(m.params.entry.text);
+  });
+  const cdp = (method, params = {}) => new Promise((r) => { const id = ++no; bekleyen.set(id, r); ws.send(JSON.stringify({ id, method, params })); });
+  await cdp('Runtime.enable'); await cdp('Log.enable'); await cdp('Page.enable');
+  /* başsız Chrome'da yeni sekme odaklı sayılmayabilir: :focus ve document.hasFocus() kararlı olsun */
+  await cdp('Page.bringToFront'); await cdp('Emulation.setFocusEmulationEnabled', { enabled: true });
+  /* profil sekmeler arasında ortak: önceki senaryonun yerel deposu sızmasın */
+  await cdp('Storage.clearDataForOrigin', { origin: new URL(ADRES).origin, storageTypes: 'local_storage,cookies' });
+  const js = async (ifade) => {
+    const r = await cdp('Runtime.evaluate', { expression: ifade, awaitPromise: true, returnByValue: true });
+    if (r.result?.exceptionDetails) throw new Error(r.result.exceptionDetails.exception?.description || 'ifade hatası');
+    return r.result?.result?.value;
+  };
+  const git = async (yol, g = 1440, y = 900) => {
+    await cdp('Emulation.setDeviceMetricsOverride', { width: g, height: y, deviceScaleFactor: 1, mobile: g < 700 });
+    await cdp('Page.navigate', { url: new URL(yol, ADRES).href });
+    await bekle(1800);
+  };
+  const tikla = async (x, y) => { for (const type of ['mouseMoved', 'mousePressed', 'mouseReleased']) await cdp('Input.dispatchMouseEvent', { type, x, y, button: 'left', clickCount: 1 }); };
+  /* Enter/Boşluk için text alanı şart: yoksa tarayıcı düğmeyi etkinleştirmez (keypress üretilmez) */
+  const tus = async (key, code = key, kod = 0) => {
+    const text = key === 'Enter' ? String.fromCharCode(13) : key === ' ' ? ' ' : undefined;
+    await cdp('Input.dispatchKeyEvent', { type: 'keyDown', key, code, windowsVirtualKeyCode: kod, ...(text ? { text, unmodifiedText: text } : {}) });
+    await cdp('Input.dispatchKeyEvent', { type: 'keyUp', key, code, windowsVirtualKeyCode: kod });
+  };
+  /* tembel yüklenen modüllerin kurduğu öğeyi bekle */
+  const bekleOge = async (secici, sure = 4000) => { const t0 = Date.now(); while (Date.now() - t0 < sure) { if (await js(`!!document.querySelector(${JSON.stringify(secici)})`)) return true; await bekle(100); } return false; };
+  const dokun = async (type, x, y) => {
+    await cdp('Emulation.setTouchEmulationEnabled', { enabled: true, maxTouchPoints: 5 });
+    await cdp('Input.dispatchTouchEvent', { type, touchPoints: type === 'touchEnd' ? [] : [{ x, y, id: 1 }] });
+  };
+  /* sekme gerçekten kapanır: yalnız soketi kapatmak sayfayı (ve 3B döngülerini) arka planda çalışır bırakıyor, sonraki senaryoları yavaşlatıyordu */
+  const kapat = async () => { ws.close(); try { await fetch(`http://127.0.0.1:${port}/json/close/${h.id}`); } catch { /* zaten kapalı */ } };
+  return { js, git, tikla, tus, dokun, bekleOge, cdp, hatalar, kapat };
+}
+
+/* düzen ölçen senaryolar önce otursun: yazı tipleri insin, iki kare geçsin (yedek yazının satır yüksekliği ölçümü bozar) */
+const OTUR = 'document.fonts.ready.then(() => new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(() => r(true)))))';
+
+/* koşulu en çok `sure` ms bekle */
+const kosulBekle = async (s, ifade, sure = 6000) => { const t0 = Date.now(); while (Date.now() - t0 < sure) { if (await s.js(ifade)) return true; await bekle(100); } return false; };
+const POSTA = resolve(dirname(fileURLToPath(import.meta.url)), '..', 'sunucu', 'posta-kutusu');
+const { readdirSync: dizin, readFileSync: dosyaOku } = await import('node:fs');
+const { execFileSync } = await import('node:child_process');
+const sonPosta = (desen) => { try { const f = dizin(POSTA).filter((x) => x.endsWith('.txt')).sort().reverse().map((x) => dosyaOku(join(POSTA, x), 'utf8')).find((m) => desen.test(m)); return f?.match(/https?:\/\/\S+/)?.[0]; } catch { return null; } };
+const DAMGA = Date.now().toString().slice(-7);
+/* sınama etkinlikleri koşudan önce ve sonra silinir: yerel sitenin gündeminde "Sınama etkinliği …" kalmasın (yalnız deneme.db) */
+const { DatabaseSync } = await import('node:sqlite');
+function sinamaTemizle(ne) {
+  const yol = join(dirname(fileURLToPath(import.meta.url)), '..', 'sunucu', 'veri', 'deneme.db');
+  if (!existsSync(yol)) return;   /* boş dosya yaratmasın */
+  const db = new DatabaseSync(yol);
+  db.exec('PRAGMA foreign_keys = ON; PRAGMA busy_timeout = 3000;');
+  db.prepare("DELETE FROM kayit WHERE etkinlik_id LIKE 'sinama-%'").run();
+  const silinen = db.prepare("DELETE FROM etkinlik WHERE id LIKE 'sinama-%'").run().changes;
+  /* betiğin açtığı kayıtlar ve üye hesapları (örnek etkinliklerin kontenjanı sınamalarla dolmasın); yönetici rolüne dokunmaz */
+  /* yalnız betiğin 7 haneli damgalı adresleri (elle açılmış "deneme.ad@" gibi hesaplar silinmez) */
+  const desen = ['misafir', 'deneme', 'csv', 'yon', 'sil'].map((p) => `eposta GLOB '${p}.[0-9][0-9][0-9][0-9][0-9][0-9][0-9]@itu.edu.tr'`).join(' OR ');
+  const kayit = db.prepare(`DELETE FROM kayit WHERE ${desen}`).run().changes;
+  const kisi = db.prepare(`DELETE FROM kullanici WHERE rol = 'uye' AND (${desen})`).run().changes;
+  db.close();
+  if (silinen || kayit || kisi) console.log(`  (deneme.db: ${ne} ${silinen} sınama etkinliği, ${kayit} sınama kaydı, ${kisi} sınama hesabı silindi)`);
+}
+sinamaTemizle('önceki koşulardan');
+const KISI = { ad: 'Deneme', soyad: 'Kullanıcı', eposta: `deneme.${DAMGA}@itu.edu.tr`, okul_no: `11${DAMGA}`, parola: 'deneme-parola-1' };
+const doldur = (s, form, v) => s.js(`(() => { const f = document.querySelector('${form}'); for (const [k, d] of Object.entries(${JSON.stringify(v)})) { const g = f.elements[k]; if (g.type === 'checkbox') g.checked = d; else g.value = d; } })()`);
+
+const SENARYO = {
+  async 'açılış: ana başlık h1 sabit; ad İTÜ UUMK → AS Istanbul / EUROAVIA → İTÜ UUMK, açıklama yerinde kalır, uçak uçar'(s) {
+    await s.git('./?olc=1');
+    if (!(await kosulBekle(s, `document.querySelector('#ucus-tuval').dataset.cizici === '2b' && !!document.querySelector('.ad__durum.bolundu')`, 8000))) throw new Error('sahne kurulmadı');
+    const yol = await s.js(`document.querySelector('#hikaye-iz').offsetHeight - innerHeight`);
+    const kare = async (q, hal) => {
+      await s.js(`window.scrollTo({ top: ${Math.round(yol * q)}, behavior: 'instant' })`);
+      await kosulBekle(s, `Math.abs(__uumk.hikayePayi() - ${q}) < 0.01 && document.querySelector('.ad__durum[data-durum="${hal}"]').dataset.gorunur === '1'`, 4000); await bekle(120);
+      return s.js(`(() => { const a = document.querySelector('.giris__aciklama'); const u = __uumk.ucus().olc(); return {
+        durum: [...document.querySelectorAll('.ad__durum')].filter((e) => e.dataset.gorunur === '1').map((e) => e.dataset.durum).join(),
+        h1: document.querySelector('h1').getAttribute('aria-label'), aciklamaUst: Math.round(a.getBoundingClientRect().top), x: Math.round(u.x), y: Math.round(u.y), ters: u.ters }; })()`);
+    };
+    const k0 = await kare(0.1, 0), k1 = await kare(0.53, 1), k2 = await kare(0.95, 2);
+    const kT = { ters: await s.js(`Array.from({ length: 25 }, (_, i) => 0.66 + i * 0.01).some((q) => __uumk.ucus().olc(q).ters)`) };
+    const sorun = [];
+    if (k0.durum !== '0' || k1.durum !== '1' || k2.durum !== '2') sorun.push(`hâller ${k0.durum}/${k1.durum}/${k2.durum}`);
+    if (new Set([k0.h1, k1.h1, k2.h1]).size !== 1 || !k0.h1.startsWith('İTÜ Uçak Uzay')) sorun.push(`h1 ${k0.h1}`);
+    if (new Set([k0.aciklamaUst, k1.aciklamaUst, k2.aciklamaUst]).size !== 1) sorun.push(`açıklama kaydı ${k0.aciklamaUst}/${k1.aciklamaUst}/${k2.aciklamaUst}`);
+    if (Math.hypot(k1.x - k0.x, k1.y - k0.y) < 100) sorun.push('uçak yer değiştirmedi');
+    if (!kT.ters) sorun.push('taklada sırtüstü değil');
+    if (sorun.length) throw new Error(sorun.join(' · ') + ' ' + JSON.stringify({ k0, k1, k2, kT }));
+    console.log(`      açılış: hâller ${k0.durum}→${k1.durum}→${k2.durum} · h1 "${k0.h1}" sabit · açıklama ${k0.aciklamaUst} px'te sabit · uçak (${k0.x},${k0.y}) → (${k1.x},${k1.y}) → (${k2.x},${k2.y}) · takla penceresinde sırtüstü`);
+  },
+  async 'hesap: aç, doğrula, tek tıkla kaydol, iptal et (tarayıcıda)'(s) {
+    await s.git('./#hesap');
+    if (!(await kosulBekle(s, `!document.querySelector('#giris-form fieldset').disabled`, 6000))) throw new Error('sunucu yok (fieldset kapalı)');
+    await s.js(`document.querySelector('#sekme-kayit').click()`);
+    await doldur(s, '#kayit-form', { ad: KISI.ad, soyad: KISI.soyad, eposta: 'yanlis@gmail.com', okul_no: KISI.okul_no, parola: KISI.parola, kvkk: true });
+    await s.js(`document.querySelector('#kayit-form button[type=submit]').click()`);
+    if (!(await kosulBekle(s, `document.querySelector('#kayit-form-eposta').getAttribute('aria-invalid') === 'true'`))) throw new Error('okul dışı e-posta reddedilmedi');
+    const hataMetni = await s.js(`document.querySelector('#kayit-form-eposta-hata').textContent`);
+    await doldur(s, '#kayit-form', { eposta: KISI.eposta });
+    await s.js(`document.querySelector('#kayit-form button[type=submit]').click()`);
+    if (!(await kosulBekle(s, `!document.querySelector('.profil').hidden`, 6000))) throw new Error('profil açılmadı');
+    const ust = await s.js(`document.querySelector('#hesap-dugme').textContent`);
+    const dogrulamaNotu = await s.js(`!document.querySelector('.profil__dogrula').hidden`);
+    const kartNotu = await s.js(`[...document.querySelectorAll('.etkinlik__mesaj')].some((m) => m.textContent.includes('doğrula'))`);
+    const adimOnce = await s.js(`document.querySelector('.hesap__adimlar').hidden`);   /* doğrulanmamış: adımlar görünür */
+    const baglanti = sonPosta(new RegExp(KISI.eposta.replace('.', '\\.') + '[\\s\\S]*dogrula\\?t='));
+    if (!baglanti) throw new Error('doğrulama e-postası posta kutusunda yok');
+    await s.git(new URL(baglanti).pathname + new URL(baglanti).search);
+    if (!(await kosulBekle(s, `document.querySelector('#duyuru').textContent.includes('doğrulandı')`, 6000))) throw new Error('doğrulama duyurusu yok');
+    if (adimOnce || !(await kosulBekle(s, `document.querySelector('.hesap__adimlar').hidden`, 4000))) throw new Error('kurulum adımları: doğrulanmadan gizli ya da doğrulandıktan sonra görünür');
+    await s.js(`document.querySelector('#gundem').scrollIntoView({ behavior: 'instant' })`);
+    if (!(await kosulBekle(s, `!!document.querySelector('#etkinlik-kart-ornek-seminer .dugme--birincil')`, 6000))) throw new Error('kaydol düğmesi yok');
+    await s.js(`document.querySelector('#etkinlik-kart-ornek-seminer .dugme--birincil').click()`);
+    if (!(await kosulBekle(s, `document.querySelector('#etkinlik-kart-ornek-seminer .etkinlik__durum')?.dataset.durum === 'kayitli'`, 6000))) throw new Error('tek tık kayıt olmadı');
+    const formYok = await s.js(`!document.querySelector('#etkinlik-kart-ornek-seminer form')`);
+    await s.js(`document.querySelector('#etkinlik-kart-ornek-seminer .dugme--ikincil').click()`);
+    if (!(await kosulBekle(s, `document.querySelector('#etkinlik-kart-ornek-seminer .etkinlik__durum')?.dataset.durum === 'acik'`, 6000))) throw new Error('iptal olmadı');
+    if (!hataMetni.includes('itu.edu.tr') || ust !== KISI.ad || !dogrulamaNotu || !kartNotu || !formYok) throw new Error(`hata "${hataMetni}" üst ${ust} not ${dogrulamaNotu}/${kartNotu} form ${formYok}`);
+  },
+  async 'misafir: boş form hata verir, dolu form kaydeder'(s) {
+    await s.git('./#gundem');
+    if (!(await kosulBekle(s, `!!document.querySelector('#etkinlik-kart-ornek-teknik-gezi .dugme--birincil')`, 6000))) throw new Error('kart yok');
+    await s.js(`document.querySelector('#etkinlik-kart-ornek-teknik-gezi .dugme--birincil').click()`);
+    await s.js(`document.querySelector('#misafir-ornek-teknik-gezi button[type=submit]').click()`);
+    if (!(await kosulBekle(s, `document.querySelectorAll('#misafir-ornek-teknik-gezi [aria-invalid=true]').length >= 4`))) throw new Error('boş alan hataları gösterilmedi');
+    const odak = await s.js(`document.activeElement.id`);
+    const g = `misafir.${DAMGA}@itu.edu.tr`;
+    await doldur(s, '#misafir-ornek-teknik-gezi', { ad: 'Misafir', soyad: 'Kişi', eposta: g, okul_no: `12${DAMGA}`, kvkk: true });
+    await s.js(`document.querySelector('#misafir-ornek-teknik-gezi button[type=submit]').click()`);
+    if (!(await kosulBekle(s, `document.querySelector('#duyuru').textContent.includes('${g}')`, 6000))) throw new Error('misafir kaydı duyurusu yok');
+    if (odak !== 'misafir-ornek-teknik-gezi-ad') throw new Error(`ilk hatalı alana odak gitmedi: ${odak}`);
+  },
+  async 'dil: EN geçişi metinleri değiştirir, tercih kalır, TR geri döner'(s) {
+    await s.git('./');
+    await s.js(`document.querySelector('#dil-dugme').click()`);
+    if (!(await kosulBekle(s, `document.documentElement.lang === 'en' && document.querySelector('#giris-baslik').textContent.startsWith('ITU Aeronautical')`))) throw new Error('EN olmadı');
+    const nav = await s.js(`document.querySelector('.menu a [data-i18n]').textContent`);
+    const adres = await s.js('location.search');
+    await s.git('./');
+    const kalici = await s.js(`document.documentElement.lang`);
+    await s.js(`document.querySelector('#ag').scrollIntoView({ behavior: 'instant' })`);
+    await kosulBekle(s, `!!document.querySelector('#harita[data-cizici]')`, 8000);
+    const takvim = await s.js(`document.querySelector('#olay-4 small').textContent`);
+    await s.js(`document.querySelector('#dil-dugme').click()`);
+    if (!(await kosulBekle(s, `document.documentElement.lang === 'tr' && document.querySelector('#giris-baslik').textContent.startsWith('İTÜ')`))) throw new Error('TR dönmedi');
+    if (nav !== 'Agenda' || adres !== '?dil=en' || kalici !== 'en' || !takvim.startsWith('Munich')) throw new Error(`${nav} ${adres} ${kalici} ${takvim}`);
+  },
+  async 'takvime ekle: kart .ics üretir (UTC saat, başlık, yer)'(s) {
+    await s.git('./#gundem');
+    if (!(await kosulBekle(s, `!!document.querySelector('#etkinlik-kart-ornek-teknik-gezi .etkinlik__eylem .dugme--ikincil')`, 6000))) throw new Error('düğme yok');
+    const r = await s.js(`(async () => {
+      let yakalanan = null; const asil = URL.createObjectURL;
+      URL.createObjectURL = (b) => { yakalanan = b; return asil.call(URL, b); };
+      HTMLAnchorElement.prototype.click = function () {};
+      const b = [...document.querySelectorAll('#etkinlik-kart-ornek-teknik-gezi .etkinlik__eylem button')].find((x) => x.textContent === 'Takvime ekle'); b.click();
+      URL.createObjectURL = asil;
+      return { tur: yakalanan?.type, metin: yakalanan ? await yakalanan.text() : '' };
+    })()`);
+    const m = r.metin;
+    if (r.tur !== 'text/calendar' || !/^BEGIN:VCALENDAR\r\n/.test(m) || !/DTSTART:\d{8}T063000Z/.test(m) || !m.includes('SUMMARY:Teknik gezi (örnek)') || !m.includes('LOCATION:Hangar (örnek)') || m.split('\r\n').some((l) => new TextEncoder().encode(l).length > 75) || !m.includes('\r\n ')) throw new Error(JSON.stringify(r).slice(0, 400));
+    console.log(`      takvim: ${r.tur}, ${m.split('\r\n').length} satır, ${m.match(/DTSTART:\S+/)[0]} (09:30 İstanbul)`);
+  },
+  async 'dil değişimi: dönen pano ve açık misafir formu bozulmaz'(s) {
+    await s.git('./#etkinlikler');
+    await s.js(`document.querySelector('#dil-dugme').click()`);   /* pano dönerken */
+    await kosulBekle(s, `document.documentElement.lang === 'en'`, 5000); await bekle(1800);
+    const en = await s.js(`document.querySelector('tr[data-bilet=pegasus] button').textContent`);
+    await s.js(`document.querySelector('#dil-dugme').click()`);
+    await kosulBekle(s, `document.documentElement.lang === 'tr'`, 5000); await bekle(300);
+    const tr = await s.js(`document.querySelector('tr[data-bilet=pegasus] button').textContent`);
+    await s.js(`document.querySelector('#gundem').scrollIntoView({ behavior: 'instant' })`);
+    await kosulBekle(s, `!!document.querySelector('#etkinlik-kart-ornek-teknik-gezi .dugme--birincil')`, 6000);
+    await s.js(`document.querySelector('#etkinlik-kart-ornek-teknik-gezi .dugme--birincil').click()`);
+    await doldur(s, '#misafir-ornek-teknik-gezi', { ad: 'Kalıcı' });
+    await s.js(`document.querySelector('#dil-dugme').click()`);
+    await kosulBekle(s, `document.documentElement.lang === 'en'`, 5000); await bekle(300);
+    const form = await s.js(`document.querySelector('#misafir-ornek-teknik-gezi')?.elements.ad.value`);
+    await s.js(`document.querySelector('#dil-dugme').click()`);
+    if (en !== 'Pegasus technical trip' || tr !== 'Pegasus teknik gezisi' || form !== 'Kalıcı') throw new Error(JSON.stringify({ en, tr, form }));
+    console.log(`      dil: pano "${en}" → "${tr}" · misafir formu korundu ("${form}")`);
+  },
+  async 'pano: Enter biniş kartını açar, Esc kapatır, odak döner'(s) {
+    await s.git('./#etkinlikler');
+    await s.js(`document.querySelector('tr[data-bilet=pegasus] button').focus()`);
+    await s.tus('Enter', 'Enter', 13); await bekle(300);
+    const ad = await s.js(`document.querySelector('#bilet').open && document.querySelector('#bilet-ad').textContent`);
+    await s.tus('Escape', 'Escape', 27); await bekle(300);
+    const odak = await s.js(`document.activeElement === document.querySelector('tr[data-bilet=pegasus] button')`);
+    if (ad !== 'Pegasus teknik gezisi' || !odak) throw new Error(`${ad} ${odak}`);
+  },
+  async 'takvim: ok tuşu + Enter seçer, panel güncellenir'(s) {
+    await s.git('./#ag');
+    if (!(await s.bekleOge('#harita[data-cizici]', 8000))) throw new Error('harita kurulmadı');
+    await s.js(`document.querySelector('#takvim').focus()`);
+    await s.tus('ArrowDown', 'ArrowDown', 40); await s.tus('ArrowDown', 'ArrowDown', 40); await s.tus('Enter', 'Enter', 13); await bekle(400);
+    const ad = await s.js(`document.querySelector('.ag__secim-ad').textContent`);
+    if (!ad.startsWith('Rzeszów')) throw new Error(ad);
+  },
+  async 'bölüm bağlantısı: /#ag ile açılış bölüme doğrudan atlar (yumuşak kaydırma yüklemeden sonra)'(s) {
+    await s.git('./?yeniden=bag#ag');
+    await bekle(600);
+    const r = await s.js(`({ y: Math.round(scrollY), ust: Math.round(document.querySelector('#ag').getBoundingClientRect().top), pad: parseFloat(getComputedStyle(document.documentElement).scrollPaddingTop) })`);
+    await kosulBekle(s, `document.documentElement.classList.contains('yumusak')`, 3000);
+    const davranis = await s.js(`getComputedStyle(document.documentElement).scrollBehavior`);
+    if (r.y < 4000 || Math.abs(r.ust - r.pad) > 4 || davranis !== 'smooth') throw new Error(JSON.stringify({ ...r, davranis }));
+    console.log(`      bölüm bağlantısı: 600 ms içinde scrollY ${r.y}, #ag üstü ${r.ust} px (scroll-padding ${r.pad}), sonra kaydırma "${davranis}"`);
+  },
+  async 'yönetim: yönetici sayfası etkinlikleri listeler'(s) {
+    await s.git('./#hesap');
+    await kosulBekle(s, `!document.querySelector('#giris-form fieldset').disabled`, 6000);
+    await doldur(s, '#giris-form', { kim: KISI.eposta, parola: KISI.parola });
+    await s.js(`document.querySelector('#giris-form button[type=submit]').click()`);
+    if (!(await kosulBekle(s, `!document.querySelector('.profil').hidden`, 6000))) throw new Error('giriş olmadı');
+    execFileSync(process.execPath, [join(dirname(fileURLToPath(import.meta.url)), '..', 'sunucu', 'yonet.mjs'), 'yonetici', KISI.eposta, '--deneme']);
+    await s.git('./yonetim.html');
+    if (!(await kosulBekle(s, `!document.querySelector('#etkinlik-bolum').hidden && document.querySelectorAll('#etkinlik-tablo tr').length >= 2`, 6000))) throw new Error('yönetim tablosu yok');
+    execFileSync(process.execPath, [join(dirname(fileURLToPath(import.meta.url)), '..', 'sunucu', 'yonet.mjs'), 'uye', KISI.eposta, '--deneme']);
+  },
+  async 'mobil menü: açılır, bağlantı kapatır'(s) {
+    await s.git('./', 390, 844);
+    await s.js(`document.querySelector('#menu-dugme').click()`);
+    const acik = await s.js(`getComputedStyle(document.querySelector('#menu')).display !== 'none'`);
+    await s.js(`document.querySelector('#menu a[href="#ag"]').click()`); await bekle(200);
+    const kapali = await s.js(`document.querySelector('#menu-dugme').getAttribute('aria-expanded') === 'false'`);
+    if (!acik || !kapali) throw new Error(`${acik} ${kapali}`);
+  },
+  async 'taşma yok: 320 · 390 · 768 · 1024 · 1440 px'(s) {
+    const tasan = [];
+    for (const g of [320, 390, 768, 1024, 1440]) { await s.git('./', g, 800); await s.js(OTUR); const w = await s.js('document.documentElement.scrollWidth'); if (w > g) tasan.push(`${g}: ${w}`); }
+    if (tasan.length) throw new Error(tasan.join(', '));
+  },
+  async 'hareket azaltma: ?az=1 yapışkan sahne yok, ad tek hâlde, silüet çizili, uçak durağan'(s) {
+    await s.git('./?az=1');
+    await bekle(400);
+    const r = await s.js(`(() => ({ konum: getComputedStyle(document.querySelector('.giris__sahne')).position, gorunen: [...document.querySelectorAll('.ad__durum')].map((e) => getComputedStyle(e).visibility).join(),
+      silet: [...document.querySelectorAll('#silet path')].every((p) => getComputedStyle(p).strokeDashoffset === '0px' || getComputedStyle(p).strokeDashoffset === '0'), iz: document.querySelector('#hikaye-iz').offsetHeight < innerHeight * 1.5 }))()`);
+    if (r.konum !== 'relative' || r.gorunen !== 'visible,hidden,hidden' || !r.silet || !r.iz) throw new Error(JSON.stringify(r));
+  },
+  async 'klavye: ilk Tab "İçeriğe geç" görünür'(s) {
+    await s.git('./');
+    await s.tus('Tab', 'Tab', 9);
+    const r = await s.js(`(() => { const a = document.activeElement; const b = a.getBoundingClientRect(); return [a.className, b.top >= 0]; })()`);
+    if (r[0] !== 'atla' || !r[1]) throw new Error(JSON.stringify(r));
+  },
+  async 'harita: İstanbul’dan rotalar, etkinlik seçince rota çizilir, uçak hedefe varır, km sayacı mesafeyi gösterir'(s) {
+    await s.git('./?olc=1#ag');
+    if (!(await kosulBekle(s, `!!document.querySelector('#harita[data-cizici]') && !!globalThis.__ag`, 8000))) throw new Error('harita kurulmadı');
+    await s.js(`document.querySelector('#olay-18').click()`);
+    await kosulBekle(s, `__ag.cizici.durum().secili?.ilerleme === 1`, 5000);
+    await bekle(1300);
+    const r = await s.js(`(() => { const t = document.querySelector('#harita-tuval'); const d = t.getContext('2d').getImageData(0, 0, t.width, t.height).data; let petrol = 0; for (let j = 0; j < d.length; j += 16) if (d[j] > 215 && d[j + 1] > 170 && d[j + 1] < 215 && d[j + 2] < 60 && d[j + 3] > 200) petrol++;   /* seçili rota: gece sarısı */
+      return { durum: __ag.cizici.durum(), km: document.querySelector('#ag-km').textContent, ad: document.querySelector('.ag__secim-ad').textContent, etiket: [...document.querySelectorAll('.harita__etiket:not([hidden])')].map((e) => e.textContent), petrol }; })()`);
+    if (r.durum.rota < 30 || r.durum.kara < 1000 || r.durum.secili?.ilerleme !== 1 || r.km !== '2.266' || !r.ad.startsWith('Brugge') || !r.etiket.includes('Brugge') || r.petrol < 50) throw new Error(JSON.stringify(r));
+    const donGorundu = await s.js(`!document.querySelector('.ag__don').hidden`);
+    await s.js(`document.querySelector('.ag__don').click()`);
+    const don = await s.js(`[document.querySelector('.ag__secim-ad').textContent, document.querySelector('.ag__don').hidden, __ag.cizici.durum().secili]`);
+    if (!donGorundu || !don[0].startsWith('İstanbul') || !don[1] || don[2] !== null) throw new Error('dönüş: ' + JSON.stringify(don));
+    console.log(`      harita: ${r.durum.rota} rota, ${r.durum.kara} kara noktası · Ideathon seçildi → rota tamam, sayaç ${r.km} km, etiketler [${r.etiket.join(', ')}], sarı rota piksel ${r.petrol}`);
+  },
+  async 'EN: her çevrilebilir öğe sözlükteki İngilizce metinle aynı, kart ve küre İngilizce'(s) {
+    await s.git('./?dil=en');
+    if (!(await kosulBekle(s, `document.documentElement.lang === 'en' && !document.documentElement.classList.contains('dil-bekle')`, 6000))) throw new Error('EN açılmadı');
+    await kosulBekle(s, `document.querySelector('#hesap-dugme').textContent === 'Sign in' && !!document.querySelector('.etkinlik__durum span')`, 8000);   /* hesap modülü sunucudan yanıt alınca yazar */
+    const sonuc = await s.js(`(async () => {
+      const { SAYFA, JS } = await import('/dil/en.mjs');
+      const fark = [];
+      for (const e of document.querySelectorAll('[data-i18n]')) if (e.textContent.trim() !== SAYFA[e.dataset.i18n].trim()) fark.push(e.dataset.i18n);
+      const div = document.createElement('div');
+      for (const e of document.querySelectorAll('[data-i18n-html]')) { div.innerHTML = SAYFA[e.dataset.i18nHtml]; if (e.textContent.trim() !== div.textContent.trim()) fark.push(e.dataset.i18nHtml); }
+      for (const e of document.querySelectorAll('[data-i18n-aria]')) if (e.getAttribute('aria-label') !== SAYFA[e.dataset.i18nAria]) fark.push('aria:' + e.dataset.i18nAria);
+      for (const e of document.querySelectorAll('[data-i18n-alt]')) if (e.getAttribute('alt') !== SAYFA[e.dataset.i18nAlt]) fark.push('alt:' + e.dataset.i18nAlt);
+      const say = document.querySelectorAll('[data-i18n],[data-i18n-html],[data-i18n-aria],[data-i18n-alt]').length;
+      return { fark, say, baslik: document.title, hesap: document.querySelector('#hesap-dugme').textContent, kart: document.querySelector('.etkinlik__durum span')?.textContent || '', bos: JS.etkinlikYok };
+    })()`);
+    await s.js(`document.querySelector('tr[data-bilet=tusas] button').click()`); await bekle(300);
+    const bilet = await s.js(`[document.querySelector('#bilet-ad').textContent, document.querySelector('[data-alan=durum]').textContent, document.querySelector('[data-alan=metin]').textContent]`);
+    await s.js(`document.querySelector('#bilet').close()`);
+    await s.js(`document.querySelector('#ag').scrollIntoView({ behavior: 'instant' })`);
+    await kosulBekle(s, `!!document.querySelector('#harita[data-cizici]')`, 8000);
+    const panel = await s.js(`document.querySelector('.ag__secim-alt').textContent`);
+    const yazi = (await s.js(`document.querySelector('.yazi h3 a').textContent`)).replace(/ /g, ' ');   /* başlıkta ay–yıl arası bölünmez boşluk */
+    if (sonuc.fark.length) throw new Error('çevrilmemiş: ' + sonuc.fark.join(', '));
+    if (!sonuc.baslik.startsWith('ITU UUMK') || sonuc.hesap !== 'Sign in' || !['Registration open', 'Registration closed', 'Full'].includes(sonuc.kart)) throw new Error(JSON.stringify(sonuc));
+    if (bilet[0] !== 'TUSAŞ technical trip' || bilet[1] !== 'Held' || !bilet[2].startsWith('We toured the production lines')) throw new Error(JSON.stringify(bilet));
+    if (!panel.startsWith('Türkiye') && !panel.startsWith('Turkey')) throw new Error(panel);
+    if (!panel.includes('Nearest group') || !yazi.startsWith('AS Istanbul July 2026')) throw new Error(`${panel} | ${yazi}`);
+    console.log(`      EN: ${sonuc.say} çevrilebilir öğe, fark 0 · kart "${sonuc.kart}" · bilet "${bilet[0]}" · harita "${panel.slice(0, 60)}…" · yazı "${yazi}"`);
+  },
+  async 'hesap silme: tarayıcıda parolayla silinir, sonra aynı bilgilerle giriş reddedilir'(s) {
+    const k = { ad: 'Silinecek', soyad: 'Hesap', eposta: `sil.${DAMGA}@itu.edu.tr`, okul_no: `14${DAMGA}`, parola: 'silinecek-parola-1' };
+    await s.git('./#hesap');
+    await kosulBekle(s, `!document.querySelector('#giris-form fieldset').disabled`, 6000);
+    await s.js(`document.querySelector('#sekme-kayit').click()`);
+    await doldur(s, '#kayit-form', { ...k, kvkk: true });
+    await s.js(`document.querySelector('#kayit-form button[type=submit]').click()`);
+    if (!(await kosulBekle(s, `!document.querySelector('.profil').hidden`, 6000))) throw new Error('hesap açılmadı');
+    await s.js(`document.querySelector('.profil__sil').open = true`);
+    await doldur(s, '#sil-form', { parola: 'yanlis-parola-1' });
+    await s.js(`document.querySelector('#sil-form button[type=submit]').click()`);
+    if (!(await kosulBekle(s, `document.querySelector('#sil-form-parola').getAttribute('aria-invalid') === 'true'`, 4000))) throw new Error('yanlış parola reddedilmedi');
+    await doldur(s, '#sil-form', { parola: k.parola });
+    await s.js(`document.querySelector('#sil-form button[type=submit]').click()`);
+    await bekle(1500);
+    await kosulBekle(s, `document.readyState === 'complete' && !document.querySelector('#giris-form fieldset').disabled && document.querySelector('.profil').hidden`, 10000);
+    const profilGizli = await s.js(`document.querySelector('.profil').hidden`);
+    const r = await s.js(`fetch('/api/hesap/giris', { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-UUMK': '1' }, body: JSON.stringify({ kim: '${k.eposta}', parola: '${k.parola}' }) }).then((x) => x.status)`);
+    if (!profilGizli || r !== 401) throw new Error(`profil gizli ${profilGizli} giriş ${r}`);
+    console.log(`      silme: yanlış parola reddedildi, doğru parolayla silindi, sonraki giriş ${r}`);
+  },
+  async 'hikâye: baştan sona kaydırma — ad hâlleri 0→1→2 sırayla, silüet çizilir, uçak her karede yer değiştirir'(s) {
+    await s.git('./?olc=1');
+    if (!(await kosulBekle(s, `document.querySelector('#ucus-tuval').dataset.cizici === '2b' && !!document.querySelector('.ad__durum.bolundu')`, 8000))) throw new Error('sahne kurulmadı');
+    const yol = await s.js(`document.querySelector('#hikaye-iz').offsetHeight - innerHeight`);
+    const kayit = [];
+    for (let i = 0; i <= 24; i++) {
+      await s.js(`window.scrollTo({ top: ${Math.round((yol * i) / 24)}, behavior: 'instant' })`);
+      await bekle(160);
+      kayit.push(await s.js(`(() => { const t = document.querySelector('#ucus-tuval'); const d = t.getContext('2d').getImageData(0, 0, t.width, t.height).data; let h = 0, dolu = 0; for (let j = 3; j < d.length; j += 64) { if (d[j] > 10) dolu++; h = (h * 31 + d[j - 3] + d[j]) >>> 0; }
+        const yollar = [...document.querySelectorAll('#silet path')]; const cizili = yollar.filter((y) => parseFloat(y.style.strokeDashoffset || '1') < 0.02).length;
+        const g = [...document.querySelectorAll('.ad__durum')].filter((e) => e.dataset.gorunur === '1').map((e) => +e.dataset.durum);
+        return { p: +__uumk.hikayePayi().toFixed(3), hal: g.length ? Math.max(...g) : -1, cizili, toplam: yollar.length, iz: h, dolu }; })()`));
+    }
+    const haller = kayit.map((k) => k.hal);
+    const sirali = haller.every((a, i) => i === 0 || a >= haller[i - 1]);
+    const hepsi = [0, 1, 2].every((a) => haller.includes(a));
+    const ortada = kayit.find((k) => k.p >= 0.55 && k.p <= 0.6);
+    const farkli = new Set(kayit.map((k) => k.iz)).size;
+    if (!sirali || !hepsi || !ortada || ortada.cizili !== ortada.toplam || kayit[0].cizili !== 0 || farkli < 22) throw new Error(JSON.stringify({ haller, farkli, ortada, bas: kayit[0].cizili }));
+    console.log(`      hikâye: p 0→${kayit.at(-1).p} · hâller ${haller.join('')} · silüet ${kayit[0].cizili} → ${ortada.cizili}/${ortada.toplam} yol · 25 karede ${farkli} farklı tuval`);
+  },
+  async 'yönetim arayüzü: etkinlik ekle → gündemde görünür → misafir kaydı CSV dosyasında'(s) {
+    const y = { ad: 'Yonetici', soyad: 'Deneme', eposta: `yon.${DAMGA}@itu.edu.tr`, okul_no: `15${DAMGA}`, parola: 'yonetici-parola-1' };
+    await s.git('./#hesap');
+    await kosulBekle(s, `!document.querySelector('#giris-form fieldset').disabled`, 6000);
+    await s.js(`document.querySelector('#sekme-kayit').click()`);
+    await doldur(s, '#kayit-form', { ...y, kvkk: true });
+    await s.js(`document.querySelector('#kayit-form button[type=submit]').click()`);
+    if (!(await kosulBekle(s, `!document.querySelector('.profil').hidden`, 6000))) throw new Error('hesap açılmadı');
+    execFileSync(process.execPath, [join(dirname(fileURLToPath(import.meta.url)), '..', 'sunucu', 'yonet.mjs'), 'yonetici', y.eposta, '--deneme']);
+    await s.git('./yonetim.html');
+    if (!(await kosulBekle(s, `!document.querySelector('#etkinlik-bolum').hidden`, 6000))) throw new Error('yönetim açılmadı');
+    const id = `sinama-${DAMGA}`;
+    const tarih = new Date(Date.now() + 15 * 864e5).toISOString().slice(0, 10) + 'T10:00';
+    await doldur(s, '#etkinlik-form', { id, baslangic: tarih, baslik_tr: `Sınama etkinliği ${DAMGA}`, baslik_en: `Test event ${DAMGA}`, yer_tr: 'Sınama', kontenjan: '5', kayit_acik: true, yayinda: true });
+    await s.js(`document.querySelector('#etkinlik-form button[type=submit]').click()`);
+    if (!(await kosulBekle(s, `[...document.querySelectorAll('#etkinlik-tablo th')].some((t) => t.textContent.includes('${id}'))`, 6000))) throw new Error('etkinlik tabloya gelmedi');
+    await s.git('./#gundem');
+    if (!(await kosulBekle(s, `!!document.querySelector('#etkinlik-kart-${id}')`, 6000))) throw new Error('gündemde görünmedi');
+    await s.js(`fetch('/api/hesap/cikis', { method: 'POST', headers: { 'X-UUMK': '1' } })`);
+    await s.git('./?yeniden=1#gundem');          /* aynı adrese gitmek yalnız çapaya atlar; yeniden yükleme şart */
+    await kosulBekle(s, `!!document.querySelector('#etkinlik-kart-${id} .dugme--birincil')`, 6000);
+    await s.js(`document.querySelector('#etkinlik-kart-${id} .dugme--birincil').click()`);
+    const misafir = `csv.${DAMGA}@itu.edu.tr`;
+    await doldur(s, '#misafir-' + id, { ad: 'Csv', soyad: 'Misafir', eposta: misafir, okul_no: `16${DAMGA}`, kvkk: true });
+    await s.js(`document.querySelector('#misafir-${id} button[type=submit]').click()`);
+    if (!(await kosulBekle(s, `document.querySelector('#etkinlik-kart-${id} .etkinlik__durum')?.textContent.includes('4')`, 6000))) throw new Error('kalan 4 olmadı');
+    await s.js(`fetch('/api/hesap/giris', { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-UUMK': '1' }, body: JSON.stringify({ kim: '${y.eposta}', parola: '${y.parola}' }) })`);
+    const csv = await s.js(`fetch('/api/yonetim/etkinlikler/${id}/kayitlar?bicim=csv').then((r) => r.text())`);
+    execFileSync(process.execPath, [join(dirname(fileURLToPath(import.meta.url)), '..', 'sunucu', 'yonet.mjs'), 'uye', y.eposta, '--deneme']);
+    if (!csv.includes(misafir) || !csv.includes('"evet"')) throw new Error('CSV: ' + csv.slice(0, 200));
+    console.log(`      yönetim: "${id}" arayüzden eklendi, gündemde göründü, misafir kaydı CSV'de (${csv.trim().split('\n').length - 1} satır)`);
+  },
+  async 'header: gerçek logo, dil ve hesap düğmesi, etkin menü, aşağı kaydırınca gizlenir, yukarıda döner'(s) {
+    await s.git('./');
+    await s.js(OTUR);
+    const ust = await s.js(`(() => { const u = document.querySelector('#ust'); const logo = u.querySelector('.ust__logo img'); return {
+      logo: logo.getAttribute('src'), logoY: Math.round(logo.getBoundingClientRect().height), logoYuklu: logo.complete && logo.naturalWidth >= 2 * logo.getBoundingClientRect().width,   /* en az 2 kat çözünürlük */
+      nav: [...u.querySelectorAll('.menu ul a')].map((a) => a.lastElementChild.textContent), dil: u.querySelector('#dil-dugme').textContent, hesap: u.querySelector('#hesap-dugme').textContent,
+      h: Math.round(u.getBoundingClientRect().height), konum: getComputedStyle(u).position, kenar: getComputedStyle(u).borderBottomColor }; })()`);
+    await s.js(`document.querySelector('#yazilar').scrollIntoView({ behavior: 'instant' })`);
+    await kosulBekle(s, `document.querySelector('.menu a[href="#yazilar"]').getAttribute('aria-current') === 'true'`, 3000);
+    const etkin = await s.js(`[...document.querySelectorAll('.menu a[aria-current=true]')].map((a) => a.lastElementChild.textContent)`);
+    await s.js(`window.__iz = []; addEventListener('scroll', () => __iz.push([Math.round(scrollY), document.documentElement.scrollHeight, document.querySelector('#ust').classList.contains('ust--gizli') ? 'G' : '-', Math.round(performance.now())]))`);
+    await s.js(`window.scrollBy({ top: 600, behavior: 'instant' })`); await bekle(250);
+    await s.js(`window.scrollBy({ top: 300, behavior: 'instant' })`);
+    const gizli = await kosulBekle(s, `document.querySelector('#ust').classList.contains('ust--gizli')`, 3000);
+    await s.js(OTUR);   /* iki kare: +300 ile -200 aynı karede birleşirse net +100 olur ve şerit haklı olarak gizli kalır */
+    await s.js(`window.scrollBy({ top: -200, behavior: 'instant' })`);
+    const dondu = await kosulBekle(s, `!document.querySelector('#ust').classList.contains('ust--gizli')`, 3000);
+    const yler = await s.js(`Math.round(scrollY)`);
+    const dolu = await kosulBekle(s, `parseFloat(getComputedStyle(document.querySelector('#ust')).getPropertyValue('--ilerleme')) > 0.3 && getComputedStyle(document.querySelector('.menu__isaret')).opacity === '1'`, 3000);
+    if (ust.logo !== 'gorseller/logo-uumk-360.png' || !ust.logoYuklu || ust.logoY < 30 || ust.nav.length !== 5 || ust.dil !== 'EN' || ust.hesap !== 'Giriş yap' || ust.konum !== 'fixed') throw new Error(JSON.stringify(ust));
+    if (etkin.join() !== 'Yazılar' || !gizli || !dondu || !dolu) throw new Error(`etkin ${etkin} gizli ${gizli} döndü ${dondu} dolu ${dolu} scrollY ${yler} sınıf ${await s.js(`document.querySelector('#ust').className`)} iz ${JSON.stringify(await s.js(`__iz`))}`);
+    console.log(`      header: logo ${ust.logoY} px (asıl ${ust.logo}), menü ${ust.nav.length} madde, etkin "${etkin}", aşağıda gizlendi, yukarıda döndü, kaydırınca alt çizgi`);
+  },
+  async 'footer: iki beyaz logo, adres, e-posta, site ve kanal bağlantıları, aydınlatma metni, siyah zemin'(s) {
+    await s.git('./');
+    await s.js(`document.querySelector('.alt').scrollIntoView({ behavior: 'instant' })`);
+    await kosulBekle(s, `[...document.querySelectorAll('.alt__logolar img')].every((i) => i.complete && i.naturalWidth > 0)`, 5000);   /* logolar loading=lazy */
+    const a = await s.js(`(() => { const f = document.querySelector('.alt'); return {
+      zemin: getComputedStyle(f).backgroundColor, logolar: [...f.querySelectorAll('.alt__logolar img')].map((i) => [i.getAttribute('src'), i.complete && i.naturalWidth > 0]),
+      adres: f.querySelector('.alt__adres').textContent.includes('Katar Cad.'), eposta: f.querySelector('a[href^="mailto:"]')?.getAttribute('href'),
+      site: [...f.querySelectorAll('nav[aria-labelledby=alt-site] a')].map((x) => x.getAttribute('href')), kanal: [...f.querySelectorAll('nav[aria-labelledby=alt-kanal] a')].map((x) => new URL(x.href).hostname),
+      hedef: Math.min(...[...f.querySelectorAll('ul a')].map((x) => x.getBoundingClientRect().height)), dip: f.querySelector('.alt__dip').textContent.includes('© 2026') }; })()`);
+    const kvkk = await s.js(`fetch('kvkk.html').then((r) => r.status)`);
+    if (a.zemin !== 'rgb(26, 26, 26)' || a.logolar.length !== 2 || !a.logolar.every((l) => l[1] && l[0].includes('beyaz')) || !a.adres || a.eposta !== 'mailto:istanbul@euroavia.eu') throw new Error(JSON.stringify(a));
+    if (!a.site.includes('kvkk.html') || a.kanal.length !== 4 || a.hedef < 44 || !a.dip || kvkk !== 200) throw new Error(JSON.stringify(a) + ' kvkk ' + kvkk);
+    console.log(`      footer: zemin ${a.zemin} (#1a1a1a), ${a.logolar.length} beyaz logo, adres + ${a.eposta}, site ${a.site.length} · kanal ${a.kanal.length} bağlantı (en küçük ${Math.round(a.hedef)} px), kvkk.html ${kvkk}`);
+  },
+  async 'tipografi ve palet (tarayıcıda): yalnız iki yazı tipi yüklenir, 6 punto, başlık serif, gövde Instrument Sans'(s) {
+    await s.git('./?p=1');
+    await s.js(OTUR);
+    for (const sec of ['#gundem', '#etkinlikler', '#yazilar', '#kulup', '#ag', '#hesap']) { await s.js(`document.querySelector('${sec}').scrollIntoView({ behavior: 'instant' })`); await bekle(150); }
+    await s.js(`document.fonts.ready`);
+    const r = await s.js(`(() => {
+      const yuklu = [...new Set([...document.fonts].filter((f) => f.status === 'loaded').map((f) => f.family.replace(/["']/g, '')))];
+      const gor = (e) => { const b = e.getBoundingClientRect(); const c = getComputedStyle(e); return b.width > 0 && b.height > 0 && c.visibility !== 'hidden' && c.display !== 'none'; };
+      const metinli = [...document.querySelectorAll('body *')].filter((e) => !e.closest('dialog:not([open]),[hidden]') && [...e.childNodes].some((n) => n.nodeType === 3 && n.textContent.trim()) && gor(e));
+      const punto = [...new Set(metinli.map((e) => getComputedStyle(e).fontSize))];
+      const aile = [...new Set(metinli.map((e) => getComputedStyle(e).fontFamily.split(',')[0].replace(/["']/g, '').trim()))];
+      return { yuklu, punto, aile, h1: getComputedStyle(document.querySelector('h1')).fontFamily.split(',')[0], h2: getComputedStyle(document.querySelector('#gundem h2')).fontFamily.split(',')[0], govde: getComputedStyle(document.body).fontFamily.split(',')[0],
+        birincil: getComputedStyle(document.querySelector('#giris-form .dugme--birincil')).backgroundColor };
+    })()`);
+    const izinli = ['Instrument Sans', 'Source Serif 4'];
+    if (!r.yuklu.every((f) => izinli.includes(f)) || !r.aile.every((f) => izinli.includes(f)) || r.punto.length > 6) throw new Error(JSON.stringify(r));
+    if (!/Source Serif 4/.test(r.h1) || !/Source Serif 4/.test(r.h2) || !/Instrument Sans/.test(r.govde) || r.birincil !== 'rgb(5, 107, 122)') throw new Error(JSON.stringify(r));
+    console.log(`      tipografi: yüklenen [${r.yuklu.join(', ')}] · kullanılan aileler [${r.aile.join(', ')}] · ${r.punto.length} punto (${r.punto.join(' ')}) · birincil düğme ${r.birincil} (#056b7a)`);
+  },
+  async 'kuruluş ve tarihçe: 2001 iki dilde, rota kaydırdıkça dolar, noktalar sırayla işaretlenir'(s) {
+    await s.git('./');
+    const nokta = `[...document.querySelectorAll('.rota__nokta')].find((l) => l.querySelector('time').textContent === '2001')`;
+    let tr = await s.js(`${nokta}.textContent`);
+    await s.js(`document.querySelector('#kulup').scrollIntoView({ behavior: 'instant' })`); await bekle(300);
+    const r = await s.js(`(() => { const r = document.querySelector('#rota').getBoundingClientRect(); return { ust: Math.round(r.top), gecti: document.querySelectorAll('.rota__nokta[data-gecti]').length }; })()`);
+    await s.js(`window.scrollBy({ top: 500, behavior: 'instant' })`);
+    await kosulBekle(s, `document.querySelectorAll('.rota__nokta[data-gecti]').length === 6`, 4000);
+    const r2 = await s.js(`document.querySelectorAll('.rota__nokta[data-gecti]').length`);
+    await s.js(`document.querySelector('#dil-dugme').click()`);
+    await kosulBekle(s, `document.documentElement.lang === 'en'`, 5000);
+    let en = await s.js(`${nokta}.textContent`);
+    [tr, en] = [tr, en].map((m) => m.replace(/ /g, ' '));   /* tarihlerde bölünmez boşluk */
+    if (!tr.includes('4 Ocak') || !tr.includes('7 Mayıs') || !tr.includes('EUROAVIA') || !en.includes('4 January') || !en.includes('7 May') || r2 < r.gecti || r2 !== 6) throw new Error(JSON.stringify({ tr, en, r, r2 }));
+    console.log(`      kuruluş: TR "${tr.slice(0, 70)}…" · EN "${en.slice(0, 60)}…" · rota noktaları ${r.gecti} → ${r2}/6`);
+  },
+  async 'EUROAVIA takvimi: yarım satır yok, "Tüm takvim" açar/kapatır'(s) {
+    await s.git('./#ag');
+    if (!(await kosulBekle(s, `!!document.querySelector('.takvim__tum')?.textContent`, 8000))) throw new Error('düğme yok');
+    const r = await s.js(`(() => { const l = document.querySelector('#takvim'), b = document.querySelector('.takvim__tum'), alt = l.getBoundingClientRect().bottom;
+      const yarim = [...l.children].filter((x) => { const q = x.getBoundingClientRect(); return q.top < alt - 1 && q.bottom > alt + 1; }).length;
+      const ilk = { yuk: l.clientHeight, yarim, metin: b.textContent, acik: b.getAttribute('aria-expanded') };
+      b.click(); const ac = { kaydir: l.scrollHeight - l.clientHeight, acik: b.getAttribute('aria-expanded') }; b.click();
+      return { ilk, ac, son: l.clientHeight }; })()`);
+    if (r.ilk.yarim || r.ilk.acik !== 'false' || !/19/.test(r.ilk.metin) || r.ac.kaydir > 1 || r.ac.acik !== 'true' || r.son !== r.ilk.yuk) throw new Error(JSON.stringify(r));
+    console.log(`      takvim: ${r.ilk.yuk} px, yarım satır ${r.ilk.yarim}, "${r.ilk.metin}" → açık (taşma ${r.ac.kaydir}) → kapalı`);
+  },
+  async 'telefonda tarihçe: dikey iz kaydırdıkça dolar, noktalar izin ucuyla birlikte işaretlenir'(s) {
+    await s.git('./', 390, 844);
+    const olc = `(() => { const r = document.querySelector('#rota'); return { t: Number(r.style.getPropertyValue('--rota-t') || 0), gecti: r.querySelectorAll('[data-gecti]').length, cizgi: getComputedStyle(r.querySelector('.rota__liste'), '::before').borderLeftStyle }; })()`;
+    await s.js(`document.querySelector('#rota').scrollIntoView({ block: 'end', behavior: 'instant' }); scrollBy({ top: -500, behavior: 'instant' })`); await bekle(250);
+    const a = await s.js(olc);
+    await s.js(`scrollBy({ top: 400, behavior: 'instant' })`); await bekle(250);
+    const b = await s.js(olc);
+    await s.js(`scrollBy({ top: 900, behavior: 'instant' })`); await kosulBekle(s, `document.querySelectorAll('.rota__nokta[data-gecti]').length === 6`, 3000);
+    const c = await s.js(olc);
+    if (a.cizgi !== 'dashed' || !(b.t > a.t) || !(b.gecti >= a.gecti) || c.t !== 1 || c.gecti !== 6) throw new Error(JSON.stringify({ a, b, c }));
+    console.log(`      telefonda tarihçe: iz ${a.t} → ${b.t} → ${c.t}, işaretli nokta ${a.gecti} → ${b.gecti} → ${c.gecti}/6`);
+  },
+};
+
+let gecen = 0, dusen = 0;
+for (const [ad, fn] of Object.entries(SENARYO).filter(([ad]) => !process.env.SENARYO || ad.includes(process.env.SENARYO))) {
+  const s = await sekmeAc();
+  try {
+    await fn(s);
+    const konsol = s.hatalar.filter((h) => !/Failed to load resource.*(400|401|404|409)/.test(h));   /* bilerek tetiklenen hatalı istekler */
+    if (konsol.length) throw new Error(`konsol: ${konsol.join(' | ')}`);
+    gecen++; console.log(`  ✓ ${ad}`);
+  } catch (h) { dusen++; console.log(`  ✗ ${ad} — ${h.message}`); }
+  await s.kapat();
+}
+sinamaTemizle('bu koşudan');
+console.log(`\n${gecen} geçti · ${dusen} düştü`);
+surec.once('exit', () => { try { rmSync(profil, { recursive: true, force: true, maxRetries: 10, retryDelay: 200 }); } catch { /* sonraki koşu siler */ } });
+surec.kill();
+process.exitCode = dusen ? 1 : 0;

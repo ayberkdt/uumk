@@ -1,0 +1,85 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 300" width="640" height="300">
+<!-- Boş gündem çizimi (v12): kayıt bankosu kapalı, kemerli bariyer çekili, koltukta kedi uyuyor; camın ardında uçak taksi eder,
+     bulutlar kayar. Hareket azaltmada her şey durur. Renkler site paletinden. -->
+<style>
+.c{stroke:#141414;stroke-width:2;stroke-linejoin:round;stroke-linecap:round}
+.i{stroke:#141414;stroke-width:1.2;stroke-linejoin:round;stroke-linecap:round}
+.ucak{animation:taksi 24s linear infinite}
+.bulut{animation:bulut 26s ease-in-out infinite alternate}
+.z{opacity:0;animation:z 3.6s ease-out infinite}
+.z2{animation-delay:1.2s}.z3{animation-delay:2.4s}
+.lamba{animation:lamba 2.4s ease-in-out infinite}
+.nefes{transform-box:fill-box;transform-origin:50% 100%;animation:nefes 3.6s ease-in-out infinite}
+.kuyruk{transform-box:fill-box;transform-origin:0% 50%;animation:kuyruk 5s ease-in-out infinite}
+@keyframes taksi{from{transform:translateX(-240px)}to{transform:translateX(700px)}}
+@keyframes bulut{to{transform:translateX(-90px)}}
+@keyframes z{0%{opacity:0;transform:translate(0,0)}25%{opacity:1}100%{opacity:0;transform:translate(14px,-30px)}}
+@keyframes lamba{50%{opacity:.3}}
+@keyframes nefes{50%{transform:scaleY(1.06)}}
+@keyframes kuyruk{50%{transform:rotate(9deg)}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important}.z1{opacity:1}}
+</style>
+<defs><clipPath id="cam"><rect x="40" y="34" width="560" height="156"/></clipPath></defs>
+<rect width="640" height="300" fill="#ecebe7"/>
+<!-- cam ve dışarısı -->
+<rect x="40" y="34" width="560" height="156" fill="#dfeaeb"/>
+<g clip-path="url(#cam)">
+  <g class="bulut">
+    <path d="M90 78h62a12 12 0 0 0-14-14a17 17 0 0 0-30-4a13 13 0 0 0-18 18z" fill="#f8f8f6" class="i"/>
+    <path d="M330 62h48a10 10 0 0 0-11-11a13 13 0 0 0-23-3a10 10 0 0 0-14 14z" fill="#f8f8f6" class="i"/>
+    <path d="M520 90h56a11 11 0 0 0-12-12a15 15 0 0 0-27-4a12 12 0 0 0-17 16z" fill="#f8f8f6" class="i"/>
+  </g>
+  <path d="M500 158v-46h-8l4-14h20l4 14h-8v46z" fill="#f8f8f6" class="i"/><path d="M494 98h24v-8h-24z" fill="#056b7a" class="i"/>
+  <rect x="40" y="158" width="560" height="32" fill="#cfcdc6"/><path d="M40 158H600" class="i"/>
+  <path d="M60 174h36M130 174h36M200 174h36M270 174h36M340 174h36M410 174h36M480 174h36M550 174h36" stroke="#f8f8f6" stroke-width="3"/>
+  <g class="ucak">
+    <g transform="translate(0 112)">
+      <path d="M8 24L0 0h14l20 22z" fill="#056b7a" class="i"/>
+      <path d="M10 22h120q18 0 24 9q-4 9-24 9H24q-14 0-18-8z" fill="#f8f8f6" class="i"/>
+      <path d="M147 26h7q3 2 2 4h-10z" fill="#141414"/>
+      <path d="M30 34h112" stroke="#056b7a" stroke-width="2.4"/>
+      <g fill="#03525e"><circle cx="40" cy="29" r="1.8"/><circle cx="50" cy="29" r="1.8"/><circle cx="60" cy="29" r="1.8"/><circle cx="70" cy="29" r="1.8"/><circle cx="80" cy="29" r="1.8"/><circle cx="90" cy="29" r="1.8"/><circle cx="100" cy="29" r="1.8"/><circle cx="110" cy="29" r="1.8"/><circle cx="120" cy="29" r="1.8"/></g>
+      <path d="M62 36l34 0l-20 8z" fill="#cfcdc6" class="i"/>
+      <rect x="70" y="40" width="22" height="9" rx="4.5" fill="#f8f8f6" class="i"/>
+      <path d="M40 40v6M132 40v6" class="i"/><circle cx="40" cy="47" r="3" fill="#141414"/><circle cx="132" cy="47" r="3" fill="#141414"/>
+    </g>
+  </g>
+</g>
+<rect x="40" y="34" width="560" height="156" fill="none" class="c"/>
+<path d="M180 34v156M320 34v156M460 34v156" class="c"/>
+<!-- tavandan sarkan kapı tabelası -->
+<path d="M110 0v14M190 0v14" class="i"/>
+<rect x="92" y="14" width="116" height="40" rx="5" fill="#1a1a1a" class="c"/>
+<text x="112" y="44" font-family="Futura, 'Century Gothic', 'Segoe UI', sans-serif" font-size="24" font-weight="700" fill="#f2c200">A1</text>
+<circle cx="182" cy="34" r="11" fill="#a4262c" class="lamba"/><path d="M175 34h14" stroke="#f8f8f6" stroke-width="3.4" stroke-linecap="round"/>
+<!-- zemin -->
+<rect y="236" width="640" height="64" fill="#cfcdc6"/><path d="M0 236H640" class="c"/>
+<path d="M0 268H640" stroke="#f8f8f6" stroke-width="2" stroke-dasharray="26 14" opacity=".7"/>
+<!-- kayıt bankosu: kapalı, ekran kararmış, üstünde kapalı levhası -->
+<rect x="52" y="196" width="196" height="54" rx="4" fill="#056b7a" class="c"/>
+<rect x="44" y="188" width="212" height="10" rx="3" fill="#f8f8f6" class="c"/>
+<path d="M60 222h180" stroke="#03525e" stroke-width="2"/>
+<rect x="88" y="160" width="40" height="28" rx="3" fill="#141414" class="c"/><path d="M104 188v-4h8v4" fill="#4a4a48" class="i"/>
+<path d="M176 188l14-26h22l14 26z" fill="#f8f8f6" class="c"/><circle cx="201" cy="176" r="7" fill="#a4262c"/><path d="M196 176h10" stroke="#f8f8f6" stroke-width="2.4" stroke-linecap="round"/>
+<!-- kemerli bariyer -->
+<g><rect x="286" y="198" width="7" height="52" rx="3" fill="#141414"/><ellipse cx="289.5" cy="250" rx="11" ry="3.4" fill="#141414"/><circle cx="289.5" cy="198" r="5" fill="#4a4a48" class="i"/>
+<rect x="372" y="198" width="7" height="52" rx="3" fill="#141414"/><ellipse cx="375.5" cy="250" rx="11" ry="3.4" fill="#141414"/><circle cx="375.5" cy="198" r="5" fill="#4a4a48" class="i"/>
+<path d="M292 205q40 14 80 0" fill="none" stroke="#f2c200" stroke-width="6"/><path d="M292 205q40 14 80 0" fill="none" stroke="#141414" stroke-width="1.2" stroke-dasharray="6 6"/></g>
+<!-- bekleme koltukları, valiz, uyuyan kedi -->
+<rect x="568" y="206" width="22" height="30" rx="4" fill="#f2c200" class="c"/><path d="M574 206v-8h10v8" fill="none" class="i"/><path d="M572 220h14" class="i"/>
+<g>
+  <rect x="408" y="204" width="146" height="10" rx="3" fill="#03525e" class="c"/>
+  <path d="M414 214v22M548 214v22M481 214v22" class="c"/>
+  <rect x="410" y="174" width="44" height="30" rx="6" fill="#056b7a" class="c"/><rect x="459" y="174" width="44" height="30" rx="6" fill="#056b7a" class="c"/><rect x="508" y="174" width="44" height="30" rx="6" fill="#056b7a" class="c"/>
+</g>
+<g transform="translate(456 178) scale(1.4)">
+  <path class="kuyruk" d="M36 16q14 2 10-10" fill="none" stroke="#4a4a48" stroke-width="5" stroke-linecap="round"/>
+  <path class="nefes c" d="M4 18q0-14 18-14q16 0 18 14z" fill="#85837e"/>
+  <path d="M2 18q-2-10 7-12l1-6l4 5q5 0 7 6q2 8-6 7z" fill="#85837e" class="c"/>
+  <path d="M7 12q2 1.4 4 0" fill="none" class="i"/>
+  <path d="M4 18h36" class="c"/>
+</g>
+<g font-family="Futura, 'Century Gothic', 'Segoe UI', sans-serif" font-weight="700" fill="#03525e">
+  <text class="z z1" x="470" y="170" font-size="13">z</text><text class="z z2" x="478" y="164" font-size="16">z</text><text class="z z3" x="487" y="157" font-size="19">Z</text>
+</g>
+</svg>

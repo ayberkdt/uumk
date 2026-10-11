@@ -1,9 +1,9 @@
-/* MAKET 3B — "Kabin ekipleri": kaide üstünde üstü kesilmiş (kesit) bir yolcu uçağı; altı bölmede ekiplerin işi küçük
+/* MAKET 3B — "Kabin ekipleri": sayfanın kâğıdına gölgesiyle oturan, üstü kesilmiş (kesit) bir yolcu uçağı; altı bölmede ekiplerin işi küçük
  * dioramalarla (three.js r184, ortografik kamera, gölgeli PBR; Antra Tech / Desilla 2,5B dili).
- * Burun → kuyruk: kokpit · yönetim kurulu, Etkinlik, Ar-Ge, Sponsorluk, Tanıtım, Tasarım. Bölme adları HTML düğmeleridir
- * (dünyadan ekrana izdüşümle konur); düğmeye ya da bölmeye basınca kamera o bölmeye yaklaşır, kartı site.mjs açar.
+ * Burun → kuyruk: kokpit · yönetim kurulu, Etkinlik, Ar-Ge, Sponsorluk, Tanıtım, Tasarım. Bölme numaraları uzak duvarın üstünde
+ * küçük HTML düğmeleridir (dünyadan ekrana izdüşümle konur); seçilen bölmeye kamera yaklaşır. Tur ve kartlar site.mjs'te.
  * Canlılık: koridorda yürüyen iki üye, konuşan/çalışan figürler, değişen ekranlar, uçan dron, dönen motor fanları, yanıp sönen
- * uçak ışıkları, apronda dönen bagaj treni, yönlendirme yapan apron görevlisi; kaide çok yavaş salınır.
+ * uçak ışıkları, uçağın çevresinde dönen bagaj treni; uçak çok yavaş salınır.
  * Ekran dışında ya da sekme gizliyken döngü durur; hareket azaltmada tek kare. WebGL yoksa null (poster ve aynı düğmeler kalır). */
 import { THREE, RENK, cizici, isiklar, araclar, tuvalDoku, cerceve, dongu, birlestir, pikselOrani } from './maket-ortak.mjs';
 
@@ -16,7 +16,7 @@ export const BOLME = [[X1 - 0.05, X1 + 1.55], ...SINIR.slice(1).map((s, i) => [s
 const orta = (i) => (BOLME[i][0] + BOLME[i][1]) / 2;
 const HALI = [0x34393e, 0xf1e2a9, 0xcfe4e7, 0xe8d6bc, 0xf0d7d3, 0xe2e0d8];
 /* apron yolu: bagaj treni bu yuvarlatılmış dikdörtgende döner */
-const YOL = { x0: -6.3, x1: 7.3, z: 3.75, r: 1.1 };
+const YOL = { x0: -6.3, x1: 6.5, z: 3.75, r: 1.1 };
 
 function yolNokta(s) {
   const { x0, x1, z, r } = YOL, a = x1 - x0 - 2 * r, b = 2 * z - 2 * r, q = Math.PI * r / 2, L = 2 * a + 2 * b + 4 * q;
@@ -35,7 +35,7 @@ function yolNokta(s) {
   return parca[0][1](0);
 }
 
-export function maketKur(tuvalEl, { imler = [], az = false, secildi, kartSagda = () => true } = {}) {
+export function maketKur(tuvalEl, { imler = [], az = false, secildi } = {}) {
   const renderer = cizici(tuvalEl); if (!renderer) return null;
   const sahne = new THREE.Scene();
   isiklar(sahne, { boyut: 12 });
@@ -44,29 +44,13 @@ export function maketKur(tuvalEl, { imler = [], az = false, secildi, kartSagda =
   const { std, isik, ekle, kutu, sil, kure, yuvarlak, kisi, yuru } = araclar(ucak, dinamik);
   const M = { govde: std(RENK.govde, 0.38, 0.1, { side: THREE.DoubleSide }), ic: std(RENK.ic, 0.8), petrol: std(RENK.petrol, 0.5, 0.1), petrolKoyu: std(RENK.petrolKoyu, 0.55, 0.1),
     sari: std(RENK.sari, 0.45), gri: std(RENK.gri, 0.7), koyu: std(RENK.koyu, 0.5, 0.2), kirmizi: std(RENK.kirmizi, 0.5), kraft: std(RENK.kraft, 0.85),
-    celik: std(0xc9ccd0, 0.3, 0.6), lastik: std(0x222222, 0.9), turuncu: std(RENK.turuncu, 0.55), cam: std(0xbfdde2, 0.08, 0.1, { transparent: true, opacity: 0.45 }) };
+    celik: std(0xc9ccd0, 0.3, 0.6), lastik: std(0x222222, 0.9), cam: std(0xbfdde2, 0.08, 0.1, { transparent: true, opacity: 0.45 }) };
   const canli = [], dokular = [];
 
-  /* ── apron: kenarları kâğıda karışan beton zemin (derz, lekeler, sarı yanaşma çizgisi, durma çizgisi, kesikli servis yolu);
-   * sert kenarlı kaide yok, böylece çerçeve hiçbir yeri kesmez ── */
-  const KX0 = -11, KX1 = 10.6, KZ = 6.8;
-  const apron = tuvalDoku(1024, 640, (g, w, h) => {
-    g.fillStyle = '#d6d4cd'; g.fillRect(0, 0, w, h);
-    for (let i = 0; i < 260; i++) { g.fillStyle = `rgba(20,20,20,${0.012 + (i % 5) * 0.005})`; g.fillRect((i * 397) % w, (i * 211) % h, 22 + (i % 7) * 8, 16 + (i % 4) * 6); }
-    g.strokeStyle = 'rgba(20,20,20,.08)'; g.lineWidth = 2; for (let x = 0; x <= w; x += 48) { g.beginPath(); g.moveTo(x, 0); g.lineTo(x, h); g.stroke(); } for (let y = 0; y <= h; y += 48) { g.beginPath(); g.moveTo(0, y); g.lineTo(w, y); g.stroke(); }
-    const yx = (x) => (x - KX0) / (KX1 - KX0) * w, yz = (z) => (z + KZ) / (2 * KZ) * h;
-    g.strokeStyle = '#f2c200'; g.lineWidth = 6; g.beginPath(); g.moveTo(0, h / 2); g.lineTo(yx(7.6), h / 2); g.stroke();
-    g.lineWidth = 5; g.beginPath(); g.moveTo(yx(7.0), yz(-1.3)); g.lineTo(yx(7.0), yz(1.3)); g.stroke();
-    g.strokeStyle = 'rgba(255,255,255,.8)'; g.lineWidth = 3; g.setLineDash([18, 14]);
-    g.strokeRect(yx(YOL.x0) - 10, yz(-YOL.z) - 10, yx(YOL.x1) - yx(YOL.x0) + 20, yz(YOL.z) - yz(-YOL.z) + 20); g.setLineDash([]);
-    const veri = g.getImageData(0, 0, w, h), d = veri.data;
-    for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
-      const ax = Math.max(0, (Math.abs(x / w - 0.5) * 2 - 0.667) / 0.166), az2 = Math.max(0, (Math.abs(y / h - 0.5) * 2 - 0.58) / 0.24), r = Math.min(1, Math.hypot(ax, az2));
-      d[(y * w + x) * 4 + 3] *= 1 - r * r * (3 - 2 * r);
-    }
-    g.putImageData(veri, 0, 0);
-  });
-  ekle(new THREE.PlaneGeometry(KX1 - KX0, KZ * 2), std(0xffffff, 0.92, 0, { map: apron, transparent: true, depthWrite: false }), (KX0 + KX1) / 2, 0.005, 0, dunya, { golge: false, rx: -Math.PI / 2 });
+  /* ── zemin: yalnız gölge alan saydam düzlem; uçak sayfanın kâğıdına kendi gölgesiyle oturur (v12: gri apron, sarı yanaşma
+   * çizgisi, koniler ve apron görevlisi kalktı; çerçeve uçağa göre) ── */
+  const zemin = new THREE.Mesh(new THREE.PlaneGeometry(34, 24), new THREE.ShadowMaterial({ color: 0x1a1a1a, opacity: 0.18 }));
+  zemin.rotation.x = -Math.PI / 2; zemin.position.y = 0.004; zemin.receiveShadow = true; dunya.add(zemin);
 
   /* ── gövde kabuğu: kesit silindir, burun kubbesi, kuyruk konisi ── */
   const kabuk = new THREE.CylinderGeometry(R, R, X1 - X0, 64, 1, true, T0, TL); kabuk.rotateZ(Math.PI / 2);
@@ -246,7 +230,7 @@ export function maketKur(tuvalEl, { imler = [], az = false, secildi, kartSagda =
   const yuruyenler = [kisi(ucak, 0, YF, 0.12, { renk: RENK.sari }), kisi(ucak, 0, YF, -0.12, { renk: 0xf8f8f6, alt: RENK.petrolKoyu })];
   const KORIDOR = [X0 + 0.45, X1 - 0.35];
 
-  /* ── apron: bagaj treni (çekici + iki araba), yakıt aracı, apron görevlisi, takozlar ve konilerin ── */
+  /* ── uçağın çevresi: bagaj treni (çekici + iki araba) ve yakıt aracı ── */
   const tren = [];
   { const cek = new THREE.Group(); dunya.add(cek); yuvarlak(0.72, 0.22, 0.44, 0.08, M.sari, 0, 0.14, 0, cek); kutu(0.28, 0.24, 0.4, M.cam, -0.12, 0.47, 0, cek); kutu(0.3, 0.03, 0.42, M.koyu, -0.12, 0.6, 0, cek);
     for (const [a, b] of [[0.24, 0.2], [-0.24, 0.2], [0.24, -0.2], [-0.24, -0.2]]) ekle(new THREE.CylinderGeometry(0.1, 0.1, 0.07, 14), M.lastik, a, 0.1, b, cek, { rx: Math.PI / 2 });
@@ -264,14 +248,10 @@ export function maketKur(tuvalEl, { imler = [], az = false, secildi, kartSagda =
     canli.push({ tur: 'tepe2', m: kure(0.04, isik(0xffa020), 0.98, 0.54, 0, y, { golge: false }) });
     const hortum = new THREE.TubeGeometry(new THREE.CatmullRomCurve3([new THREE.Vector3(-0.6, 0.3, -0.25), new THREE.Vector3(-0.9, 0.15, -0.9), new THREE.Vector3(-0.5, 0.6, -1.3), new THREE.Vector3(-0.2, 1.12, -1.55)]), 24, 0.025, 6);
     ekle(hortum, M.koyu, 0, 0, 0, y, { golge: false }); }
-  const gorevli = kisi(dunya, X1 + 2.95, 0.02, 0.9, { renk: RENK.turuncu, ry: -Math.PI / 2 });
-  const asa = (kol) => { ekle(new THREE.CylinderGeometry(0.018, 0.018, 0.22, 8), isik(0xff8a2a), 0, -0.3, 0.02, kol, { golge: false }); };
-  asa(gorevli.solK); asa(gorevli.sagK);
-  for (const [x, z] of [[X1 + 2.15, 0], [X0 - 3.4, 0]]) { sil(0.012, 0.09, 0.22, M.turuncu, x, 0.12, z, dunya); kutu(0.2, 0.02, 0.2, M.turuncu, x, 0.02, z, dunya); }
 
   /* ── seçim ── */
   let secili = -1, uzerinde = -1;
-  const durumYaz = () => vurgular.forEach((v, i) => { v.hedef = i === secili ? 0.34 : i === uzerinde ? 0.16 : 0; });
+  const durumYaz = () => vurgular.forEach((v, i) => { v.hedef = i === secili ? 0.42 : i === uzerinde ? 0.18 : 0; });
   function sec(i) { if (i === secili) return; secili = i; durumYaz(); odakHedef(); d.ciz(); }
 
   /* ── kamera: ortografik; kaide (ve bagaj yolu) tuvalin içinde kalır, hiçbir yer kesilmez ── */
@@ -280,25 +260,21 @@ export function maketKur(tuvalEl, { imler = [], az = false, secildi, kartSagda =
   const V = (x, y, z) => new THREE.Vector3(x, y, z);
   const sinir = [V(X1 + 2.0, YC, 0), V(X1 + 0.45, 0, 0), V(-8.5, YC + 0.6, 0), V(-8.2, YC + 2.95, 0), V(-6.6, YC + 2.95, 0), V(-7.6, YC + 0.45, 2.0), V(-7.6, YC + 0.45, -2.0),
     V(1.1, KY, 5.0), V(0.1, KY, 5.0), V(1.1, KY + 0.6, -5.0), V(0.1, KY + 0.6, -5.0), 
-    V(YOL.x0 - 0.3, 0, YOL.z + 0.3), V(YOL.x1 + 0.3, 0, YOL.z + 0.3), V(YOL.x0 - 0.3, 0.7, -YOL.z - 0.3), V(YOL.x1 + 0.3, 0.7, -YOL.z - 0.3), V(X1 + 3.1, 0, 1.0), V(X1 + 3.1, 0.95, 1.0)];
+    V(YOL.x0 - 0.3, 0, YOL.z + 0.3), V(YOL.x1 + 0.3, 0, YOL.z + 0.3), V(X1 + 3.1, 0, -1.6)];
   /* dar tuvalde (telefon) uçak köşegene yatar: kuyruk sol üstte, burun sağ altta */
-  const cerGenis = cerceve(kamera, yon, hedef, sinir, 1.09), cerDar = cerceve(kamera, new THREE.Vector3(0.55, 1.2, 0.9).normalize(), hedef, [...sinir.slice(0, 11), ...sinir.slice(-2)], 1.08);
+  const cerGenis = cerceve(kamera, yon, hedef, sinir, 1.04), cerDar = cerceve(kamera, new THREE.Vector3(0.55, 1.2, 0.9).normalize(), hedef, [...sinir.slice(0, 11), sinir.at(-1)], 1.04);
   let cer = cerGenis;
   const kam = { x: 0, y: 0, z: 1 }, kamHedef = { x: 0, y: 0, z: 1 };
   let gen = 1, yuk = 1, ilk = true;
-  function odakHedef() {
-    const { mx, my, yw } = cer.yari;
-    if (secili < 0) { Object.assign(kamHedef, { x: mx, y: my, z: 1 }); return; }
-    const z = cer === cerDar ? 1.8 : 2.5, p = ucak.localToWorld(new THREE.Vector3(orta(secili), YF + 0.3, 0)), pc = cer.kameraUzayi(p);
-    Object.assign(kamHedef, { x: pc.x + (kartSagda() ? 0.26 * yw / z : 0), y: pc.y + 0.05 * yw / z, z });
-  }
+  /* uçak her tuvalde bütün görünür (v12: yakınlaşma uçağı tuval kenarında kesiyordu); seçim zemin ışığı ve numarayla belli olur */
+  function odakHedef() { const { mx, my } = cer.yari; Object.assign(kamHedef, { x: mx, y: my, z: 1 }); }
   function boyutla() {
     gen = tuvalEl.clientWidth || 1; yuk = tuvalEl.clientHeight || 1;
     renderer.setPixelRatio(pikselOrani()); renderer.setSize(gen, yuk, false);
-    cer = gen / yuk < 1.3 ? cerDar : cerGenis; cer.olc(gen, yuk); odakHedef(); if (ilk || az) { Object.assign(kam, kamHedef); ilk = false; }
+    cer = gen / yuk < 1.5 ? cerDar : cerGenis; cer.olc(gen, yuk); odakHedef(); if (ilk || az) { Object.assign(kam, kamHedef); ilk = false; }
     d.ciz();
   }
-  const imNokta = BOLME.map((_, i) => new THREE.Vector3(i === 0 ? X1 + 0.62 : orta(i), YF + 0.02, i === 0 ? 0 : 0.0));
+  const imNokta = BOLME.map((_, i) => new THREE.Vector3(i === 0 ? X1 + 0.75 : orta(i), YC + (i === 0 ? 0.62 : 0.78), -R * (i === 0 ? 0.5 : 0.82)));
   const v = new THREE.Vector3();
   function imleriKoy() { imler.forEach((e, i) => { v.copy(imNokta[i]); ucak.localToWorld(v); v.project(kamera); e.style.transform = `translate(${((v.x + 1) / 2 * gen).toFixed(1)}px, ${((1 - v.y) / 2 * yuk).toFixed(1)}px)`; }); }
 
@@ -323,7 +299,7 @@ export function maketKur(tuvalEl, { imler = [], az = false, secildi, kartSagda =
     const k = az ? 1 : 1 - Math.exp(-dt * 5.5);
     kam.x += (kamHedef.x - kam.x) * k; kam.y += (kamHedef.y - kam.y) * k; kam.z += (kamHedef.z - kam.z) * k;
     cer.uygula(kam.x, kam.y, kam.z);
-    dunya.rotation.y = az ? 0 : Math.sin(t * (Math.PI * 2 / 40)) * 0.03;
+    dunya.rotation.y = az ? 0 : Math.sin(t * (Math.PI * 2 / 30)) * 0.05;
     vurgular.forEach((vv) => { vv.m.material.opacity += (vv.hedef - vv.m.material.opacity) * (az ? 1 : 0.2); });
     if (!az && Math.floor(t * 8) !== sonDoku) { sonDoku = Math.floor(t * 8); dokular.forEach((d0) => d0.yeniden(t)); }
     for (const c of canli) {
@@ -355,11 +331,9 @@ export function maketKur(tuvalEl, { imler = [], az = false, secildi, kartSagda =
     });
     /* bagaj treni */
     tren.forEach((p) => { const [x, z, a] = yolNokta(t * 0.85 - p.gec * 0.95 + 4); p.g.position.set(x, 0.02, z); p.g.rotation.y = a; if (p.tepe) p.tepe.visible = az || Math.floor(t * 3) % 2 === 0; });
-    /* uçak ışıkları, fanlar, apron görevlisi */
+    /* uçak ışıkları, fanlar */
     for (const l of isiklarU) l.m.visible = az || (l.tur === 'seyir' ? true : l.tur === 'tepe' ? (t % 1.2) < 0.2 : ((t % 1.6) < 0.06 || ((t % 1.6) > 0.16 && (t % 1.6) < 0.22)));
     fanlar.forEach((f) => { f.rotation.x = az ? 0 : t * 2.4; });
-    const sal = az ? 0 : Math.sin(t * 2.6);
-    gorevli.solK.rotation.z = -2.4 - 0.5 * sal; gorevli.sagK.rotation.z = 2.4 - 0.5 * sal;
     renderer.render(sahne, kamera); imleriKoy();
   }
   /* hareket edenler birleştirilmez; geri kalan her şey malzemeye göre tek ağ */

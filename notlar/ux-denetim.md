@@ -1,3 +1,32 @@
+# YASA DENETİMİ — UUMK v12 (Biz kimiz, Ne yapıyoruz, kabin turu, gündem, sponsorluk, kulüp kartı, hover) · 2026-10-11 akşam · denetleyici index 0 HATA · 7 UYARI · axe 0 (390 TR, 360 EN, 1440 TR, 1440 API'siz)
+
+Sonuç: 20/20 ölçüldü · 0 HATA · 7 UYARI (5'i v11'den: kapak ve tarihçe öğe yoğunluğu, sayfa öğe sayısı, ayrıntı penceresi 6 eylem, hesap formu zorunlu alanlar; yeni 2: kabin 9 eylem, tur süre çubuğu 7 sn) · ara ölçümde 10 UYARI vardı: yarıçap 6 → jetonlara, gölge 6 → 2, kart geçişi 360 → 280 ms ile 3'ü kapandı · karar: TESLİM.
+
+| # | Yasa | Ölçüm | Eşik | Durum | Gerekçe (yalnız UYARI) |
+|---|---|---|---|---|---|
+| 1 | Hick | nav 7 · kabin bölümü 9 eylem (6 numara + önceki/sonraki/durdur; başvuru bağlantı) · Biz kimiz 1 · gündem boş kart 1 | ≤ 7 · ≤ 5 | UYARI | 6 numara tek bir seçim kümesi (uçağın üstünde uzaya dağılmış sekme gibi), varsayılan seçili ve tur kendiliğinden gezer; kullanıcı seçmek zorunda değil |
+| 2 | Fitts | numara düğmesi 44×44 (görsel 28 px), önceki/sonraki/durdur 44×44 (e2e: masaüstü ve 390 px'te min 44) · mobil-denetim 320–1440 px'te < 44 px hedef 0 | ≥ 44 px | geçti | |
+| 3 | Jakob | karusel deseni: önceki/sonraki, süre çubuğu, ⏸/▶, üstüne gelince durur · "Tarihçemizi keşfet" gerçek #tarihce bağlantısı (JS'siz de atlar) · kaydırma kaçırılmaz | 0 sapma | geçti | |
+| 4 | Seçim Yükü | kabin 6 ekip, varsayılan 1 (Yönetim kurulu) seçili | ≤ 5 ya da varsayılan | geçti | |
+| 5 | Yakınlık | Ne yapıyoruz kutu arası 16 px, kutu dolgusu 24 px (1:1,5) · kabin kartı içi 16 px, sahne–kart 16 px · kimlik paneli logo–ad 8 px, panel dolgusu 24 px | ≤ 1:2 | geçti | |
+| 6 | Benzerlik | punto ölçek dışı 0 · yarıçap 3 (r-1/r-2/r-3 jetonları; askılı kart 18 px → r-2) · gölge 2 (g-1 ve kart gölgesi; hover'lar g-1) · kutular (iş, biçim, etkinlik, kimlik) aynı çerçeve/zemin/yarıçap | ≤ 8 · ≤ 4 · ≤ 2 | geçti | |
+| 7 | Tekdüze Bağlılık | seçili numara sarı + seçili bölme zemini sarı + kartta "n / 6" · kimlik panelinde iki logo kesik yayla bağlı | — | geçti | |
+| 8 | Ortak Bölge | tek öğeli kutu 0 · iç içe kart 0 (kabin kartı sahnenin dışında) · künye kutusu kalktı | 0 | geçti | |
+| 9 | Prägnanz | degrade 0 · cam 0 · ışıma 0 · parıltı şeridi düz yarı saydam (degrade değil) · uçak gri apron dikdörtgeni olmadan kâğıda oturur | 0 | geçti | |
+| 10 | Von Restorff | görünüm başına 1 birincil: Biz kimiz "Tarihçemizi keşfet", kabin "Bu ekibe başvur", tarihçe "Üye alım formu" (kabin ve tarihçe ayrı section) | 1 | geçti | |
+| 11 | Miller | form değişmedi (max 6 alan) · Ne yapıyoruz 5 kutu | ≤ 7 | geçti | |
+| 12 | Sıra Konumu | nav değişmedi (ilk Biz kimiz, son Sponsorluk) · kutular: ilk Teknik geziler (en sık sorulan), son Kulüp hayatı · kabin burundan kuyruğa | birincil görevler | geçti | |
+| 13 | Doherty | numara/ok → kart aynı karede · kart geçişi 280 ms · tur süre çubuğu 7 sn (zamanlayıcı, geri bildirim değil) · düğme uçağı 560 ms, tarihçeye varış ≈ 1 sn (kaydırma) | ≤ 300 · < 400 ms yanıt | UYARI | 7 sn'lik animasyon turun bekleme süresini gösteren çubuk; kullanıcı eylemine yanıt değil, ⏸ ile durur |
+| 14 | Zeigarnik | çok adımlı akış yok; tur "n / 6" ve süre çubuğuyla nerede olduğunu gösterir | — | geçti | |
+| 15 | Zirve-Son | boş gündem tasarlandı (kapalı kapı çizimi + ne yapılacağı + Instagram) · kabin turu sonda başa döner · kart doluyken baş harf ve barkod | 3/3 | geçti | |
+| 16 | Parkinson | hesap formu 6/6 zorunlu (değişmedi) | ≤ %50 | UYARI | Kullanıcı isteği (okul e-postası ve numarası zorunlu) |
+| 17 | Tesler | tur kendiliğinden başlar/durur (görünürlük, üstüne gelme, seçim); hareket azaltmada kapalı · GPU yoksa poster ve aynı düğmeler · telefon sürümü medya sorgusuyla | — | geçti | |
+| 18 | Postel | değişmedi | 0 | geçti | |
+| 19 | Occam | künye (6 satır) ve Güz/Bahar akışı (7 durak), meydan bandı, sponsorlukta foto şeridi + kurum açıklamaları + teklif künyesi kalktı · sayfa 3099 öğe | ≤ 900 | UYARI | Öğe sayısının çoğu kapak panoramasının SVG parçaları (1843); v11'den beri aynı gerekçe |
+| 20 | Pareto | ilk ekran değişmedi | ≥ %60 | UYARI (v9 gerekçesi) | |
+
+Risk: tur ve hover gerçek telefonda denenmedi (masaüstü Chrome'un telefon öykünmesi); parıltı şeridi yalnız fareyle görünür.
+
 # YASA DENETİMİ — UUMK v11 (mobil + kapak uçağı) · 2026-10-11 gece · denetleyici index 0 HATA · 6 UYARI (v10 ile aynı) · axe 0 (390 TR, 360 EN, 1440 TR)
 
 Sonuç: 20/20 ölçüldü · 0 HATA · UYARIlar v10'daki gerekçelerle aynı (Hick kulüp 9, Parkinson, Occam, Pareto) · karar: TESLİM. Değişen satırlar (yalnız ≤ 760 px):

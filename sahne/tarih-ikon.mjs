@@ -102,4 +102,13 @@ export const IS_IKON = {
     <rect x="6" y="50" width="40" height="8" rx="1.4" fill="${K}" ${ana}/>${Array.from({ length: 12 }, (_, i) => `<rect x="${8.4 + i * 3.1}" y="52" width="2.2" height="1.8" fill="${G}"/><rect x="${8.4 + i * 3.1}" y="54.6" width="2.2" height="1.8" fill="${G}"/>`).join('')}
     <path d="M51 49h7v9q0 2-2 2h-3q-2 0-2-2z" fill="${P}" ${ana}/><path d="M58 51q3 0 3 3t-3 3" fill="none" ${ince}/><path d="M53 46q1-2 0-3M56 46q1-2 0-3" ${ince}/>
     <rect y="60" width="64" height="4" fill="${G}"/>`),
+  /* kulüp hayatı: açılış mangalı (ızgarada sucuklar, duman), üstte süs ışıkları, sohbet eden iki üye, yerde langırt topu */
+  sosyal: c(`<rect width="64" height="64" fill="${Z}"/>
+    <path d="M2 7Q32 31 62 7" fill="none" ${ince}/>${[1, 2, 3, 4, 5, 6, 7].map((k) => { const t = k / 8; return `<circle cx="${(2 + 60 * t).toFixed(1)}" cy="${(9.5 + 24 * t * (1 - t)).toFixed(1)}" r="1.7" fill="${k % 3 ? S : R}" ${ince}/>`; }).join('')}
+    <path d="M17 30q-3-3 0-6t0-6M25 29q3-3 0-6t0-6" fill="none" stroke="${G}" stroke-width="1.6" stroke-linecap="round"/>
+    <path d="M7 37h30l-4 9H11z" fill="${KO}" ${ana}/><path d="M6 37h32" ${ana}/><path d="M12 46l-3 12M32 46l3 12" ${ana}/>
+    ${[10, 16.5, 23, 29.5].map((x) => `<rect x="${x}" y="33.6" width="5.4" height="2.8" rx="1.4" fill="${R}" ${ince}/>`).join('')}<path d="M14 40h16" stroke="${S}" stroke-width="1.2" stroke-dasharray="2 2"/>
+    ${kisi(46, 54, P, 1.7)}${kisi(56, 54, S, 1.7)}<rect x="48.6" y="44" width="2.4" height="3.2" fill="${K}" ${ince}/><rect x="52.4" y="45" width="2.4" height="3.2" fill="${R}" ${ince}/>
+    <path d="M44 33h12a3 3 0 0 1 0 6h-7l-3 2.4V39h-2a3 3 0 0 1 0-6z" fill="${K}" ${ince}/><circle cx="47" cy="36" r="0.7" fill="${M}"/><circle cx="50" cy="36" r="0.7" fill="${M}"/><circle cx="53" cy="36" r="0.7" fill="${M}"/>
+    <rect y="58" width="64" height="6" fill="${G}"/><path d="M0 58H64" ${ana}/><circle cx="40" cy="55.6" r="2.2" fill="${K}" ${ince}/>`),
 };

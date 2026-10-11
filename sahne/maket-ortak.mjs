@@ -1,4 +1,4 @@
-/* MAKET ORTAK — kabin maketi (maket3b) ve gündem meydanı (meydan3b) için ortak parçalar: çizici kurulumu, malzemeler, şekil
+/* MAKET ORTAK — kabin maketi (maket3b) için ortak parçalar: çizici kurulumu, malzemeler, şekil
  * yardımcıları, eklemli insan figürü (yürür, el sallar, oturur), tuval dokusu, sınır kutusuna sığan ortografik çerçeve ve
  * görünürlüğe bağlı çizim döngüsü (ekran dışında ya da sekme gizliyken durur; hareket azaltmada tek kare). */
 import * as THREE from '../vendor/three-r184/three.module.min.js';

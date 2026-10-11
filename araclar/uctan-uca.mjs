@@ -552,51 +552,76 @@ const SENARYO = {
     }
     console.log('      ' + sonuc.join(' · '));
   },
-  async 'kabin maketi: 6 bölme düğmesi; GPU yoksa poster ve düğmeler, düğme kartı açar (önceki/sonraki/Esc); WebGL ile 2,5B maket, tuvale tıklayınca bölme seçilir; telefonda kare sahne, kart altta, taşma yok'(s) {
+  async 'kabin maketi: kart hep açık, tur kendiliğinden ilerler; seçince ya da durdurunca durur, ⏸ yeniden başlatır; başvuru düğmesi üye alım formuna; GPU yoksa poster; WebGL ile tuvale tıklayınca bölme seçilir; telefonda 4:3 sahne, kart altta, taşma yok'(s) {
+    const secili = `[...document.querySelectorAll('.kabin__kart')].findIndex((k) => k.hasAttribute('data-secili'))`;
     await s.git('./', 1440, 900);
-    await kosulBekle(s, `!!document.querySelector('#maket') && !!document.querySelector('#kabin')`, 8000);
+    await kosulBekle(s, `!!document.querySelector('#maket') && !!document.querySelector('.maket__imler > li').style.getPropertyValue('--x')`, 8000);   /* site.mjs bağlandı */
     await s.js(`document.querySelector('#maket').scrollIntoView({ block: 'center', behavior: 'instant' })`);
-    const poster = await kosulBekle(s, `(() => { const i = document.querySelector('.maket__poster'); return i.complete && i.naturalWidth > 0 && document.querySelector('#kabin').hidden; })()`, 6000);
-    const a = await s.js(`({ n: document.querySelectorAll('.maket__im').length, kart: document.querySelector('#kabin').hidden, cizici: document.querySelector('#maket').dataset.cizici || 'yok', posterOp: getComputedStyle(document.querySelector('.maket__poster')).opacity, sigar: document.querySelector('.maket__sahne').getBoundingClientRect().height <= innerHeight, hedef: Math.min(...[...document.querySelectorAll('.maket__im')].map((b) => b.getBoundingClientRect().height)), icerde: [...document.querySelectorAll('.maket__im')].every((b) => { const r = b.getBoundingClientRect(), k = document.querySelector('.maket__sahne').getBoundingClientRect(); return r.left >= k.left && r.right <= k.right && r.top >= k.top; }) })`);
+    const poster = await kosulBekle(s, `(() => { const i = document.querySelector('.maket__poster'); return i.complete && i.naturalWidth > 0; })()`, 6000);
+    const a = await s.js(`({ n: document.querySelectorAll('.maket__im').length, kartAcik: !document.querySelector('#kabin').hidden && getComputedStyle(document.querySelector('.kabin__kart[data-secili]')).visibility === 'visible', ilk: ${secili}, cta: document.querySelector('.kabin__basvur').textContent, href: document.querySelector('.kabin__basvur').href, cizici: document.querySelector('#maket').dataset.cizici || 'yok', posterOp: getComputedStyle(document.querySelector('.maket__poster')).opacity, hedef: Math.min(...[...document.querySelectorAll('.maket__im')].map((b) => b.getBoundingClientRect().height)), icerde: [...document.querySelectorAll('.maket__im')].every((b) => { const r = b.getBoundingClientRect(), k = document.querySelector('.maket__sahne').getBoundingClientRect(); return r.left >= k.left && r.right <= k.right && r.top >= k.top && r.bottom <= k.bottom; }), tur: document.querySelector('#maket').hasAttribute('data-tur'), yonlendirme: /bölmeye basınca/.test(document.querySelector('.kabin-kap').textContent) })`);
+    const ilerledi = await kosulBekle(s, `${secili} === 1`, 9000);
     await s.js(`document.querySelectorAll('.maket__im')[2].click()`); await bekle(200);
-    const k1 = await s.js(`({ acik: !document.querySelector('#kabin').hidden, ad: document.querySelector('.kabin__kart[data-secili] h4').textContent, exp: document.querySelectorAll('.maket__im')[2].getAttribute('aria-expanded') })`);
+    const k1 = await s.js(`({ i: ${secili}, ad: document.querySelector('.kabin__kart[data-secili] h4').textContent, basili: document.querySelectorAll('.maket__im')[2].getAttribute('aria-pressed'), durdu: document.querySelector('.kabin__tur').getAttribute('aria-pressed'), tur: document.querySelector('#maket').hasAttribute('data-tur'), cta: document.querySelector('.kabin__basvur').textContent })`);
     await s.js(`document.querySelector('[data-kabin="1"]').click()`); await bekle(100);
     const k2 = await s.js(`document.querySelector('.kabin__kart[data-secili] h4').textContent`);
-    await s.js(`document.querySelector('[data-kabin="1"]').focus(); document.querySelector('#maket').dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }))`); await bekle(100);
-    const k3 = await s.js(`({ kapali: document.querySelector('#kabin').hidden, odak: document.activeElement === document.querySelectorAll('.maket__im')[3] })`);
-    /* yazılımsal GPU'da maketi zorla kur (?webgl=1): düğmeler izdüşümle yerleşir; tuvalde bir bölmeye tıklayınca kart açılır */
+    await bekle(7600);
+    const k3 = await s.js(`document.querySelector('.kabin__kart[data-secili] h4').textContent`);
+    await s.js(`document.querySelector('.kabin__tur').click()`); await bekle(100);
+    const k4 = await s.js(`({ durdu: document.querySelector('.kabin__tur').getAttribute('aria-pressed'), tur: document.querySelector('#maket').hasAttribute('data-tur') })`);
+    /* yazılımsal GPU'da maketi zorla kur (?webgl=1, hareket azaltma): tur kapalı başlar; tuvalde bir bölmeye tıklayınca o ekip seçilir */
     await s.git('./?webgl=1&az=1', 1440, 900);
-    await kosulBekle(s, `!!document.querySelector('#maket') && !!document.querySelector('#kabin')`, 8000);
+    await kosulBekle(s, `!!document.querySelector('#maket')`, 8000);
     await s.js(`document.querySelector('#maket').scrollIntoView({ block: 'center', behavior: 'instant' })`);
     const kuruldu = await kosulBekle(s, `document.querySelector('#maket').dataset.cizici === '3b'`, 20000);
     let b = {};
     if (kuruldu) {
       await bekle(400);
-      b = await s.js(`(() => { const li = document.querySelectorAll('.maket__imler > li')[4], r = li.getBoundingClientRect(); document.querySelector('#maket-tuval').dispatchEvent(new MouseEvent('click', { clientX: r.left, clientY: r.top - 6, bubbles: true })); return { imKonum: [...document.querySelectorAll('.maket__imler > li')].every((e) => /translate\\(/.test(e.style.transform)), secili: document.querySelector('.kabin__kart[data-secili]')?.dataset.i ?? null }; })()`);
+      b = await s.js(`(() => { const ilkTur = document.querySelector('.kabin__tur').getAttribute('aria-pressed'); const imler = [...document.querySelectorAll('.maket__imler > li')], c = document.querySelector('#maket-tuval').getBoundingClientRect(), m = imler.map((li) => { const r = li.getBoundingClientRect(); return [r.left, r.top]; });
+        /* 5. bölmenin tabanı: numaranın altında, kabin tabanı yüksekliğinde */
+        const [x, y] = m[4]; document.querySelector('#maket-tuval').dispatchEvent(new MouseEvent('click', { clientX: x, clientY: y + c.height * 0.12, bubbles: true }));
+        return { ilkTur, imKonum: imler.every((e) => /translate\\(/.test(e.style.transform)), secili: ${secili} }; })()`);
     }
     await s.git('./', 390, 844);
-    await kosulBekle(s, `!!document.querySelector('#maket') && !!document.querySelector('#kabin')`, 8000);
+    await kosulBekle(s, `!!document.querySelector('#maket') && !!document.querySelector('.maket__imler > li').style.getPropertyValue('--x')`, 8000);
     await s.js(`document.querySelector('#maket').scrollIntoView({ behavior: 'instant' })`); await bekle(400);
-    await kosulBekle(s, `document.querySelector('#kabin').hidden && !!document.querySelector('.maket__imler > li').style.getPropertyValue('--x')`, 6000);   /* site.mjs bağlandı */
-    await s.js(`document.querySelectorAll('.maket__im')[0].click()`); await bekle(150);
-    const t = await s.js(`(() => { const sa = document.querySelector('.maket__sahne').getBoundingClientRect(), ka = document.querySelector('#kabin').getBoundingClientRect(); return { sw: document.documentElement.scrollWidth, gen: Math.round(sa.width), kare: Math.abs(sa.width - sa.height) < 2, altta: ka.top >= sa.bottom - 1, kutular: [Math.round(sa.top), Math.round(sa.bottom), Math.round(ka.top), Math.round(ka.bottom), getComputedStyle(document.querySelector('#kabin')).position], hedef: Math.min(...[...document.querySelectorAll('.maket__im')].map((x) => x.getBoundingClientRect().height)) }; })()`);
-    if (!poster || a.n !== 6 || !a.kart || a.cizici !== 'yok' || a.posterOp !== '1' || !a.sigar || a.hedef < 44 || !a.icerde || !k1.acik || k1.ad !== 'Ar-Ge' || k1.exp !== 'true' || k2 !== 'Sponsorluk' || !k3.kapali || !k3.odak || !kuruldu || !b.imKonum || b.secili !== '4' || t.sw > 390 || !t.kare || !t.altta || t.hedef < 44) throw new Error(JSON.stringify({ poster, a, k1, k2, k3, kuruldu, b, t }));
-    console.log(`      kabin: 6 bölme düğmesi poster üstünde (≥ 44 px) · Ar-Ge kartı açıldı, sonraki → Sponsorluk, Esc kapattı ve odak düğmede · ?webgl=1 ile maket kuruldu, tuvalde 5. bölmeye tıklayınca kartı açıldı · telefonda ${t.gen} px kare sahne, kart altta, taşma yok`);
+    const t = await s.js(`(() => { const sa = document.querySelector('.maket__sahne').getBoundingClientRect(), ka = document.querySelector('#kabin').getBoundingClientRect(); return { sw: document.documentElement.scrollWidth, gen: Math.round(sa.width), oran: +(sa.width / sa.height).toFixed(2), altta: ka.top >= sa.bottom - 1, hedef: Math.min(...[...document.querySelectorAll('.maket__im'), ...document.querySelectorAll('.kabin__ok')].map((x) => x.getBoundingClientRect().height)) }; })()`);
+    if (!poster || a.n !== 6 || !a.kartAcik || a.ilk !== 0 || a.cta !== 'Üye ol ↗' || !a.href.startsWith('https://forms.gle/') || a.cizici !== 'yok' || a.posterOp !== '1' || a.hedef < 44 || !a.icerde || !a.tur || a.yonlendirme || !ilerledi
+      || k1.i !== 2 || k1.ad !== 'Ar-Ge' || k1.basili !== 'true' || k1.durdu !== 'true' || k1.tur || k1.cta !== 'Bu ekibe başvur ↗' || k2 !== 'Sponsorluk' || k3 !== 'Sponsorluk' || k4.durdu !== 'false' || !k4.tur
+      || !kuruldu || b.ilkTur !== 'true' || !b.imKonum || b.secili !== 4 || t.sw > 390 || Math.abs(t.oran - 1.33) > 0.02 || !t.altta || t.hedef < 44) throw new Error(JSON.stringify({ poster, a, ilerledi, k1, k2, k3, k4, kuruldu, b, t }));
+    console.log(`      kabin: kart açık (1/6 Yönetim kurulu, "Üye ol ↗" → üye alım formu), yönlendirme cümlesi yok · tur 7 sn'de Etkinlik'e geçti · Ar-Ge seçilince tur durdu, düğme "Bu ekibe başvur ↗" · sonraki → Sponsorluk, 7,6 sn sonra hâlâ Sponsorluk · ⏸ turu yeniden başlattı · ?webgl=1&az=1: tur kapalı, tuvalde 5. bölme seçildi · telefonda ${t.gen} px 4:3 sahne, kart altta, hedefler ≥ 44 px, taşma yok`);
   },
-  async 'gündem meydanı: bölüm başında poster; WebGL ile 2,5B havaalanı kurulur ve zamanla değişir'(s) {
+  async 'boş gündem: kayıt kapalıyken çizimli kapı kartı (kapalı banko, uyuyan kedi, taksi eden uçak) ve Instagram bağlantısı; 3B meydan bandı yok'(s) {
+    /* sunucu yokmuş gibi: /api/durum 503 döner (yayındaki statik barındırma) */
+    const { identifier } = await s.cdp('Page.addScriptToEvaluateOnNewDocument', { source: `{ const f = window.fetch; window.fetch = (u, ...r) => String(u).includes('/api/durum') ? Promise.resolve(new Response('{}', { status: 503 })) : f(u, ...r); }` });
     await s.git('./', 1440, 900);
-    await s.js(`document.querySelector('#meydan').scrollIntoView({ block: 'center', behavior: 'instant' })`);
-    const poster = await kosulBekle(s, `(() => { const i = document.querySelector('.meydan__poster'); return i.complete && i.naturalWidth > 0; })()`, 6000);
-    await s.git('./?webgl=1&olc=1', 1440, 900);
-    await s.js(`document.querySelector('#meydan').scrollIntoView({ block: 'center', behavior: 'instant' })`);
-    const kuruldu = await kosulBekle(s, `document.querySelector('#meydan').dataset.cizici === '3b' && !!globalThis.__meydan`, 20000);
-    let degisti = false;
-    if (kuruldu) {
-      const kare = `(() => { globalThis.__meydan.ciz(); const t = document.querySelector('.meydan__tuval'), c = document.createElement('canvas'); c.width = 96; c.height = 30; c.getContext('2d').drawImage(t, 0, 0, 96, 30); return c.toDataURL(); })()`;
-      const k1 = await s.js(kare); await bekle(2500); const k2 = await s.js(kare); degisti = k1 !== k2;
-    }
-    if (!poster || !kuruldu || !degisti) throw new Error(JSON.stringify({ poster, kuruldu, degisti }));
-    console.log('      meydan: poster yüklendi · ?webgl=1 ile havaalanı kuruldu, 2,5 sn arayla iki kare farklı (sahne canlı)');
+    await s.js(`document.querySelector('#gundem').scrollIntoView({ block: 'start', behavior: 'instant' })`);
+    const hazir = await kosulBekle(s, `(() => { const i = document.querySelector('#etkinlik-listesi .bos__resim'); return !!i && i.complete && i.naturalWidth > 0; })()`, 8000);
+    const g = await s.js(`(() => { const l = document.querySelector('#etkinlik-listesi'), k = l.querySelector('.bos'), r = k?.getBoundingClientRect(), d = document.querySelector('.duyurular').getBoundingClientRect(); return { meydan: !!document.querySelector('#meydan, .meydan, #gundem canvas'), baslik: k?.querySelector('.bos__baslik').textContent, link: k?.querySelector('a')?.href, resim: k?.querySelector('img')?.getAttribute('src'), oran: r ? +(r.height / d.height).toFixed(2) : 0 }; })()`);
+    await s.cdp('Page.removeScriptToEvaluateOnNewDocument', { identifier });
+    if (!hazir || g.meydan || g.baslik !== 'Etkinlik kaydı bu sitede şu an kapalı' || !String(g.link).includes('instagram.com/ituuumk') || g.resim !== 'gorseller/kapi.svg' || g.oran < 0.7) throw new Error(JSON.stringify({ hazir, g }));
+    console.log(`      boş gündem: "${g.baslik}" kartı, kapı çizimi yüklendi, Instagram bağlantısı · kart yüksekliği duyurular sütununun ${Math.round(g.oran * 100)}%'i · meydan bandı yok`);
+  },
+  async 'Biz kimiz: künye yok, kimlik paneli (iki logo, aralarında uçak), "Tarihçemizi keşfet" tarihçeye indirir, başlığın çizgisi uzar, odak başlıkta'(s) {
+    await s.git('./', 1440, 900);
+    await kosulBekle(s, `!!document.querySelector('#tarihce-git')`, 6000);
+    await s.js(`document.querySelector('#kulup').scrollIntoView({ block: 'start', behavior: 'instant' })`);
+    const ucus = await kosulBekle(s, `document.querySelector('.kimlik').hasAttribute('data-ucus')`, 4000);
+    const k = await s.js(`({ kunye: !!document.querySelector('.kunye'), donem: !!document.querySelector('.donem'), logolar: [...document.querySelectorAll('.kimlik__rozet img')].filter((i) => i.complete && i.naturalWidth > 0).length, kutular: document.querySelectorAll('.isler__liste > .is').length })`);
+    await s.js(`document.querySelector('#tarihce-git').click()`);
+    const indi = await kosulBekle(s, `(() => { const r = document.querySelector('#tarihce').getBoundingClientRect(); return Math.abs(r.top) < 120 && document.querySelector('#tarihce').classList.contains('varis') && document.activeElement === document.querySelector('#tarihce-baslik'); })()`, 5000);
+    const son = await s.js(`(document.getAnimations().forEach((x) => { if (x instanceof CSSTransition) x.finish(); }), { hash: location.hash, cizgi: getComputedStyle(document.querySelector('#tarihce-baslik'), '::after').width })`);
+    if (!ucus || k.kunye || k.donem || k.logolar !== 2 || k.kutular !== 5 || !indi || son.hash !== '#tarihce' || parseFloat(son.cizgi) < 40) throw new Error(JSON.stringify({ ucus, k, indi, son }));
+    console.log(`      Biz kimiz: künye ve Güz/Bahar akışı yok, 5 kutu, 2 logo, uçak uçtu · düğme tarihçeye indirdi (${son.hash}), çizgi ${son.cizgi}, odak başlıkta`);
+  },
+  async 'kulüp kartı: askılı kart; yazdıkça ad, baş harfler, okul numarası ve barkod dolar; imleçle eğilir, bırakınca sallanır'(s) {
+    await s.git('./', 1440, 900);
+    await s.js(`document.querySelector('#hesap').scrollIntoView({ block: 'start', behavior: 'instant' }); document.querySelector('#sekme-kayit').click()`);
+    await kosulBekle(s, `!!document.querySelector('#kulup-karti [data-kart="barkod"] rect')`, 6000);   /* sahne/kart.mjs yüklendi */
+    await s.js(`(() => { const f = document.querySelector('#kayit-form'), y = (n, v) => { const i = f.querySelector('[name=' + n + ']'); i.value = v; i.dispatchEvent(new Event('input', { bubbles: true })); }; y('ad', 'Deneme'); y('soyad', 'İlkay'); y('okul_no', '110220031'); })()`); await bekle(100);
+    const k = await s.js(`(() => { const k = document.querySelector('#kulup-karti'), a = (n) => k.querySelector('[data-kart="' + n + '"]'); return { durum: k.dataset.durum, ad: a('ad').textContent, bas: a('bas').textContent, kod: a('kod').textContent, cubuk: a('barkod').querySelectorAll('rect').length, aski: getComputedStyle(k.querySelector('.kart__aski')).height }; })()`);
+    const e = await s.js(`(() => { const k = document.querySelector('#kulup-karti'), r = k.getBoundingClientRect(); k.dispatchEvent(new PointerEvent('pointermove', { pointerType: 'mouse', clientX: r.right - 10, clientY: r.top + 40, bubbles: true })); const ry = k.style.getPropertyValue('--ry'); k.dispatchEvent(new PointerEvent('pointerleave', { pointerType: 'mouse' })); return { ry, salin: k.classList.contains('salin'), sifir: k.style.getPropertyValue('--ry') === '' }; })()`);
+    if (k.durum !== 'canli' || k.ad !== 'Deneme İlkay' || k.bas !== 'Dİ' || k.kod !== 'UUMK-0031' || k.cubuk < 2 * k.kod.length || parseFloat(k.aski) < 40 || parseFloat(e.ry) < 4 || !e.salin || !e.sifir) throw new Error(JSON.stringify({ k, e }));
+    console.log(`      kulüp kartı: "${k.ad}", baş harfler ${k.bas}, ${k.kod}, barkodda ${k.cubuk} çubuk · imleç sağda → eğim ${e.ry}, bırakınca sallandı`);
   },
   async 'üst şerit: bayraklı dil anahtarı etkin dili gösterir; 320–414 px telefonda menü ve hesap düğmesi ekranda, hedefler ≥ 44 px'(s) {
     await s.git('./', 1440, 900);

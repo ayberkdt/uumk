@@ -23,6 +23,7 @@ export const JS_TR = {
   sponsorKonu: 'Sponsorluk — İTÜ UUMK', sponsorGovde: 'Merhaba,\n\n[Şirket] adına İTÜ UUMK ile sponsorluk ya da iş birliği hakkında görüşmek istiyoruz.\n\nAd soyad:\nŞirket:\nTelefon:\n',
   adresKopyalandi: '{adres} kopyalandı.', adresKopyalanamadi: 'Kopyalanamadı; adres: {adres}', parolaGoster: 'Göster', parolaGizle: 'Gizle',
   turGezi: 'Teknik gezi', turAtolye: 'Atölye', turKurs: 'Kurs', turYarisma: 'Yarışma', turSosyal: 'Sosyal', ucusKod: 'Uçuş',
+  kabinBasvur: 'Bu ekibe başvur ↗', kabinUyeOl: 'Üye ol ↗', kabinNot: 'Önce üye alım formuyla üye ol; sonra bu ekipte görev alabilirsin.', kabinNotYonetim: 'Yönetim kurulu genel kurulda seçilir; önce üye ol.',
   dahaFazla: 'Diğer {n} etkinliği göster', takvimeEkle: 'Takvime ekle', kartAd: 'Ad Soyad', kartTaslak: 'Henüz hesap yok', kartCanli: 'Hesap açılıyor', kartDogrulandi: 'Doğrulandı', kartBekliyor: 'Doğrulama bekliyor',
   'h-ad-gerekli': 'Adını yaz.', 'h-soyad-gerekli': 'Soyadını yaz.', 'h-eposta-gecersiz': 'Geçerli bir e-posta adresi yaz.',
   'h-eposta-okul': 'Okul e-postanı yaz (@{alan}).', 'h-okul-no-gecersiz': 'Okul numaran yalnız rakamlardan oluşmalı.',

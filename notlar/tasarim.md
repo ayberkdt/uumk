@@ -53,6 +53,46 @@ Düz ve bilgi veren cümle. Yasak liste araclar/dogrula.mjs'de (TR + EN).
 
 ## Modül notları (kaynak başlıklarından taşındı, 11 Ekim 08:15 — açılış JS bütçesi)
 
+### sahne/ucus.mjs — satır yorumları (v7, 11 Ekim 2026; açılış JS bütçesi için kaynaktan taşındı, sırayla)
+- yerel eksenler: x sağ kanat, y yukarı, z burun. Kanat açıklığı 2.  — `const N = [0, 0.03, 1.15], C = [0, 0, -0.95];`
+- kanat ucunda logodaki petrol bant  — `const ara = (a, b, t) => [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1`
+- anahtar kareler [p, x, y, z]  — `export const GENIS = [`
+- adın hâlleri: [giriş, çıkış] pencereleri (p)  — `/* takla penceresi */`
+- takla penceresi  — `export const TAKLA = [0.67, 0.87];`
+- ardışık: yeni ad eskisi çıkınca girer  — `export const PENCERE = [[null, [0.27, 0.35]], [[0.35, 0.44], [0.61, 0.`
+- * yörünge: nokta(q), eksen(q)  — `export function yorunge(anahtar) {`
+- konum ve eksenler: teğet + (eğrilik + yerçekimi) → yatış ve takla  — `function eksen(q) {`
+- takla penceresinde sırtüstü olabilir  — `const takla = q > TAKLA[0] && q < TAKLA[1];`
+- açılıştan 1,5 sn sonra 30 kare aralığının ortancası > 30 ms ise (GPU yok) doku ve uçuş planı kapanır, tuval 1x olur. Açılış yükü sayılmaz: önceki ölçüm ilk kareleri sayıp GPU'lu makinede de hafif kipe geçiyordu.  — `let hafif = new URLSearchParams(location.search).has('hafif'), sonKare`
+- imleç paralaksı (yalnız fare)  — `const fare = { x: 0, y: 0, hx: 0, hy: 0 };`
+- dar ekranda yörünge açılış metninin altındaki banda sığar  — `const alt = dar && metinAlt ? metinAlt() : null;`
+- ekran uzayında: derinlik düzeltmesi  — `anahtar = anahtar.map(([q, x, y, z]) => [q, x, y > -4 ? (dip + ((y - y`
+- yörünge yalnız boyut değişince kurulur  — `let yrgOn = null, yrgAnahtar = null;`
+- gölge tamponu: gölge çokgenleri çeyrek çözünürlükte, yalnız kendi kutusunda bulanıklaşır ve büyütülerek basılır. Tam tuvalde filter: blur yazılımsal çizimde kare başına ~480 ms tutuyordu.  — `const GK = 0.25, golgeT = document.createElement('canvas'), gg = golge`
+- kesik çizgiler dünyaya bağlı: her parça deseni ekrandaki yay uzunluğundan sürdürür (yoksa her karede yeniden başlayıp kıpırdıyordu)  — `let yayAnahtar = null, yayIz = null, yayPlan = null;`
+- kâğıt dokusu  — `const doku = (() => {`
+- gökteki küçük kâğıt uçaklar: [hız, yükseklik payı, genlik, faz, ölçek]  — `const SURU = [[0.045, 0.18, 0.05, 0.0, 1.25], [0.032, 0.33, 0.04, 2.1,`
+- iz  — `g.setLineDash([3, 5]); g.lineWidth = 1; g.strokeStyle = 'rgba(5, 107, `
+- boşta süzülme: hafif inip kalkma ve yalpa  — `fare.x += (fare.hx - fare.x) * 0.06; fare.y += (fare.hy - fare.y) * 0.`
+- ilk açılış: sağ üstten süzülür  — `let gir = [0, 0, 0];`
+- uçuş planı: önümüzdeki yol, soluk  — `yaylar();`
+- uçuş izi  — `const bas = Math.max(0, p - 0.16), adim = 40;`
+- gölge  — `const golge = YUZLER.slice(0, 4).map((y) => y.k.map((l) => { const w =`
+- yüzler: arkadan öne  — `const kamera = [0, 0, D];`
+- kat çizgileri: ince petrol  — `g.strokeStyle = 'rgba(5, 107, 122, 0.55)'; g.lineWidth = 0.9;`
+- sınama: p'deki uçağın ekran konumu ve yatışı  — `olc(q = p) { const e = eksen(q); const [x, y] = izdus(e.o); return { x`
+- kanat uçları (dihedral)  — `const SD = [-1.0, 0.17, -0.95], SA = [1.0, 0.17, -0.95];`
+- kanattaki kat çizgisi  — `const SK = [-0.42, 0.035, -0.95], SKa = [0.42, 0.035, -0.95];`
+- omurga  — `const OS = [-0.03, -0.34, -0.95], OA = [0.03, -0.34, -0.95];`
+- yatay telefon: açılış akışta, uçak metnin altındaki bantta  — `const KISA = globalThis.matchMedia?.('(max-height: 520px) and (orienta`
+- metin ekranı dolduruyorsa uçak metnin üstüne binmez, çizilmez  — `yer = alt === null || yuk - alt > 40;`
+- bant çok darsa uçak küçülür  — `if ((yuk / 2 - alt) / S + 4 < 2.2) olcek *= 0.6;`
+- kenarda belirir / söner  — `const sol = Math.min(1, u * 8, (1 - u) * 8);`
+- yavaş çizimde yok  — `for (let i = 0, onceki = null; !hafif && i <= 36; i++) {`
+- başta kısa iz kıvrılmasın, çıkışta söner  — `g.strokeStyle = `rgba(5, 107, 122, ${(0.75 * (i / adim) ** 1.6 * (1 - `
+- metin yüksekliği yazı tipi ve dille değişir  — `document.fonts?.ready.then(() => { boyutla(); ciz(); });`
+- durup dönen döngünün aradaki boşluğu ölçülmez  — `gorunur = x.isIntersecting; sonKare = 0;`
+
 ### ceviri.mjs
 ```
 /* ÇEVİRİ — TR / EN. Türkçe sayfa metninin tek kaynağı index.html; İngilizce dil/en.mjs (yalnız seçilince iner).

@@ -10,12 +10,10 @@ const boy = (a) => Math.hypot(a[0], a[1], a[2]);
 const birim = (a) => { const l = boy(a) || 1; return [a[0] / l, a[1] / l, a[2] / l]; };
 const sinir = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
 
-/* yerel eksenler: x sağ kanat, y yukarı, z burun. Kanat açıklığı 2. */
 const N = [0, 0.03, 1.15], C = [0, 0, -0.95];
-const SD = [-1.0, 0.17, -0.95], SA = [1.0, 0.17, -0.95];          /* kanat uçları (dihedral) */
-const SK = [-0.42, 0.035, -0.95], SKa = [0.42, 0.035, -0.95];     /* kanattaki kat çizgisi */
-const OS = [-0.03, -0.34, -0.95], OA = [0.03, -0.34, -0.95];      /* omurga */
-/* kanat ucunda logodaki petrol bant */
+const SD = [-1.0, 0.17, -0.95], SA = [1.0, 0.17, -0.95];
+const SK = [-0.42, 0.035, -0.95], SKa = [0.42, 0.035, -0.95];
+const OS = [-0.03, -0.34, -0.95], OA = [0.03, -0.34, -0.95];
 const ara = (a, b, t) => [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t];
 const BANT_S = [SD, ara(SD, N, 0.24), ara(SK, N, 0.24), SK], BANT_A = [SKa, ara(SKa, N, 0.24), ara(SA, N, 0.24), SA];
 const YUZLER = [
@@ -25,7 +23,6 @@ const YUZLER = [
 const KATLAR = [[N, SK], [N, SKa], [N, C]];
 const ISIK = birim([-0.35, 0.85, 0.45]);
 
-/* anahtar kareler [p, x, y, z] */
 export const GENIS = [
   [0.00, 0.40, 0.55, 0.8], [0.10, 0.50, 0.80, 0.4], [0.21, 0.80, 1.75, -1.0], [0.31, 0.88, 0.55, -2.6],
   [0.40, 0.62, -1.20, -2.4], [0.49, 0.30, -2.15, -1.6], [0.57, 0.12, -1.95, -0.6], [0.65, 0.20, -0.45, 0.4],
@@ -38,13 +35,9 @@ export const DAR = [
   [0.90, 0.10, -3.30, 1.0], [1.00, -0.40, -5.60, 1.6],
 ];
 
-/* adın hâlleri: [giriş, çıkış] pencereleri (p) */
-/* takla penceresi */
 export const TAKLA = [0.67, 0.87];
-/* ardışık: yeni ad eskisi çıkınca girer */
 export const PENCERE = [[null, [0.27, 0.35]], [[0.35, 0.44], [0.61, 0.68]], [[0.68, 0.77], null]];
 
-/** yörünge: nokta(q), eksen(q) */
 export function yorunge(anahtar) {
   function nokta(q) {
     q = sinir(q);
@@ -57,7 +50,6 @@ export function yorunge(anahtar) {
     return [cr(1), cr(2), cr(3)];
   }
 
-  /* konum ve eksenler: teğet + (eğrilik + yerçekimi) → yatış ve takla */
   function eksen(q) {
     const e = 0.004;
     const a = nokta(q - e), o = nokta(q), b = nokta(q + e);
@@ -67,7 +59,6 @@ export function yorunge(anahtar) {
     const ivme = kat(ek(fark(b, kat(o, 2)), a), 1 / (e * e));
     const dik = fark(ivme, kat(ileri, ic(ivme, ileri)));
     const kavis = kat(dik, 1 / Math.max(hiz * hiz, 1e-6));
-    /* takla penceresinde sırtüstü olabilir */
     const takla = q > TAKLA[0] && q < TAKLA[1];
     let yukari = ek(kat(kavis, takla ? 1.1 : 0.32), [0, takla ? 0.55 : 0.9, 0]);
     yukari = fark(yukari, kat(ileri, ic(yukari, ileri)));
@@ -78,14 +69,13 @@ export function yorunge(anahtar) {
   return { nokta, eksen };
 }
 
-const KISA = globalThis.matchMedia?.('(max-height: 520px) and (orientation: landscape)') ?? { matches: false };   /* yatay telefon: açılış akışta, uçak metnin altındaki bantta */
+const KISA = globalThis.matchMedia?.('(max-height: 520px) and (orientation: landscape)') ?? { matches: false };
 export function ucusKur(tuval, { az = false, metinAlt = null, sehirUst = null } = {}) {
   const g = tuval.getContext('2d');
   let gen = 0, yuk = 0, dpr = 1, S = 100, hw = 4, anahtar = GENIS, olcek = 0.85, yer = true, sehirY = 0, metinY = 0;
   let p = 0, zaman = 0, gorunur = true, dongu = 0, girisT0 = null, girisVar = !az;
-  /* ilk kareler > 40 ms ise gölge ve doku kapanır */
-  let hafif = new URLSearchParams(location.search).has('hafif'), kareSay = 0, kareTop = 0, sonKare = 0;
-  /* imleç paralaksı (yalnız fare) */
+  let hafif = new URLSearchParams(location.search).has('hafif'), sonKare = 0;
+  const aralik = [];
   const fare = { x: 0, y: 0, hx: 0, hy: 0 };
   if (!az && matchMedia('(hover: hover) and (pointer: fine)').matches) addEventListener('pointermove', (e) => { fare.hx = (e.clientX / innerWidth) * 2 - 1; fare.hy = (e.clientY / innerHeight) * 2 - 1; }, { passive: true });
   const D = 14;
@@ -98,27 +88,49 @@ export function ucusKur(tuval, { az = false, metinAlt = null, sehirUst = null } 
     const dar = gen / yuk < 1.05 || KISA.matches;
     anahtar = (dar ? DAR : GENIS).map(([q, x, y, z]) => [q, x * hw, y, z]);
     olcek = dar ? Math.min(0.62, hw * 0.3) : Math.min(0.9, 0.55 + hw * 0.05);
-    /* dar ekranda yörünge açılış metninin altındaki banda sığar */
     const alt = dar && metinAlt ? metinAlt() : null;
     metinY = alt ?? 0;
-    yer = alt === null || yuk - alt > 40;   /* metin ekranı dolduruyorsa uçak metnin üstüne binmez, çizilmez */
+    yer = alt === null || yuk - alt > 40;
     if (alt !== null) {
-      if ((yuk / 2 - alt) / S + 4 < 2.2) olcek *= 0.6;   /* bant çok darsa uçak küçülür */
+      if ((yuk / 2 - alt) / S + 4 < 2.2) olcek *= 0.6;
       const ust = (yuk / 2 - alt) / S - 0.5 - olcek, dip = -4 + olcek * 0.6;
       const ys = DAR.filter((k) => k[2] > -4).map((k) => k[2]), y0 = Math.min(...ys), y1 = Math.max(...ys), bant = ust - dip < 0.6 ? 0 : ust - dip;
-      /* ekran uzayında: derinlik düzeltmesi */
       anahtar = anahtar.map(([q, x, y, z]) => [q, x, y > -4 ? (dip + ((y - y0) / (y1 - y0 || 1)) * bant) * (D - z) / D : y, z]);
     }
   }
 
-  /* yörünge yalnız boyut değişince kurulur */
   let yrgOn = null, yrgAnahtar = null;
   const yrg = () => { if (yrgAnahtar !== anahtar) { yrgOn = yorunge(anahtar); yrgAnahtar = anahtar; } return yrgOn; };
   const nokta = (q) => yrg().nokta(q), eksen = (q) => yrg().eksen(q);
 
   const izdus = (v) => { const s = D / (D - v[2]); return [gen / 2 + v[0] * S * s, yuk / 2 - v[1] * S * s, s]; };
 
-  /* kâğıt dokusu */
+  const GK = 0.25, golgeT = document.createElement('canvas'), gg = golgeT.getContext('2d');
+  function golgeBas(cokgenler, alfa) {
+    let x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity;
+    for (const c of cokgenler) for (const [x, y] of c) { if (x < x0) x0 = x; if (x > x1) x1 = x; if (y < y0) y0 = y; if (y > y1) y1 = y; }
+    x0 -= 28; y0 -= 28; x1 += 28; y1 += 28;
+    const w = Math.ceil((x1 - x0) * GK), h = Math.ceil((y1 - y0) * GK);
+    if (!(w > 0 && h > 0) || w > 1200 || h > 1200) return;
+    if (golgeT.width < w || golgeT.height < h) { golgeT.width = Math.max(w, golgeT.width); golgeT.height = Math.max(h, golgeT.height); }
+    gg.setTransform(1, 0, 0, 1, 0, 0); gg.clearRect(0, 0, w + 1, h + 1);
+    gg.filter = 'blur(2.25px)'; gg.fillStyle = `rgba(20, 20, 20, ${alfa})`;
+    gg.setTransform(GK, 0, 0, GK, -x0 * GK, -y0 * GK);
+    for (const c of cokgenler) { gg.beginPath(); c.forEach(([x, y], i) => (i ? gg.lineTo(x, y) : gg.moveTo(x, y))); gg.closePath(); gg.fill(); }
+    gg.filter = 'none';
+    g.drawImage(golgeT, 0, 0, w, h, x0, y0, w / GK, h / GK);
+  }
+
+  let yayAnahtar = null, yayIz = null, yayPlan = null;
+  const yayTablo = (f) => { const n = 600, L = new Float32Array(n + 1); let o = f(0); for (let i = 1; i <= n; i++) { const k = f(i / n); L[i] = L[i - 1] + Math.hypot(k[0] - o[0], k[1] - o[1]); o = k; } return (q) => { const u = sinir(q) * n, i = Math.min(n - 1, Math.floor(u)); return L[i] + (L[i + 1] - L[i]) * (u - i); }; };
+  function yaylar() {
+    if (yayAnahtar !== anahtar) {
+      yayAnahtar = anahtar;
+      yayIz = yayTablo((q) => { const e = eksen(q); return izdus(ek(e.o, kat(e.ileri, -0.9 * olcek))); });
+      yayPlan = yayTablo((q) => izdus(nokta(q)));
+    }
+  }
+
   const doku = (() => {
     const c = document.createElement('canvas'); c.width = c.height = 96; const x = c.getContext('2d');
     let t = 7; const r = () => ((t = (t * 16807) % 2147483647) / 2147483647);
@@ -126,7 +138,6 @@ export function ucusKur(tuval, { az = false, metinAlt = null, sehirUst = null } 
     return g.createPattern(c, 'repeat');
   })();
 
-  /* gökteki küçük kâğıt uçaklar: [hız, yükseklik payı, genlik, faz, ölçek] */
   const SURU = [[0.045, 0.18, 0.05, 0.0, 1.25], [0.032, 0.33, 0.04, 2.1, 0.9], [0.058, 0.08, 0.035, 4.0, 0.75]];
   function suru() {
     const dar = gen / yuk < 1.05 || KISA.matches, x0 = dar ? 0 : gen * 0.5, gw = gen - x0 + 120;
@@ -135,10 +146,9 @@ export function ucusKur(tuval, { az = false, metinAlt = null, sehirUst = null } 
     (dar ? SURU.slice(0, 2) : SURU).forEach(([v, yp, a, faz, o], i) => {
       const yer = (q) => { const u = (((q * v + faz * 0.17 + p * 0.25) % 1) + 1) % 1; return [x0 - 60 + u * gw, y0 + yh * yp + Math.sin(q * 0.9 + faz) * (dar ? 18 : yuk * a), u]; };
       const [x, y, u] = yer(t), [x2, y2] = yer(t + 0.05), aci = Math.atan2(y2 - y, x2 - x);
-      const sol = Math.min(1, u * 8, (1 - u) * 8);   /* kenarda belirir / söner */
+      const sol = Math.min(1, u * 8, (1 - u) * 8);
       if (sol <= 0) return;
       g.save(); g.globalAlpha = sol;
-      /* iz */
       g.setLineDash([3, 5]); g.lineWidth = 1; g.strokeStyle = 'rgba(5, 107, 122, 0.35)'; g.beginPath();
       for (let k = 0; k <= 10; k++) { const [ix, iy] = yer(t - k * 0.9); if (Math.abs(ix - x) > gw * 0.5) break; k ? g.lineTo(ix, iy) : g.moveTo(ix, iy); }
       g.stroke(); g.setLineDash([]);
@@ -157,27 +167,24 @@ export function ucusKur(tuval, { az = false, metinAlt = null, sehirUst = null } 
     suru();
     if (!yer) return;
     const ex = eksen(p);
-    /* boşta süzülme: hafif inip kalkma ve yalpa */
     fare.x += (fare.hx - fare.x) * 0.06; fare.y += (fare.hy - fare.y) * 0.06;
     const yalpa = az ? 0 : 0.07 * Math.sin(zaman * 1.15) - fare.x * 0.14;
     const salin = az ? 0 : 0.07 * Math.sin(zaman * 1.6);
     const cy = Math.cos(yalpa), sy = Math.sin(yalpa);
     const yuk2 = ek(kat(ex.yukari, cy), kat(ex.sag, sy)), sag2 = ek(kat(ex.sag, cy), kat(ex.yukari, -sy));
-    /* ilk açılış: sağ üstten süzülür */
     let gir = [0, 0, 0];
     if (girisVar) { const u = sinir((zaman - (girisT0 ?? zaman)) / 1.1), k = (1 - u) ** 3; gir = [hw * 0.8 * k, 1.6 * k, -1.2 * k]; if (u >= 1) girisVar = false; }
     const merkez = ek(ex.o, [fare.x * 0.22 + gir[0], salin - fare.y * 0.14 + gir[1], gir[2]]);
     const dunya = (l) => ek(merkez, ek(ek(kat(sag2, l[0] * olcek), kat(yuk2, l[1] * olcek)), kat(ex.ileri, l[2] * olcek)));
 
-    /* uçuş planı: önümüzdeki yol, soluk */
+    yaylar();
     g.lineWidth = 1.2; g.setLineDash([1, 7]); g.lineCap = 'round';
-    for (let i = 0, onceki = null; !hafif && i <= 36; i++) {   /* yavaş çizimde yok */
+    for (let i = 0, onceki = null; !hafif && i <= 36; i++) {
       const q = p + 0.03 + i * 0.009, k = q <= 1 && izdus(nokta(q));
-      if (onceki && k) { g.strokeStyle = `rgba(5, 107, 122, ${(0.3 * (1 - i / 36) * (1 - sinir((p - 0.8) / 0.12))).toFixed(3)})`; g.beginPath(); g.moveTo(onceki[0], onceki[1]); g.lineTo(k[0], k[1]); g.stroke(); }
+      if (onceki && k) { g.lineDashOffset = yayPlan(q - 0.009); g.strokeStyle = `rgba(5, 107, 122, ${(0.3 * (1 - i / 36) * (1 - sinir((p - 0.8) / 0.12))).toFixed(3)})`; g.beginPath(); g.moveTo(onceki[0], onceki[1]); g.lineTo(k[0], k[1]); g.stroke(); }
       onceki = k;
     }
     g.setLineDash([]);
-    /* uçuş izi */
     const bas = Math.max(0, p - 0.16), adim = 40;
     if (p - bas > 0.002) {
       let onceki = null;
@@ -187,25 +194,19 @@ export function ucusKur(tuval, { az = false, metinAlt = null, sehirUst = null } 
         const e = eksen(q);
         const k = izdus(ek(e.o, kat(e.ileri, -0.9 * olcek)));
         if (onceki) {
-          g.strokeStyle = `rgba(5, 107, 122, ${(0.75 * (i / adim) ** 1.6 * (1 - sinir((p - 0.96) / 0.04)) * sinir((p - 0.04) / 0.08)).toFixed(3)})`;   /* başta kısa iz kıvrılmasın, çıkışta söner */
+          g.lineDashOffset = yayIz(bas + ((p - bas) * (i - 1)) / adim);
+          g.strokeStyle = `rgba(5, 107, 122, ${(0.75 * (i / adim) ** 1.6 * (1 - sinir((p - 0.96) / 0.04)) * sinir((p - 0.04) / 0.08)).toFixed(3)})`;
           g.beginPath(); g.moveTo(onceki[0], onceki[1]); g.lineTo(k[0], k[1]); g.stroke();
         }
         onceki = k;
       }
-      g.setLineDash([]);
+      g.setLineDash([]); g.lineDashOffset = 0;
     }
+    g.lineDashOffset = 0;
 
-    /* gölge */
     const golge = YUZLER.slice(0, 4).map((y) => y.k.map((l) => { const w = dunya(l); return izdus([w[0] + 0.25, w[1] - 0.7, w[2] - 0.2]); }));
-    if (!hafif) {   /* bulanıksız sert çokgen olurdu */
-    g.save();
-    g.filter = 'blur(9px)';
-    g.fillStyle = `rgba(20, 20, 20, ${ex.yukari[1] > 0 ? 0.08 : 0.03})`;
-    for (const ucgen of golge) { g.beginPath(); ucgen.forEach(([x, y], i) => (i ? g.lineTo(x, y) : g.moveTo(x, y))); g.closePath(); g.fill(); }
-    g.restore();
-    }
+    golgeBas(golge, ex.yukari[1] > 0 ? 0.08 : 0.03);
 
-    /* yüzler: arkadan öne */
     const kamera = [0, 0, D];
     const yuzler = YUZLER.map((y) => {
       const w = y.k.map(dunya);
@@ -231,31 +232,32 @@ export function ucusKur(tuval, { az = false, metinAlt = null, sehirUst = null } 
         g.beginPath(); y.bant.forEach(([x, yy], i) => (i ? g.lineTo(x, yy) : g.moveTo(x, yy))); g.closePath(); g.fill();
       }
     }
-    /* kat çizgileri: ince petrol */
     g.strokeStyle = 'rgba(5, 107, 122, 0.55)'; g.lineWidth = 0.9;
     for (const [a, b] of KATLAR) { const [x1, y1] = izdus(dunya(a)), [x2, y2] = izdus(dunya(b)); g.beginPath(); g.moveTo(x1, y1); g.lineTo(x2, y2); g.stroke(); }
   }
 
   function kare(t) {
-    if (sonKare && kareSay < 10 && !hafif && t - sonKare < 250) { kareTop += t - sonKare; if (++kareSay === 10 && kareTop / 10 > 40) { hafif = true; document.documentElement.classList.add('hafif'); boyutla(); } }
-    sonKare = t;
     zaman = t / 1000;
     if (girisT0 === null) girisT0 = zaman;
     ciz();
+    if (!hafif && aralik.length < 30 && sonKare && zaman - girisT0 > 1.5 && document.visibilityState === 'visible') {
+      aralik.push(t - sonKare);
+      if (aralik.length === 30 && aralik.sort((a, b) => a - b)[15] > 30) { hafif = true; document.documentElement.classList.add('hafif'); boyutla(); }
+    }
+    sonKare = t;
     dongu = gorunur && !az ? requestAnimationFrame(kare) : 0;
   }
   boyutla();
   new ResizeObserver(() => { boyutla(); ciz(); }).observe(tuval);
   addEventListener('dil-degisti', () => { boyutla(); ciz(); });
-  document.fonts?.ready.then(() => { boyutla(); ciz(); });   /* metin yüksekliği yazı tipi ve dille değişir */
+  document.fonts?.ready.then(() => { boyutla(); ciz(); });
   new IntersectionObserver(([x]) => {
-    gorunur = x.isIntersecting;
+    gorunur = x.isIntersecting; sonKare = 0;
     if (gorunur && !dongu && !az) dongu = requestAnimationFrame(kare);
   }).observe(tuval);
   ciz();
   return {
     ciz(yeniP) { p = sinir(yeniP); if (p > 0.02) girisVar = false; if (az || !dongu) ciz(); },
-    /* sınama: p'deki uçağın ekran konumu ve yatışı */
     olc(q = p) { const e = eksen(q); const [x, y] = izdus(e.o); return { x, y, yatis: Math.atan2(e.sag[1], e.yukari[1]), ters: e.yukari[1] < 0 }; },
     renk: RENK.petrol,
   };

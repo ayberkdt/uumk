@@ -1,3 +1,7 @@
+# YASA DENETİMİ — UUMK v7 · 2026-10-11 · denetleyici index 0 HATA · 4 UYARI (değişmedi: Occam ×3 çizim yoğunluğu, Parkinson kayıt formu). axe 0 (1440 TR/EN, 390). Değişen satırlar: Prägnanz — kulüp kartında rota çizgisi metne binmiyor (kendi satırı), dekor öğesi metin üstünde 0 · Doherty — açılış tuvali GPU'da kare ortancası 6,9 ms (< 16,7), yavaşta hafif kip otomatik (Tesler) · Benzerlik — haritada tek uçak dili (açılış, kart, harita: uçak silüeti), yeni punto ve gölge yok.
+
+---
+
 # YASA DENETİMİ — UUMK v6 · 2026-10-11 · denetleyici index 0 HATA · 4 UYARI (önce 1 HATA: gece lambalarının `transition: opacity var(--sure) ease 900ms` kısa yazımında 900 ms gecikme süre sanıldı → `transition-delay` ayrı yazıldı, davranış aynı). axe 0 ihlal (7 görünüm: 1440 ve 390 px TR/EN, ayrıntı sayfası açık 1440 TR ve 390 EN, kvkk).
 
 GÖREV BÜTÇESİ — tarihçe ayrıntı sayfası (#ayrinti, yeni görünüm) · yüzey: web · birincil görev: kaydı okumak, sonra komşu kayda geçmek · birincil eylem: yok (okuma görünümü; "Sonraki kayıt" ikincil) · eylem 4 (kapat, önceki, sonraki, kaynak bağlantıları ≤ 3) · seçenek 0 · form 0 · geri bildirim: modül ilk dokunuşta yüklenir, şerite fare gelince önceden çekilir (yerelde < 400 ms) · stil: mevcut jetonlar, yeni punto yok (t-1, t-2/t-6, t-3, t-4), gölge --g-1 · sisteme yüklenen: kayıt seçimi şeritten gelir, dil etkin dilden, adres çubuğu kendiliğinden #tarih-<kimlik>.

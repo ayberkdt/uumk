@@ -63,11 +63,14 @@ export function haritaKur(tuval, { gruplar, merkez, boyutDegisti, az = false }) 
     for (let i = 0; i <= n; i++) { const [x, y] = egri(r, t0 + ((t1 - t0) * i) / n); i ? g.lineTo(x, y) : g.moveTo(x, y); }
     g.stroke();
   }
-  function ucak(x, y, aci, boyut, renk) {
-    g.save(); g.translate(x, y); g.rotate(aci); g.scale(boyut / 18, boyut / 18); g.fillStyle = renk;
-    g.beginPath(); g.moveTo(9, 0); g.lineTo(-9, -6); g.lineTo(-2, 1.5); g.closePath(); g.fill();
-    g.beginPath(); g.moveTo(9, 0); g.lineTo(-2, 1.5); g.lineTo(-3, 6); g.closePath(); g.globalAlpha *= 0.75; g.fill();
-    g.restore();
+  /* mini uçak (üstten, burun +x, boy 20): gövde, ok açılı kanatlar, yatay kuyruk; zemin rengi kenarla rotadan ayrılır */
+  let UCAK_YOL = null;
+  function ucak(x, y, aci, boyut, renk, c = g) {
+    UCAK_YOL ??= new Path2D('M10 0C10-.9 9-1.3 7.6-1.3H2.6L-3.4-9.2H-5.6L-2.3-1.3H-6.6L-8.8-4H-10.3L-9.3-.7-10.5 0-9.3.7-10.3 4H-8.8L-6.6 1.3H-2.3L-5.6 9.2H-3.4L2.6 1.3H7.6C9 1.3 10 .9 10 0Z');
+    c.save(); c.translate(x, y); c.rotate(aci); c.scale(boyut / 20, boyut / 20);
+    c.lineJoin = 'round'; c.strokeStyle = GECE.zemin; c.lineWidth = 2.4; c.stroke(UCAK_YOL);
+    c.fillStyle = renk; c.fill(UCAK_YOL);
+    c.restore();
   }
 
   let rotaTamponda = false;
@@ -97,15 +100,15 @@ export function haritaKur(tuval, { gruplar, merkez, boyutDegisti, az = false }) 
       tg.beginPath(); tg.arc(px, py, 2.6, 0, Math.PI * 2);
       if (x[1].startsWith('P')) { tg.strokeStyle = GECE.grup; tg.lineWidth = 1.3; tg.fillStyle = GECE.zemin; tg.fill(); tg.stroke(); } else { tg.fillStyle = GECE.grup; tg.fill(); }
     }
-    /* çerçeve dışı gruplar: kenarda yön oku + ad */
+    /* çerçeve dışı gruplar: kenarda o yöne uçan mini uçak + ad */
     for (const x of gruplar) {
       const [px, py] = izdus(x[6], x[7]);
       if (px >= 0 && py >= 0 && px <= gen && py <= yuk) continue;
-      /* ok taşılan kenarı gösterir: alttaysa aşağı, soldaysa sola… */
+      /* mini uçak taşılan kenara uçar: alttaysa aşağı, soldaysa sola… */
       const aci = py > yuk ? Math.PI / 2 : py < 0 ? -Math.PI / 2 : px < 0 ? Math.PI : 0;
       const kx = Math.min(gen - 18, Math.max(18, px)), ky = Math.min(yuk - 40, Math.max(18, py));
-      tg.save(); tg.translate(kx, ky); tg.rotate(aci); tg.fillStyle = GECE.grup; tg.beginPath(); tg.moveTo(7, 0); tg.lineTo(-5, -5); tg.lineTo(-5, 5); tg.closePath(); tg.fill(); tg.restore();
-      tg.fillStyle = GECE.grup; tg.font = `600 11px ${YAZI}`; tg.textAlign = 'left'; tg.fillText(x[3], kx + 10, ky + 4);
+      ucak(kx, ky, aci, 15, GECE.grup, tg);
+      tg.fillStyle = GECE.grup; tg.font = `600 11px ${YAZI}`; tg.textAlign = 'left'; tg.fillText(x[3], kx + 13, ky + 4);
     }
     /* ölçek çubuğu: 500 km (merkezde) */
     const [x1, y1] = izdus(MERKEZ.enlem, MERKEZ.boylam), [x2] = izdus(MERKEZ.enlem, MERKEZ.boylam + 500 / (111.32 * Math.cos(rad(MERKEZ.enlem))));
@@ -161,7 +164,7 @@ export function haritaKur(tuval, { gruplar, merkez, boyutDegisti, az = false }) 
         const [x, y] = egri(r, u);
         g.globalAlpha = Math.sin(Math.PI * u) * 0.85 * (1 - 0.7 * odak);
         g.strokeStyle = GECE.sari; g.lineWidth = 1.4; rotaParca(r, Math.max(0, u - 0.12), u, 10);
-        ucak(x, y, egim(r, u), 12, GECE.sari);
+        ucak(x, y, egim(r, u), 15, GECE.sari);
         g.globalAlpha = 1;
       }
     }
@@ -179,7 +182,7 @@ export function haritaKur(tuval, { gruplar, merkez, boyutDegisti, az = false }) 
       const u = az ? 1 : yumusak(sinir((t - secimT0) / 1.2));
       if (r) {
         g.strokeStyle = GECE.sari; g.lineWidth = 2.2; g.lineCap = 'round'; rotaParca(r, 0, u, 40);
-        if (u < 1) { const [x, y] = egri(r, u); ucak(x, y, egim(r, u), 18, GECE.sari); }
+        if (u < 1) { const [x, y] = egri(r, u); ucak(x, y, egim(r, u), 22, GECE.sari); }
       }
       g.strokeStyle = GECE.sari; g.lineWidth = 2; g.beginPath(); g.arc(hx, hy, 7 + (u < 1 ? 0 : Math.sin(t * 3) * 1.5), 0, Math.PI * 2); g.stroke();
       g.fillStyle = GECE.grup; g.beginPath(); g.arc(hx, hy, 3, 0, Math.PI * 2); g.fill();

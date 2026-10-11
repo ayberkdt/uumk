@@ -403,7 +403,7 @@ const SENARYO = {
     await s.js(OTUR);
     const ust = await s.js(`(() => { const u = document.querySelector('#ust'); const logo = u.querySelector('.ust__logo img'); return {
       logo: logo.getAttribute('src'), logoY: Math.round(logo.getBoundingClientRect().height), logoYuklu: logo.complete && logo.naturalWidth >= 2 * logo.getBoundingClientRect().width,   /* en az 2 kat çözünürlük */
-      nav: [...u.querySelectorAll('.menu ul a')].map((a) => a.lastElementChild.textContent), dil: u.querySelector('#dil-dugme').textContent, hesap: u.querySelector('#hesap-dugme').textContent,
+      nav: [...u.querySelectorAll('.menu ul a')].map((a) => a.lastElementChild.textContent), dil: u.querySelector('#dil-dugme').dataset.etkin + '/' + u.querySelectorAll('#dil-dugme svg.bayrak').length, hesap: u.querySelector('#hesap-dugme').textContent,
       h: Math.round(u.getBoundingClientRect().height), konum: getComputedStyle(u).position, kenar: getComputedStyle(u).borderBottomColor }; })()`);
     await s.js(`document.querySelector('#yazilar').scrollIntoView({ behavior: 'instant' })`);
     await kosulBekle(s, `document.querySelector('.menu a[href="#yazilar"]').getAttribute('aria-current') === 'true'`, 3000);
@@ -417,7 +417,7 @@ const SENARYO = {
     const dondu = await kosulBekle(s, `!document.querySelector('#ust').classList.contains('ust--gizli')`, 3000);
     const yler = await s.js(`Math.round(scrollY)`);
     const dolu = await kosulBekle(s, `parseFloat(getComputedStyle(document.querySelector('#ust')).getPropertyValue('--ilerleme')) > 0.3 && getComputedStyle(document.querySelector('.menu__isaret')).opacity === '1'`, 3000);
-    if (ust.logo !== 'gorseller/logo-uumk-360.png' || !ust.logoYuklu || ust.logoY < 30 || ust.nav.length !== 6 || ust.dil !== 'EN' || ust.hesap !== 'Giriş yap' || ust.konum !== 'fixed') throw new Error(JSON.stringify(ust));
+    if (ust.logo !== 'gorseller/logo-uumk-360.png' || !ust.logoYuklu || ust.logoY < 30 || ust.nav.length !== 6 || ust.dil !== 'tr/2' || ust.hesap !== 'Giriş yap' || ust.konum !== 'fixed') throw new Error(JSON.stringify(ust));
     if (etkin.join() !== 'Yazılar' || !gizli || !dondu || !dolu) throw new Error(`etkin ${etkin} gizli ${gizli} döndü ${dondu} dolu ${dolu} scrollY ${yler} sınıf ${await s.js(`document.querySelector('#ust').className`)} iz ${JSON.stringify(await s.js(`__iz`))}`);
     console.log(`      header: logo ${ust.logoY} px (asıl ${ust.logo}), menü ${ust.nav.length} madde, etkin "${etkin}", aşağıda gizlendi, yukarıda döndü, kaydırınca alt çizgi`);
   },
@@ -547,6 +547,61 @@ const SENARYO = {
     const r = await s.js(`(() => { const g = document.querySelector('#giris-form-parola'), d = g.parentElement.querySelector('.alan__goster'); const a = [g.type, d.textContent, d.getAttribute('aria-pressed')]; d.click(); const b = [g.type, d.textContent, d.getAttribute('aria-pressed')]; d.click(); return { a, b, c: g.type, hedef: Math.round(d.getBoundingClientRect().height) }; })()`);
     if (r.a.join() !== 'password,Göster,false' || r.b.join() !== 'text,Gizle,true' || r.c !== 'password' || r.hedef < 44) throw new Error(JSON.stringify(r));
     console.log(`      parola: ${r.a.join('/')} → ${r.b.join('/')} → ${r.c} · düğme ${r.hedef} px`);
+  },
+  async 'panorama sığar: 1366×768 · 1920×950 · 1440×900 · 390×844 — su bandı görünür, görüş kutusu sahnede, metin altındaki yapılar metne binmez'(s) {
+    const sonuc = [];
+    for (const [g, y] of [[1366, 768], [1920, 950], [1440, 900], [390, 844]]) {
+      await s.git('./?az=1', g, y); await s.js(OTUR);
+      const r = await s.js(`(() => { const ist = document.querySelector('#istanbul'), sah = document.querySelector('.giris__sahne').getBoundingClientRect(), b = ist.getBoundingClientRect();
+        const [x0, , vw] = ist.getAttribute('viewBox').split(' ').map(Number), su = ist.querySelector('.ist__yakin rect.s').getBoundingClientRect();
+        const metin = document.querySelector(innerWidth > 860 ? '.giris__olgu' : '.giris__olgu').offsetParent ? document.querySelector('.giris__olgu') : document.querySelector('.giris__eylem');
+        const alt = metin.getBoundingClientRect().bottom, m = document.querySelector('.giris__metin > .ad').getBoundingClientRect();
+        const ust = ['.blok--galata', '.blok--cami', '.blok--ayasofya'].map((k) => [...ist.querySelectorAll(k)]).flat().map((e) => e.getBoundingClientRect())
+          .filter((q) => q.width && q.right > m.left && q.left < Math.max(m.right, metin.getBoundingClientRect().right) && q.right > 0 && q.left < innerWidth).map((q) => Math.round(q.top));
+        return { altFark: Math.round(sah.bottom - b.bottom), suGorunen: Math.round(Math.min(su.bottom, sah.bottom) - su.top), x0, son: x0 + vw, metinAlt: Math.round(alt), enUst: ust.length ? Math.min(...ust) : null }; })()`);
+      sonuc.push(`${g}×${y}: su ${r.suGorunen} px, görüş ${Math.round(r.x0)}…${Math.round(r.son)}, metin altı ${r.metinAlt} / yapı tepesi ${r.enUst}`);
+      if (Math.abs(r.altFark) > 1 || r.suGorunen < 40 || r.x0 < -400.5 || r.son > 2000.5 || (r.enUst !== null && r.enUst < r.metinAlt)) throw new Error(`${g}×${y} ${JSON.stringify(r)}`);
+    }
+    console.log('      ' + sonuc.join(' · '));
+  },
+  async 'kabin uçağı: masaüstünde 6 bölme gövdenin içinde, ışıklar ve izler canlı; telefonda burun, kanat, kuyruk'(s) {
+    await s.git('./', 1440, 900);
+    await s.js(`document.querySelector('#ucak').scrollIntoView({ block: 'center', behavior: 'instant' })`); await bekle(1400);
+    const m = await s.js(`(() => { const isik = getComputedStyle(document.querySelector('.ucak__isik--iskele')).animationName, iz = getComputedStyle(document.querySelector('.ucak__iz')).animationName; document.querySelectorAll('.ucak, .ucak__ic').forEach((e) => { e.style.animation = 'none'; }); document.querySelectorAll('.kabin > li').forEach((e) => { e.style.transition = 'none'; }); const g = document.querySelector('.ucak__yatay .ucak__govde').getBoundingClientRect(), li = [...document.querySelectorAll('.kabin > li')].map((e) => e.getBoundingClientRect());
+      const icinde = li.every((q) => q.top >= g.top - 2 && q.bottom <= g.bottom + 2 && q.left >= g.left - 2 && q.right <= g.right + 2) || JSON.stringify([[g.left, g.top, g.right, g.bottom], li.map((q) => [q.left, q.top, q.right, q.bottom])].map((x) => JSON.stringify(x)));
+      const tasma = [...document.querySelectorAll('.kabin > li')].filter((e) => e.scrollHeight > e.clientHeight + 1).length;
+      return { icinde, tasma, n: li.length, isik, iz, dikey: getComputedStyle(document.querySelector('.ucak__burun')).display }; })()`);
+    await s.git('./', 390, 844);
+    await s.js(`document.querySelector('#ucak').scrollIntoView({ behavior: 'instant' })`); await bekle(600);
+    const t = await s.js(`(() => { const b = document.querySelector('.ucak__burun').getBoundingClientRect(), k = document.querySelector('.kabin').getBoundingClientRect(), w = document.querySelector('.ucak__kanat-d').getBoundingClientRect(), q = document.querySelector('.ucak__kuyruk').getBoundingClientRect();
+      return { yatay: getComputedStyle(document.querySelector('.ucak__yatay')).display, burunUst: Math.round(k.top - b.bottom), kanatTasar: Math.round(k.left - w.left), kuyrukAlt: Math.round(q.top - k.bottom), sw: document.documentElement.scrollWidth }; })()`);
+    if (m.icinde !== true || m.tasma || m.n !== 6 || m.isik !== 'isik-yan' || m.iz !== 'iz-ak' || m.dikey !== 'none' || t.yatay !== 'none' || Math.abs(t.burunUst) > 3 || t.kanatTasar < 40 || Math.abs(t.kuyrukAlt) > 3 || t.sw > 390) throw new Error(JSON.stringify({ m, t }));
+    console.log(`      kabin: 6 bölme gövdede, taşma 0, ışık "${m.isik}", iz "${m.iz}" · telefonda kanat gövdeden ${t.kanatTasar} px taşar, burun/kuyruk bitişik`);
+  },
+  async 'üst şerit: bayraklı dil anahtarı etkin dili gösterir; 320–414 px telefonda menü ve hesap düğmesi ekranda, hedefler ≥ 44 px'(s) {
+    await s.git('./', 1440, 900);
+    const once = await s.js(`document.querySelector('#dil-dugme').dataset.etkin`);
+    await s.js(`document.querySelector('#dil-dugme').click()`); await kosulBekle(s, `document.documentElement.lang === 'en'`, 4000);
+    const sonra = await s.js(`[document.querySelector('#dil-dugme').dataset.etkin, document.querySelector('#dil-dugme [data-dil=en]').matches('.dil[data-etkin="en"] [data-dil="en"]'), document.querySelector('#dil-dugme').getAttribute('aria-label')]`);
+    const olc = [];
+    for (const g of [320, 360, 390, 414]) {
+      await s.git('./', g, 740);
+      olc.push(await s.js(`(() => { const r = (q) => document.querySelector(q).getBoundingClientRect(); const m = r('#menu-dugme'), h = r('#hesap-dugme'), d = r('#dil-dugme');
+        return { g: innerWidth, menuSag: Math.round(m.right), hesapSag: Math.round(h.right), min: Math.round(Math.min(m.height, h.height, h.width, d.height)), cakisma: h.right > m.left || d.right > h.left }; })()`));
+    }
+    const kotu = olc.filter((o) => o.menuSag > o.g || o.min < 44 || o.cakisma);
+    if (once !== 'tr' || sonra[0] !== 'en' || sonra[1] !== true || sonra[2] !== 'Türkçeye geç' || kotu.length) throw new Error(JSON.stringify({ once, sonra, olc }));
+    console.log(`      dil: ${once} → ${sonra[0]} (etkin bayrak koyu) · telefon: ${olc.map((o) => `${o.g}px menü sağ ${o.menuSag}`).join(', ')} · en küçük hedef ${Math.min(...olc.map((o) => o.min))} px`);
+  },
+  async 'tarihçe: her kayıtta resim karesi (ikon/logo/fotoğraf), yıl rozeti uçakla ilerler'(s) {
+    await s.git('./', 1440, 900);
+    await s.js(`document.querySelector('#rota').scrollIntoView({ behavior: 'instant' }); scrollBy({ top: 200, behavior: 'instant' })`); await kosulBekle(s, `document.querySelector('#rota-yil').style.opacity === '1'`, 5000);
+    const a = await s.js(`[document.querySelector('#rota-yil').textContent, document.querySelector('#rota-yil').style.opacity, document.querySelectorAll('.serit .serit__resim').length, document.querySelectorAll('.serit__resim img').length]`);
+    const y0 = await s.js(`document.querySelector('#rota-yil').textContent`); await s.js(`scrollBy({ top: 600, behavior: 'instant' })`); await kosulBekle(s, `document.querySelector('#rota-yil').textContent !== '${y0}'`, 5000);
+    const b = await s.js(`[document.querySelector('#rota-yil').textContent, Math.round(document.querySelector('#rota-yil').getBoundingClientRect().top)]`);
+    const yuklu = await kosulBekle(s, `[...document.querySelectorAll('.serit__resim img')].every((i) => i.complete && i.naturalWidth > 0)`, 5000);
+    if (a[2] !== 12 || a[3] < 4 || a[1] !== '1' || !(+b[0] > +a[0]) || !yuklu) throw new Error(JSON.stringify({ a, b, yuklu }));
+    console.log(`      tarihçe: 12 resim karesi (${a[3]} görsel) · rozet ${a[0]} → ${b[0]}`);
   },
 };
 

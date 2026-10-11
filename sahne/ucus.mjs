@@ -80,7 +80,7 @@ export function yorunge(anahtar) {
 
 export function ucusKur(tuval, { az = false, metinAlt = null, sehirUst = null } = {}) {
   const g = tuval.getContext('2d');
-  let gen = 0, yuk = 0, dpr = 1, S = 100, hw = 4, anahtar = GENIS, olcek = 0.85, yer = true, sehirY = 0;
+  let gen = 0, yuk = 0, dpr = 1, S = 100, hw = 4, anahtar = GENIS, olcek = 0.85, yer = true, sehirY = 0, metinY = 0;
   let p = 0, zaman = 0, gorunur = true, dongu = 0, girisT0 = null, girisVar = !az;
   /* ilk kareler > 40 ms ise gölge ve doku kapanır */
   let hafif = new URLSearchParams(location.search).has('hafif'), kareSay = 0, kareTop = 0, sonKare = 0;
@@ -99,6 +99,7 @@ export function ucusKur(tuval, { az = false, metinAlt = null, sehirUst = null } 
     olcek = dar ? Math.min(0.62, hw * 0.3) : Math.min(0.9, 0.55 + hw * 0.05);
     /* dar ekranda yörünge açılış metninin altındaki banda sığar */
     const alt = dar && metinAlt ? metinAlt() : null;
+    metinY = alt ?? 0;
     yer = alt === null || yuk - alt > 40;   /* metin ekranı dolduruyorsa uçak metnin üstüne binmez, çizilmez */
     if (alt !== null) {
       if ((yuk / 2 - alt) / S + 4 < 2.2) olcek *= 0.6;   /* bant çok darsa uçak küçülür */
@@ -128,7 +129,7 @@ export function ucusKur(tuval, { az = false, metinAlt = null, sehirUst = null } 
   const SURU = [[0.045, 0.18, 0.05, 0.0, 1.25], [0.032, 0.33, 0.04, 2.1, 0.9], [0.058, 0.08, 0.035, 4.0, 0.75]];
   function suru() {
     const dar = gen / yuk < 1.05, x0 = dar ? 0 : gen * 0.5, gw = gen - x0 + 120;
-    const y0 = dar ? sehirY - 24 : yuk * 0.1, yh = dar ? 70 : yuk * 0.34;
+    const y0 = dar ? Math.max(sehirY + 14, metinY + 30) : yuk * 0.1, yh = dar ? 46 : yuk * 0.34;
     const t = az ? 20 : zaman;
     (dar ? SURU.slice(0, 2) : SURU).forEach(([v, yp, a, faz, o], i) => {
       const yer = (q) => { const u = (((q * v + faz * 0.17 + p * 0.25) % 1) + 1) % 1; return [x0 - 60 + u * gw, y0 + yh * yp + Math.sin(q * 0.9 + faz) * (dar ? 18 : yuk * a), u]; };

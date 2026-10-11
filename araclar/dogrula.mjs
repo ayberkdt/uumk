@@ -123,6 +123,12 @@ sina('HTML: hâl 1 "AS Istanbul" + "EUROAVIA", hâl 2 "İTÜ UUMK"', /data-durum
 const insa = await ice('araclar/istanbul-insa.mjs');
 sina('İstanbul panoraması: sayfadaki çizim sahne/istanbul.mjs presetiyle birebir aynı (node araclar/istanbul-insa.mjs)', insa.yerlestir(html) === html);
 sina('panorama blokları: Galata, cami, köprü, Kız Kulesi, martılar, vapur, dalgalar', ['blok--galata', 'blok--cami', 'blok--kopru', 'blok--kiz', 'blok--martilar', 'class="vapur"', 'dalga--4'].every((k) => html.includes(k)));
+sina('panorama v5: Ayasofya, Galata Köprüsü, yıldızlar, fener ışığı, tarama deseni', ['blok--ayasofya', 'blok--galata-koprusu', 'blok--yildizlar', 'class="huzme"', 'id="tarama-gun"', 'id="tarama-gece"'].every((k) => html.includes(k)));
+{ const ist = await ice('sahne/istanbul.mjs'); sina('panorama sahne genişliği site.mjs ile aynı (-400…2000)', ist.SOL === -400 && ist.SAG === 2000 && /SAHNE_SOL = -400, SAHNE_SAG = 2000/.test(oku('site.mjs'))); }
+sina('kabin: üstten uçak (yatay SVG + dikey burun/kanat/kuyruk) ve 6 bölme gövdede', ['ucak__yatay', 'ucak__burun', 'ucak__kanat-d', 'ucak__kuyruk', 'ucak__isik--iskele', 'ucak__isik--sancak'].every((k) => html.includes(k)) && (html.match(/<div class="ucak" id="ucak">[\s\S]*?<\/ol>/)?.[0].match(/<li class="kabin__/g) || []).length === 6);
+sina('dil seçici: TR ve EN bayrağı', /<button class="dil" id="dil-dugme"[^>]*>[\s\S]*?data-dil="tr"[\s\S]*?<svg class="bayrak"[\s\S]*?data-dil="en"[\s\S]*?<svg class="bayrak"/.test(html));
+sina('menüde numara yok', !html.includes('menu__no'));
+sina('tarihçe: her şeritte resim karesi (11 kayıt + sıradaki)', (html.match(/<li class="serit [^"]*"><span class="serit__resim/g) || []).length === 12 && html.includes('id="rota-yil"'));
 sina('panorama: her parça blok içinde sıralı (data-s, data-k)', (html.match(/<g class="parca" data-k="\d+">/g) || []).length > 150);
 
 /* ── 7. iki dil ── */
@@ -234,9 +240,9 @@ const acilis = ['site.mjs', 'ceviri.mjs', 'sahne/pano.mjs', 'sahne/hesap.mjs', '
 const acilisKB = acilis.reduce((s, p) => s + boyut(p), 0) / 1024;
 sina('açılış JS ≤ 72 kB (ham; v4 bütçesi)', acilisKB <= 72, acilisKB.toFixed(1) + ' kB');
 const cssGz = gzipSync(readFileSync(join(KOK, 'site.css'))).length / 1024;
-sina('site.css gzip ≤ 15 kB (v4 bütçesi)', cssGz <= 15, cssGz.toFixed(2) + ' kB');
+sina('site.css gzip ≤ 17 kB (v5 bütçesi: uçak, üst şerit, tarihçe)', cssGz <= 17, cssGz.toFixed(2) + ' kB');
 const htmlGz = gzipSync(readFileSync(join(KOK, 'index.html'))).length / 1024;
-sina('index.html gzip ≤ 32 kB (panorama dahil)', htmlGz <= 32, htmlGz.toFixed(1) + ' kB');
+sina('index.html gzip ≤ 40 kB (v5: tarama, yansıma, yıldız ayrıntılı panorama ~18 kB dahil)', htmlGz <= 40, htmlGz.toFixed(1) + ' kB');
 const gorsel = ['gorseller/logo-uumk-360.png', 'gorseller/foto/pegasus-2026-480.jpg', 'gorseller/foto/kutu-oyun-2026-480.jpg', 'gorseller/foto/modelleme-2026-480.jpg', 'gorseller/foto/lustrum-2024-480.jpg'].reduce((s, p) => s + boyut(p), 0) / 1024;
 sina('ilk yüklenen görseller ≤ 220 kB', gorsel <= 220, gorsel.toFixed(0) + ' kB');
 sina('three yalnız tembel sahnelerden', acilis.every((p) => !/from 'three'/.test(oku(p))));

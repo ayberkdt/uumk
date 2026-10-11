@@ -83,7 +83,7 @@ export async function dilKur({ dugme }) {
     document.documentElement.lang = yeni;
     uygula(yeni === 'en' ? sozluk : null);
     document.documentElement.classList.remove('dil-bekle');
-    if (dugme) { dugme.textContent = yeni === 'en' ? 'TR' : 'EN'; dugme.setAttribute('aria-label', yeni === 'en' ? 'Türkçeye geç' : 'Switch to English'); dugme.lang = yeni === 'en' ? 'tr' : 'en'; }
+    if (dugme) { dugme.dataset.etkin = yeni; dugme.setAttribute('aria-label', yeni === 'en' ? 'Türkçeye geç' : 'Switch to English'); }
     if (kaydet) { try { localStorage.setItem(ANAHTAR, yeni); } catch { /* yok */ } }
     const u = new URL(location.href);
     if (kaydet) { if (yeni === 'en') u.searchParams.set('dil', 'en'); else u.searchParams.delete('dil'); history.replaceState(null, '', u); }

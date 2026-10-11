@@ -1,3 +1,9 @@
+# YASA DENETİMİ — UUMK v5 · 2026-10-11 · denetleyici index 0 HATA · 4 UYARI (önce 7: 600 ms ikon çizimi → 300, ayrı satırdaki 1,1 sn sonsuz animasyon süresi → kısa yazım, 4 gölge değeri → 2: bayrak ve sekme gölgesi çerçeveye döndü). axe 0 (7 görünüm; önce hareketli görünümde 1: geçilmemiş tarihçe şeritleri %25 opaktı → tam opak, yalnız kayar).
+
+Değişen satırlar (kalanlar v4 tablosuyla aynı): Hick — nav 6, numarasız; üst şerit eylemleri 3 (dil, giriş, menü) · Fitts — telefonda menü/giriş/dil ≥ 44 px (e2e üst şerit, 320–414) · Von Restorff — üst şeritte tek dolgun düğme "Giriş yap" · Benzerlik — 2 gölge (--g-1, kartpostal tabanı) · Doherty — geçişler ≤ 300 ms, kabin girişi 900 ms canlandırma (sayfayı bekletmez, hareket azaltmada yok) · Occam UYARI — sayfa 2986 öğe, çoğu SVG (panorama 1704, uçak); gerekçe: kullanıcının istediği daha ayrıntılı çizim ve gerçekçi uçak · Parkinson UYARI — değişmedi (kullanıcı kararı).
+
+---
+
 # YASA DENETİMİ — UUMK v4 index.html · 2026-10-11 · denetleyici: index "0 HATA · 4 UYARI" (önce 8 UYARI: köşe yarıçapı 8 değer → jetonlara çekildi; dalga animasyonları ayrı satırda süre yazıldığı için "sonlu" görünüyordu → tek kısa yazım, sonsuz)
 
 Ölçüm: denetleyici `--tablo` + canlı DOM (`araclar/cekim.mjs` js adımı, 1440×900 ?az=1) + axe 0 ihlal (1440 TR, 1440 hareketli, 1440 EN, 390, 1024, yönetim, kvkk; önce 1 ihlal: alt bilgideki sarı düğmede `.alt a` rengi eziyordu, 1,49:1 → düzeltildi). Sonuç: 20/20 ölçüldü · 0 HATA · 3 UYARI gerekçeli · TESLİM.

@@ -41,8 +41,8 @@ let etkinBag = null;
 function isaretKoy() {
   if (!etkinBag || innerWidth <= 860) { isaret.style.opacity = '0'; return; }
   const m = menu.getBoundingClientRect(), r = etkinBag.getBoundingClientRect();
-  isaret.style.width = `${Math.max(12, r.width - 46)}px`;
-  isaret.style.transform = `translateX(${(r.left - m.left + 16).toFixed(1)}px)`;
+  isaret.style.width = `${r.width.toFixed(1)}px`;
+  isaret.style.transform = `translateX(${(r.left - m.left).toFixed(1)}px)`;
   isaret.style.opacity = '1';
 }
 const etkinIO = new IntersectionObserver((g) => {
@@ -127,16 +127,35 @@ function istKur(svg, { sure = 1100, sonra } = {}) {
 }
 const ist = $('#istanbul');
 istKur(ist);
-/* geniş ekranda metin uzunsa (ör. İngilizce üç satır başlık) metnin altına uzanan yapılar metne binmesin: şehir biraz aşağı iner */
-const SEHIR_TEPE = [[116, 206], [148, 190], [316, 190], [348, 206], [426, 283], [534, 283], [762, 140]];   /* [x, tepe y] viewBox birimi */
+/* panorama kutuya sığar: görüş kutusu (viewBox) kutunun oranına göre sahnenin -400…2000 aralığında açılır, kesilmez.
+ * Açılışta şehir yüksekliği, metin sütununun altına düşen yapıların tepesi metne binmeyecek kadar seçilir. */
+const SAHNE_SOL = -400, SAHNE_SAG = 2000;
+const SEHIR_TEPE = [[-242, 226], [-58, 226], [116, 206], [148, 190], [316, 190], [348, 206], [426, 283], [534, 283], [762, 140]];   /* [x, tepe y] viewBox birimi */
+function sigdir(svg, gen, yuk, merkez) {
+  let k = yuk / 480, vb = gen / k, kes = false;
+  if (vb > SAHNE_SAG - SAHNE_SOL) { vb = SAHNE_SAG - SAHNE_SOL; k = gen / vb; kes = true; }   /* çok geniş: üstten (gökten) kırpılır */
+  const x0 = Math.min(SAHNE_SAG - vb, Math.max(SAHNE_SOL, merkez - vb / 2));
+  svg.setAttribute('viewBox', `${x0.toFixed(1)} 0 ${vb.toFixed(1)} 480`);
+  svg.setAttribute('preserveAspectRatio', kes ? 'xMidYMax slice' : 'xMidYMax meet');
+  return { x0, k };
+}
 function sehirYerlestir() {
-  ist.style.setProperty('--sehir-in', '0px');
-  if (innerWidth <= 860) return;
-  const m = $('.giris__metin > .ad').getBoundingClientRect(), o = ($('.giris__olgu').offsetParent ? $('.giris__olgu') : $('.giris__eylem')).getBoundingClientRect(), r = ist.getBoundingClientRect();
-  const k = Math.max(r.width / 1600, r.height / 480), x0 = r.left + (r.width - 1600 * k) / 2, y0 = r.bottom - 480 * k;
-  let in_ = 0;
-  for (const [x, y] of SEHIR_TEPE) { const sx = x0 + x * k; if (sx > m.left - 12 && sx < Math.max(o.right, m.left + 640) + 12) in_ = Math.max(in_, o.bottom + 14 - (y0 + y * k)); }
-  ist.style.setProperty('--sehir-in', `${Math.min(90, Math.round(in_))}px`);
+  const sahne = $('.giris__sahne').getBoundingClientRect(), gen = sahne.width, S = sahne.height, dar = innerWidth <= 860;
+  let h = dar ? Math.min(S * 0.56, gen * 0.92) : Math.min(S * 0.56, gen * 0.36);
+  {
+    const m = $('.giris__metin > .ad').getBoundingClientRect(), o = ($('.giris__olgu').offsetParent ? $('.giris__olgu') : $('.giris__eylem')).getBoundingClientRect();
+    const T = o.bottom - sahne.top + 18, sol = dar ? -1 : m.left - sahne.left - 12, sag = dar ? gen + 1 : Math.max(o.right, m.left + 640) - sahne.left + 12;
+    for (let i = 0; i < 5; i++) {
+      const k = h / 480, vb = Math.min(SAHNE_SAG - SAHNE_SOL, gen / k), x0 = Math.min(SAHNE_SAG - vb, Math.max(SAHNE_SOL, (dar ? 956 : 800) - vb / 2)), kk = gen / vb;
+      let sinir = Infinity;
+      for (const [x, y] of SEHIR_TEPE) { const sx = (x - x0) * kk; if (sx > sol && sx < sag) sinir = Math.min(sinir, (S - T) / (1 - y / 480)); }
+      if (sinir < h) h = Math.max(sinir, S * (dar ? 0.2 : 0.3));
+    }
+  }
+  ist.style.setProperty('--sehir-h', `${Math.round(h)}px`);
+  sigdir(ist, gen, Math.round(h), dar ? 956 : 800);
+  const g = $('#istanbul-gece');
+  if (g) { const r = g.getBoundingClientRect(); sigdir(g, r.width, r.height, 1000); }
 }
 sehirYerlestir(); addEventListener('dil-degisti', sehirYerlestir); document.fonts?.ready.then(sehirYerlestir);
 let ucus = null, sonP = -1;
@@ -167,14 +186,19 @@ function ufukGuncelle() {
 }
 
 /* ── tarihçe: şerit rafı; omurga kaydırdıkça dolar, uçak ucunda, geçilen şerit yerine oturur ── */
-const rota = $('#rota'), rotaNokta = $$('#rota .serit:not(.serit--sirada)');
+const rota = $('#rota'), rotaNokta = $$('#rota .serit:not(.serit--sirada)'), rotaYil = $('#rota-yil');
 function rotaGuncelle() {
   const r = rota.getBoundingClientRect();
   if (r.bottom < -100 || r.top > innerHeight + 100) return;
   const cizgi = innerHeight * 0.62, ust = rotaNokta.map((li) => li.getBoundingClientRect().top);   /* önce oku, sonra yaz */
   const v = AZ ? 1 : sinir((cizgi - r.top) / r.height);
   rota.style.setProperty('--rota-t', v.toFixed(3)); rota.style.setProperty('--rota-u', v > 0.01 && v < 0.99 ? 1 : 0);
-  rotaNokta.forEach((li, i) => li.toggleAttribute('data-gecti', AZ || ust[i] + 24 <= cizgi + 1));
+  let son = -1;
+  rotaNokta.forEach((li, i) => { const g = AZ || ust[i] + 24 <= cizgi + 1; li.toggleAttribute('data-gecti', g); if (g) son = i; });
+  /* uçağın yanındaki yıl rozeti: geçilen son kaydın yılı */
+  rotaYil.textContent = rotaNokta[Math.max(0, son)].querySelector('time').textContent;
+  rotaYil.style.top = `${(rota.offsetTop + v * rota.offsetHeight).toFixed(1)}px`;
+  rotaYil.style.opacity = !AZ && v > 0.01 && v < 0.99 ? '1' : '0';
 }
 
 let boyutZaman = 0;
@@ -303,8 +327,8 @@ for (const g of $$('#hesap-panel input[type="password"]')) {
 /* ── alt bilgi: gece İstanbul'u görününce kurulur, ışıklar yanar; İstanbul saati ── */
 gozle($('.alt'), { yakin: '0px', ilk() {
   const gece = ist.cloneNode(true);   /* aynı preset, gece renkleri (site.css .ist--gece) */
-  gece.id = 'istanbul-gece'; gece.setAttribute('class', 'ist ist--gece');
-  $('.alt__sehir').append(gece);
+  gece.id = 'istanbul-gece'; gece.setAttribute('class', 'ist ist--gece'); gece.removeAttribute('style');
+  $('.alt__sehir').append(gece); sehirYerlestir();
   istKur(gece, { sure: 900, sonra: () => gece.classList.add('ist--isik') });
 } });
 const altSaat = $('#alt-saat'), altSaatYaz = () => { altSaat.textContent = saatBicim.format(new Date()); };

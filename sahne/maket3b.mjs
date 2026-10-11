@@ -54,7 +54,8 @@ export function maketKur(tuvalEl, { imler = [], az = false, yavas = false, secil
    * alanı sınırı, bagaj treninin dolaştığı servis yolunun beyaz kesikli kenarları, park yeri numarası. İkisi de uçakla birlikte salınır. ── */
   const plaka = tuvalDoku(128, 128, (g, w, h) => {
     g.fillStyle = '#6a6c69'; g.fillRect(0, 0, w, h);
-    for (let k = 0; k < 140; k++) { const x = (k * 37.3) % w, y = (k * 61.7) % h; g.fillStyle = k % 3 ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.06)'; g.fillRect(x, y, 2 + (k % 4), 2); }
+    let t = 7; const r = () => (t = (t * 16807) % 2147483647) / 2147483647;   /* tohumlu: her yüklemede aynı, düzensiz ince doku */
+    for (let k = 0; k < 900; k++) { g.fillStyle = r() < 0.5 ? 'rgba(255,255,255,0.035)' : 'rgba(0,0,0,0.045)'; g.fillRect(r() * w, r() * h, 1, 1); }
     g.fillStyle = '#525451'; g.fillRect(0, 0, w, 2); g.fillRect(0, 0, 2, h);
   });
   plaka.wrapS = plaka.wrapT = THREE.RepeatWrapping; plaka.repeat.set(30, 30);
@@ -76,7 +77,7 @@ export function maketKur(tuvalEl, { imler = [], az = false, yavas = false, secil
     g.beginPath(); g.moveTo(px(-15), pz(-7.2)); g.lineTo(px(11), pz(-7.2)); g.stroke();
     g.lineWidth = 0.22 * PU; g.beginPath(); g.moveTo(px(X1 + 0.95), pz(-0.7)); g.lineTo(px(X1 + 0.95), pz(0.7)); g.stroke();
     /* park yeri numarası: burnun önünde, kameraya okunur */
-    g.fillStyle = '#f2c200'; g.font = `700 ${0.9 * PU}px Futura, 'Century Gothic', 'Segoe UI', sans-serif`; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText('A1', px(5.5), pz(2.5));
+    g.fillStyle = '#f2c200'; g.font = `700 ${0.9 * PU}px Futura, 'Century Gothic', 'Segoe UI', sans-serif`; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText('A1', px(4.7), pz(2.6));
   });
   const isaretM = ekle(new THREE.PlaneGeometry(AX1 - AX0, 2 * AZ), std(0xffffff, 0.9, 0, { map: isaret, transparent: true, depthWrite: false, polygonOffset: true, polygonOffsetFactor: -2 }), (AX0 + AX1) / 2, 0.01, 0, dunya, { golge: false, rx: -Math.PI / 2 });
   isaretM.receiveShadow = true;
@@ -115,7 +116,7 @@ export function maketKur(tuvalEl, { imler = [], az = false, yavas = false, secil
     kutu(0.06, h, ZF - 0.36, M.ic, x, YF + h / 2, -(ZF + 0.36) / 2, ucak); kutu(0.06, h, ZF - 0.36, M.ic, x, YF + h / 2, (ZF + 0.36) / 2, ucak);
     kutu(0.075, 0.025, ZF * 2, M.petrol, x, DUVAR, 0, ucak, { golge: false });
   }
-  /* ── kanatlar (kanatçık, flap rayları), motorlar (pilon, dönen fan, egzoz), kuyruk, iniş takımı ── */
+  /* ── kanatlar (kanatçık), motorlar (pilon, dönen fan, egzoz), kuyruk, iniş takımı ── */
   const kanatSekli = (kok, uc, acik, ok) => { const s = new THREE.Shape(); s.moveTo(kok[0], 0); s.lineTo(kok[1], 0); s.lineTo(kok[1] - ok + (kok[1] - kok[0] - uc) * 0.2, acik); s.lineTo(kok[1] - ok + (kok[1] - kok[0] - uc) * 0.2 - uc, acik); s.closePath(); return s; };
   const fanlar = [], isiklarU = [];
   const KY = YC - 0.62 * R;
@@ -127,7 +128,6 @@ export function maketKur(tuvalEl, { imler = [], az = false, yavas = false, secil
     ekle(new THREE.ExtrudeGeometry(kc, { depth: 0.05, bevelEnabled: false }), M.petrol, ucX - 0.42, KY + 0.06, ucZ - 0.025, ucak);
     isiklarU.push({ m: kure(0.06, isik(yon > 0 ? 0x3fe07a : 0xff4040), ucX + 0.38, KY + 0.08, ucZ, ucak, { golge: false }), tur: 'seyir' });
     isiklarU.push({ m: kure(0.05, isik(0xffffff), ucX - 0.42, KY + 0.08, ucZ, ucak, { golge: false }), tur: 'flas' });
-    for (const k of [0.8, 1.9, 2.9]) kutu(0.7, 0.07, 0.07, M.gri, 0.95 - k * 0.42, KY - 0.06, yon * (0.9 * R + k), ucak);
     const mz = yon * 2.1, my = KY - 0.48;
     kutu(0.9, 0.34, 0.09, M.gri, 1.25, KY - 0.17, mz, ucak);
     ekle(new THREE.CylinderGeometry(0.4, 0.33, 1.5, 32), M.govde, 1.3, my, mz, ucak, { rz: Math.PI / 2 });

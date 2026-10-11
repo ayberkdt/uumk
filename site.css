@@ -174,6 +174,8 @@ h4 { font: 600 var(--t-2)/1.4 var(--f-govde); }
 html.js:not(.az) .ist--gece .fener-hale { animation: fener-nabiz 2.4s ease-in-out infinite; }
 html.js:not(.az) .ist--gece .ikaz { animation: ikaz-yan 1.8s linear infinite; }
 html.js:not(.az) .ist--gece .ikaz--2 { animation-delay: -0.9s; }
+.ist--gece { fill: none; stroke: var(--gece-vurgu); stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+.ist--gece .u2 { stroke-opacity: 0.55; }
 .ist--gece .ys2 { stroke: var(--gece-vurgu); opacity: 0.35; }
 .ist--gece .blok--bulutlar { opacity: 0.5; }
 .ist .gy { fill: url(#tarama-gun); stroke: var(--i-c); stroke-width: 0.8; stroke-linejoin: round; }
@@ -566,7 +568,7 @@ html.js:not(.az) .ayrinti[open]::backdrop { animation: belir 300ms ease both; }
 .kabin-kap__bas { max-width: 46rem; }
 .kabin-kap__bas p { color: var(--soluk); }
 .maket { position: relative; margin-top: var(--b-3); }
-.maket__sahne { position: relative; aspect-ratio: 16 / 9; overflow: hidden; border-radius: var(--r-2); }
+.maket__sahne { position: relative; width: 100vw; margin-inline: calc(50% - 50vw); aspect-ratio: 2.2; overflow: hidden; }
 .maket__poster, .maket__tuval { position: absolute; inset: 0; width: 100%; height: 100%; }
 .maket__poster { object-fit: cover; transition: opacity var(--sure) ease; }
 .maket[data-cizici='3b'] .maket__poster { opacity: 0; }
@@ -603,11 +605,11 @@ html:not(.js) :is(.kabin__ust, .maket__imler, .kabin__not) { display: none; }
 .js .kabin__ust { padding-left: 3.4em; }
 .js .kabin__sira { position: absolute; left: var(--b-3); top: calc(var(--b-2) + 16px); }
 .js .kabin { position: relative; gap: 12px; margin-top: var(--b-2); padding: var(--b-2) var(--b-3); border: 1px solid var(--cizgi); border-radius: var(--r-2); background: var(--yuzey); }
-@media (min-width: 1280px) { .js .kabin { position: absolute; left: var(--b-2); bottom: var(--b-2); z-index: 2; width: 24rem; margin: 0; box-shadow: var(--g-1); } }
+@media (min-width: 1360px) { .js .kabin { position: absolute; left: var(--b-2); bottom: var(--b-2); z-index: 2; width: 24rem; margin: 0; box-shadow: var(--g-1); } }
 .js .kabin__kart { grid-area: 1 / 1; transition: opacity 280ms ease, visibility 280ms; }
 .js .kabin__kart:not([data-secili]) { visibility: hidden; opacity: 0; }
 @media (max-width: 760px) {
-  .maket__sahne { margin-inline: calc(var(--kenar) * -1); aspect-ratio: 4 / 3; border-radius: 0; }
+  .maket__sahne { aspect-ratio: 4 / 3; }
   .maket:not([data-cizici='3b']) .maket__imler > li { left: var(--xm); top: var(--ym); }
   .maket__im[aria-pressed='true']:not(:hover) .maket__ad { opacity: 0; }
   .bos__resim { aspect-ratio: 4 / 3; object-fit: cover; }

@@ -6,7 +6,7 @@
 import { readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { istanbulSvg, pulSembolleri } from '../sahne/istanbul.mjs';
+import { istanbulSvg, pulSembolleri, sembolDosyasi } from '../sahne/istanbul.mjs';
 
 const yol = join(dirname(fileURLToPath(import.meta.url)), '..', 'index.html');
 export const PARCALAR = {
@@ -25,7 +25,9 @@ export function yerlestir(html) {
 
 if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
   const html = readFileSync(yol, 'utf8'), yeni = yerlestir(html);
-  if (process.argv.includes('--sina')) { console.log(html === yeni ? 'aynı' : 'FARKLI — node araclar/istanbul-insa.mjs'); process.exit(html === yeni ? 0 : 1); }
-  writeFileSync(yol, yeni);
+  const sYol = join(dirname(yol), 'gorseller', 'semboller.svg'), sYeni = sembolDosyasi();
+  let sEski = ''; try { sEski = readFileSync(sYol, 'utf8'); } catch { /* ilk kez */ }
+  if (process.argv.includes('--sina')) { const ok = html === yeni && sEski === sYeni; console.log(ok ? 'aynı' : 'FARKLI — node araclar/istanbul-insa.mjs'); process.exit(ok ? 0 : 1); }
+  writeFileSync(yol, yeni); writeFileSync(sYol, sYeni);
   console.log(`index.html güncellendi (${(Buffer.byteLength(yeni) / 1024).toFixed(0)} kB; çizim ${(Object.values(PARCALAR).reduce((s, u) => s + u().length, 0) / 1024).toFixed(0)} kB)`);
 }

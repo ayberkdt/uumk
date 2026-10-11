@@ -1,4 +1,4 @@
-# İTÜ UUMK · EUROAVIA AS Istanbul — web sitesi (v5)
+# İTÜ UUMK · EUROAVIA AS Istanbul — web sitesi (v6)
 
 İTÜ Uçak Uzay Mühendisliği Kulübü'nün sitesi: gündem ve etkinlik kayıtları (hesap ya da misafir), son etkinlikler, yazılar,
 kulüp ve EUROAVIA ağı. Türkçe ve İngilizce. Bağımlılık yok: tarayıcı tarafı bağımsız ES modülleri (WebGL gerekmez); sunucu
@@ -12,7 +12,7 @@ Kız Kulesi, Üsküdar, Ayasofya, Galata Köprüsü ve balıkçılar, vapur, mar
 harita rotaları, alt bilgide pist. Siyah bölümlere (pano, EUROAVIA gece haritası, alt bilgi) geçişte ufuk kavisi kaydırdıkça düzleşir.
 
 **Renk ve yazı.** Palet "E · Hangar" (11 Ekim 2026, yedi seçenek arasından seçildi): beton grisi zemin #ecebe7, vurgu UUMK logosundaki petrol #056b7a, kalkış panosu ve alt bilgi siyah #1a1a1a üstüne sarı #f2c200. Önizlemeler `notlar/palet-secenekleri/`. Başlıklar
-Source Serif 4, gövde Instrument Sans (OFL, yerel). Ayrıntı: `notlar/tasarim.md`.
+Jost (geometrik grotesk, 600), gövde IBM Plex Sans (ikisi de OFL, değişken, yerel; latin + latin-ext). Ayrıntı: `notlar/tasarim.md`.
 
 ## Çalıştırma
 
@@ -51,10 +51,10 @@ site açılır, kayıt bölümü "sunucuya ulaşılamıyor" der ve yazılar `ver
 | Bölüm | İçerik |
 |---|---|
 | Açılış | Sabit ana başlık, adın üç hâli (UUMK · AS Istanbul/EUROAVIA · İTÜ UUMK), kâğıt uçaklar, blok blok kurulan İstanbul panoraması, "Gündem" + "Üye ol" |
-| 01 Biz kimiz | Künye, 8 faaliyet, üstten görünen uçakta kabin ekipleri (kokpit = yönetim kurulu; ışıklar, motor izleri, telefonda dikey uçak), Güz/Bahar çizelgesi; koyu bantta resimli "uçuş şeritleri" tarihçesi (11 kayıt, 1941–2026, uçakla ilerleyen yıl rozeti) |
+| 01 Biz kimiz | Künye, 8 faaliyet, üstten görünen uçakta kabin ekipleri (kokpit = yönetim kurulu; ışıklar, motor izleri, telefonda dikey uçak), Güz/Bahar çizelgesi; koyu bantta resimli "uçuş şeritleri" tarihçesi (15 kayıt, 1941–2026; şeride basınca kaydın ayrıntı sayfası açılır: program, kaynaklar, önceki/sonraki, `#tarih-<kimlik>` bağlantısı; uçakla ilerleyen yıl rozeti) |
 | 02 Gündem | Kayda açık etkinlikler (sunucudan; ilk 4, kalanı "göster") + duyurular (2026–27 programı, yeni öğrenciler, EUROAVIA Ideathon 2026) |
 | 03 Son etkinlikler | Kalkış panosu (10 etkinlik) + biniş kartı (rota, tür, uçuş kodu, damga, fotoğraf, dile göre tarih) + 3 fotoğraf |
-| 04 Yazılar | AESTRO rafı (3 kapak) + AS Istanbul'un 6 EUROAVIA dönem raporu kartpostal olarak; yönetimden eklenen yazılar sitenin kendi okuyucusunda açılır |
+| 04 Yazılar | AESTRO rafı (3 sayının gerçek kapağı, okuma bağlantılarıyla) + AS Istanbul'un 6 EUROAVIA dönem raporu kartpostal olarak (her raporun içeriğinden bir ön yüz çizimi, pul, posta damgası); yönetimden eklenen yazılar sitenin kendi okuyucusunda açılır |
 | 05 EUROAVIA | Koyu "gece haritası": 40 grup / 15 ülke, İstanbul'dan sarı rotalar ve uçaklar, seçimde odak + km sayacı; ağın 2025–26 takvimi (5 tam satır + "Tüm takvim", geçmişler soluk) |
 | 06 Sponsorluk | 4 iş birliği biçimi (doğrulanmış geçmiş örnekleriyle), "E-posta yaz" (konu satırı hazır) + "Adresi kopyala" |
 | 07 Hesap | "Check-in" paneli, parola göster/gizle, "Kulüp kartın" (forma yazdıkça dolar), giriş / hesap aç / parola / profil, kayıtlarım, hesabı sil |
@@ -69,10 +69,12 @@ veriyor; EUROAVIA'nın bugünkü sitesindeki "1999" gerekçesiz ve EUROAVIA'nın
 ## Araçlar
 
 ```
-node araclar/dogrula.mjs                     # ~1150 sınama, tarayıcısız (açılış yörüngesi, panorama = preset dahil)
-node araclar/istanbul-insa.mjs [--sina]      # İstanbul panoramasını ve pulları sahne/istanbul.mjs'ten index.html'e yazar (preset değişince)
+node araclar/dogrula.mjs                     # ~1320 sınama, tarayıcısız (açılış yörüngesi, panorama = preset dahil)
+node araclar/istanbul-insa.mjs [--sina]      # İstanbul panoramasını sahne/istanbul.mjs'ten index.html'e, pul ve kartpostal sembollerini gorseller/semboller.svg'ye yazar
+node araclar/tarihce-insa.mjs [--sina]       # tarihçe şeritlerini veri/tarihce.mjs'ten index.html'e, İngilizcelerini dil/en.mjs'e yazar (kayıt değişince)
+node araclar/harita-insa.mjs                 # Natural Earth 1:50m ülkelerinden veri/harita-ulkeler.mjs'i üretir (kaynak dosya .cekim-gecici altında)
 node araclar/sunucu-sina.mjs                 # 61 sınama: API, güvenlik, kayıt akışları, 404 sayfası (geçici veritabanıyla)
-node araclar/uctan-uca.mjs                   # 33 senaryo, başsız Chrome (sunucu --deneme ile açık olmalı; sınama etkinliklerini önce ve sonra siler)
+node araclar/uctan-uca.mjs                   # 35 senaryo, başsız Chrome (sunucu --deneme ile açık olmalı; sınama etkinliklerini önce ve sonra siler)
 node araclar/erisilebilirlik.mjs 1440x900    # axe-core
 node araclar/cekim.mjs <adres> <klasör> [g] [y] [adım…]
 node "C:\Users\ayber\Desktop\Custom Yetenekler\ux-yasalari\scripts\ux-yasa-denetimi.mjs" index.html --tablo
@@ -87,10 +89,11 @@ node "C:\Users\ayber\Desktop\Custom Yetenekler\ux-yasalari\scripts\ux-yasa-denet
 | `sahne/ucus.mjs` | Açılıştaki uçak: yörünge, koordineli uçuş yönü, çizim; gökteki küçük kâğıt uçaklar; adın hâl pencereleri |
 | `sahne/istanbul.mjs` | İstanbul panoraması preseti (yapı taşları → bloklar → sahne); yalnız üretim zamanında (`araclar/istanbul-insa.mjs`) çalışır |
 | `sahne/hesap.mjs` | Hesap paneli, etkinlik kartları, misafir formu |
+| `sahne/kartpostal.mjs` · `sahne/ayrinti.mjs` | Dönem raporu kartpostallarının ön yüz çizimleri (üretim zamanı) · tarihçe ayrıntı sayfası (ilk tıklamada yüklenir) |
 | `sahne/pano.mjs` · `ag.mjs` · `harita.mjs` · `renk.mjs` | Pano + biniş kartı · EUROAVIA denetleyicisi · harita · palet |
 | `sunucu/` | `sunucu.mjs` (HTTP + statik), `api.mjs`, `vt.mjs` (şema), `guvenlik.mjs`, `posta.mjs`, `ayar.mjs`, `yonet.mjs` |
-| `veri/` | `ag.mjs` (EUROAVIA), `kure-maske.mjs`, `yazilar.json` |
-| `gorseller/` | Logolar (kulübün 2023 site logosundan kırpıldı; beyaz sürümler alt bilgi için), fotoğraflar, favicon |
+| `veri/` | `ag.mjs` (EUROAVIA), `tarihce.mjs` (tarihçe kayıtları, TR + EN ayrıntı ve kaynaklar), `harita-ulkeler.mjs` (Natural Earth, kamu malı), `kure-maske.mjs`, `yazilar.json` |
+| `gorseller/` | Logolar (kulübün 2023 site logosundan kırpıldı; beyaz sürümler alt bilgi için), fotoğraflar, AESTRO kapakları (`aestro/`), `semboller.svg` (üretilir), favicon |
 | `kaynak/v1/` · `kaynak/v2/` | Önceki sürümler (v2: katlanan kâğıt, küre); yayına girmez |
 
 ## Bilinen sınırlar ve kulübe sorulacaklar

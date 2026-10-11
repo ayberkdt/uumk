@@ -10,8 +10,13 @@ Sıra: v1 koyu+neon → v2 açık gri #f6f7f5 + petrol/lacivert → B petrol blo
 - Bölüm etiketleri mürekkep; koyu bölümlerde sarı.
 
 ## Yazı
-- Başlık: Source Serif 4 (dergi gibi; AESTRO ve yazılar bölümüyle uyumlu). Gövde: Instrument Sans (değişken genişlik; pano başlıkları %78 genişlikte).
-- Bırakılanlar: Big Shoulders (dar büyük harf başlık), JetBrains Mono etiketleri, Archivo.
+- v6 (11 Ekim 2026; kullanıcı: "Kullanılan fontlar da direkt AI SLOP"): başlık Jost 600 (Futura soyundan geometrik grotesk; havacılık afişleri ve
+  eski uçuş kartlarının dili, Türkçe harfleri tam), gövde IBM Plex Sans (mühendislik kökenli, okunaklı, sayıları düzgün). İkisi de OFL, değişken, yerel.
+  Kalkış panosu ve kartpostal başlıkları da Jost; ayrı bir "vurgu serifi" yok — iki aile, 6 punto.
+- Bırakılanlar: Source Serif 4 + Instrument Sans (v5; kullanıcı "AI slop" buldu), B612 (Türkçe harfleri eksik), Big Shoulders, JetBrains Mono, Archivo;
+  doğrulayıcı yasak listesi: Instrument Sans, Source Serif, Geist, Manrope, DM Sans.
+- Hareket (v6, "daha smooth"): ortak eğri `--egri: cubic-bezier(0.16, 1, 0.3, 1)` (üstel yavaşlama), süre `--sure: 560ms` (600 ms kırmızı çizginin altında);
+  kaydırmaya bağlı açılış hikâyesi rAF'te üstel yumuşatmayla (τ ≈ 110 ms) hedefe yaklaşır; kaydırmayı izleyen omurga/uçak/ilerleme çubuğu kısa doğrusal.
 
 ## Açılış (v3, 11 Ekim 2026 gece; kullanıcı: "uçak animasyonu çok kötü", "sol taraftaki ana yazı neden değişiyor")
 - Sol: ana başlık sabit h1 "İTÜ Uçak Uzay Mühendisliği Kulübü" ve UUMK'yi anlatan sabit açıklama. Kaydırdıkça yalnız ad değişir:

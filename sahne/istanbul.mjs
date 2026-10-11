@@ -6,6 +6,8 @@
  * Her yapı bir BLOK; blok PARÇA'lardan oluşur ve açılışta parça parça yükselir. Sahne -400…2000 birim genişliğindedir;
  * site.mjs görüş kutusunu (viewBox) ekranın oranına göre bu aralıkta açar. Renkler sınıflarla (site.css .ist / .ist--gece). */
 
+import { KART_SAHNE } from './kartpostal.mjs';
+
 export const W = 1600, H = 480, SU = 396, SOL = -400, SAG = 2000;
 
 /* deterministik rastgele: her üretim aynı çizimi verir */
@@ -112,7 +114,7 @@ function kizKulesi(cx, taban) {
     P(`M${f(cx - 66)} ${taban + 12}Q${f(cx - 58)} ${taban - 6} ${f(cx - 40)} ${taban - 4}L${f(cx + 46)} ${taban - 5}Q${f(cx + 62)} ${taban - 2} ${f(cx + 70)} ${taban + 12}Z`, 'kaya') + P(`M${f(cx - 52)} ${taban + 4}l8-5M${f(cx + 30)} ${taban + 2}l10-4M${f(cx - 10)} ${taban + 6}l12-3`, 'l ince'),
     R(cx - 48, taban - 30, 96, 26, 'g') + R(cx - 48, taban - 30, 14, 26, 'gy') + kemerler(cx - 46, taban - 26, 92, 8, 12) + R(cx - 50, taban - 32, 100, 3, 'g') + R(cx + 26, taban - 44, 16, 12, 'g') + kubbe(cx + 34, taban - 44, 8, 8),
     R(cx - 14, taban - 104, 28, 72, 'g') + R(cx - 14, taban - 104, 9, 72, 'gy') + R(cx - 3, taban - 96, 6, 10, 'p y2') + R(cx - 3, taban - 74, 6, 10, 'p') + R(cx - 3, taban - 52, 6, 10, 'p y4') + R(cx - 17, taban - 108, 34, 4, 'g'),
-    `<path class="huzme" d="M${f(cx)} ${taban - 116}L${f(cx - 380)} ${taban - 190}L${f(cx - 380)} ${taban - 140}Z"/>` + R(cx - 9, taban - 124, 18, 16, 'g') + R(cx - 5, taban - 121, 10, 10, 'fener') + P(`M${f(cx - 12)} ${taban - 124}L${f(cx)} ${taban - 146}L${f(cx + 12)} ${taban - 124}Z`, 'c') + P(`M${f(cx)} ${taban - 146}v-16`, 'l') + P(`M${f(cx)} ${taban - 162}h12l-3 4 3 4h-12z`, 'v'),
+    O(cx, taban - 116, 26, 'fener-hale fener-hale--2') + O(cx, taban - 116, 14, 'fener-hale') + R(cx - 9, taban - 124, 18, 16, 'g') + R(cx - 5, taban - 121, 10, 10, 'fener') + P(`M${f(cx - 12)} ${taban - 124}L${f(cx)} ${taban - 146}L${f(cx + 12)} ${taban - 124}Z`, 'c') + P(`M${f(cx)} ${taban - 146}v-16`, 'l') + P(`M${f(cx)} ${taban - 162}h12l-3 4 3 4h-12z`, 'v'),
   ];
 }
 /* Boğaz Köprüsü (uzakta): asma köprü, iki kule, ana kablo, askılar; gece tabliyede ışıklar */
@@ -125,7 +127,7 @@ function kopru(x0, x1, k0, k1, tabliye, kuleUst) {
   for (let x = x0 + 6; x < x1; x += 11) isik += R(x, tabliye - 1, 3, 2, `p y${1 + (Math.round(x) % 4)}`);
   const kule = (x) => R(x - 5, kuleUst, 3, tabliye - kuleUst + 22, 'uk') + R(x + 2, kuleUst, 3, tabliye - kuleUst + 22, 'uk') + R(x - 5, kuleUst + 6, 10, 2.5, 'uk') + R(x - 5, kuleUst + 40, 10, 2.5, 'uk');
   return [
-    kule(k0) + kule(k1),
+    kule(k0) + kule(k1) + O(k0, kuleUst - 3, 2.6, 'ikaz') + O(k1, kuleUst - 3, 2.6, 'ikaz ikaz--2'),
     R(x0, tabliye, x1 - x0, 4, 'uk') + isik,
     P(kablo, 'uc') + P(aski, 'uc ince'),
   ];
@@ -230,6 +232,7 @@ function sahne() {
   ekle('yakin', [R(SOL - 40, SU, SAG - SOL + 80, H - SU + 10, 's') + P(`M${SOL - 40} ${SU}H${SAG + 40}`, 'kiyi')]);
   ekle('yakin', [yansima([[-150, 120, 34], [232, 110, 40], [184, 6, 44], [316, 6, 44], [480, 70, 30], [762, 30, 58], [960, 8, 26], [1220, 8, 26], [1440, 40, 26]], r)
     + P(`M1100 ${SU + 22}h40M1084 ${SU + 34}h62M1102 ${SU + 48}h34M1116 ${SU + 62}h20`, 'ay-yansima')]);
+  { let l = ''; for (let x = SOL + 10; x < SAG; x += 26 + Math.floor(r() * 18)) { if (x > 1080 && x < 1220) continue; l += O(x, SU - 3, 1.7, 'lamba') + P(`M${f(x)} ${SU + 5}v${f(8 + r() * 10)}`, 'lamba-y'); } ekle('yakin', [l], 'lambalar'); }
   ekle('yakin', kizKulesi(1150, 436), 'kiz');
   let ky = ''; for (let i = 0; i < 5; i++) ky += R(1150 - 9 + (i % 2) * 5 - i, 452 + i * 6, 14 - i * 2, 2, 'ys');
   ekle('yakin', [ky + kayik(300, 438) + kayik(1660, 446)]);
@@ -248,9 +251,9 @@ export function simgeler() {
   const r = rastgele(7);
   return [
     ['galata', '714 138 92 198', galata(762, 333)],
-    ['kiz', '1078 270 146 182', kizKulesi(1150, 436).map((p) => p.replace(/<path class="huzme"[^>]*\/>/, ''))],
+    ['kiz', '1078 270 146 182', kizKulesi(1150, 436).map((p) => p.replace(/<circle[^>]*class="fener-hale[^"]*"\/>/g, ''))],
     ['cami', '100 216 264 132', suleymaniye(232, 338)],
-    ['kopru', '880 228 430 128', kopru(890, 1300, 960, 1220, 330, 242)],
+    ['kopru', '880 228 430 128', kopru(890, 1300, 960, 1220, 330, 242).map((p) => p.replace(/<circle[^>]*class="ikaz[^"]*"\/>/g, ''))],
     ['vapur', '-6 -48 146 70', [vapur()]],
     ['ev', '-8 330 128 70', [ev(4, 392, 30, 40, r), ev(36, 392, 26, 30, r), ev(64, 392, 34, 44, r), ev(100, 392, 18, 24, r)].flat()],
   ];
@@ -280,6 +283,12 @@ const PUL = { g: 'fill="#f8f8f6" stroke="#141414" stroke-width="1.6"', c: 'fill=
 const pulBoya = (s) => s.replace(/class="([^"]+)"/g, (_, c) => PUL[c.split(' ')[0]] || '');
 const DESEN = `<pattern id="tarama-gun" width="4" height="4" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="4" height="4" fill="#e3e1da"/><path d="M0 0V4" stroke="#141414" stroke-width="0.8" stroke-opacity="0.55"/></pattern>`
   + `<pattern id="tarama-gece" width="4" height="4" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="4" height="4" fill="#0f0f0f"/><path d="M0 0V4" stroke="#4a4a48" stroke-width="0.8" stroke-opacity="0.7"/></pattern>`;
+/** sayfaya giden: yalnız tarama desenleri (dolgu deseni başka dosyadan okunmaz) */
 export function pulSembolleri() {
-  return `<svg class="pul-kaynak" width="0" height="0" aria-hidden="true" focusable="false"><defs>${DESEN}${simgeler().map(([k, vb, p]) => `<symbol id="pul-${k}" viewBox="${vb}">${pulBoya(p.join(''))}</symbol>`).join('')}</defs></svg>`;
+  return `<svg class="pul-kaynak" width="0" height="0" aria-hidden="true" focusable="false"><defs>${DESEN}</defs></svg>`;
 }
+/** gorseller/semboller.svg: pullar ve kartpostal sahneleri (<use href="gorseller/semboller.svg#…">) */
+export function sembolDosyasi() {
+  return `<svg xmlns="http://www.w3.org/2000/svg"><defs>${DESEN}${simgeler().map(([k, vb, p]) => `<symbol id="pul-${k}" viewBox="${vb}">${pulBoya(p.join(''))}</symbol>`).join('')}${Object.entries(KART_SAHNE).map(([k, s]) => `<symbol id="kart-${k}" viewBox="0 0 160 120">${s}</symbol>`).join('')}</defs></svg>\n`;
+}
+

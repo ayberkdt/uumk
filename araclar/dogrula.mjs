@@ -76,7 +76,11 @@ bolum('4. Yazılar');
 const yazilar = JSON.parse(oku('veri/yazilar.json'));
 const AY = ['Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran', 'Temmuz', 'Ağustos', 'Eylül', 'Ekim', 'Kasım', 'Aralık'];
 const trTarih = (t) => { const p = t.split('-'); return `${p.length === 3 ? +p[2] + ' ' : ''}${AY[+p[1] - 1]} ${p[0]}`; };
-const htmlYazi = [...html.matchAll(/<li class="kartpostal"><svg class="kartpostal__resim"[^>]*><use href="#pul-[a-z]+"\/><\/svg><div class="kartpostal__yazi"><p class="kartpostal__damga"><time datetime="([^"]+)">([^<]+)<\/time><\/p><h3><a href="([^"]+)"[^>]*>([^<]+)<\/a><\/h3><p>([^<]+)<\/p><\/div><\/li>/g)];
+const htmlYazi = [...html.matchAll(/<li class="kartpostal"><svg class="kartpostal__resim"[^>]*><use href="gorseller\/semboller\.svg#(?:kart|pul)-[a-z]+"\/><\/svg><div class="kartpostal__yazi"><span class="kartpostal__pul"[^>]*><svg[^>]*><use href="gorseller\/semboller\.svg#pul-[a-z]+"\/><\/svg><\/span><p class="kartpostal__damga"><time datetime="([^"]+)">([^<]+)<\/time><\/p><h3><a href="([^"]+)"[^>]*>([^<]+)<\/a><\/h3><p class="kartpostal__ozet">([^<]+)<\/p>/g)];
+{ const { KART_ESLEME, KART_SAHNE } = await ice('sahne/kartpostal.mjs'); const sm = oku('site.mjs').match(/const KART = (\{[^}]+\});/);
+  sina('kartpostal sahne eşlemesi site.mjs = sahne/kartpostal.mjs', !!sm && JSON.stringify(Function('return ' + sm[1])()) === JSON.stringify(KART_ESLEME));
+  sina('her kartpostal sahnesi sayfada sembol', Object.keys(KART_SAHNE).every((k) => oku('gorseller/semboller.svg').includes(`<symbol id="kart-${k}"`)));
+  sina('her EUROAVIA raporunun kendi sahnesi', Object.keys(KART_ESLEME).every((id) => yazilar.some((y) => y.id === id))); }
 const rafta = (y) => y.kaynak === 'AESTRO' || y.id === 'aestro-yolculugu';
 const kartlik = yazilar.filter((y) => !rafta(y));
 sina('kartpostal sayısı = veri/yazilar.json (raf dışı)', htmlYazi.length === kartlik.length, `${htmlYazi.length}/${kartlik.length}`);
@@ -121,14 +125,25 @@ sina('adın 3 hâli, pencereler ardışık (yeni ad eskisi çıkınca girer)', U
 sina('HTML: adın 3 hâli, ilki h1', (html.match(/class="ad__durum"/g) || []).length === 3 && /<h1 class="ad__durum" id="giris-baslik" data-durum="0">/.test(html));
 sina('HTML: hâl 1 "AS Istanbul" + "EUROAVIA", hâl 2 "İTÜ UUMK"', /data-durum="1"[^>]*><span class="ad__buyuk">AS Istanbul<\/span><span class="ad__kucuk">EUROAVIA<\/span>/.test(html) && /data-durum="2"[^>]*><span class="ad__buyuk" data-i18n="ad2">İTÜ UUMK<\/span>/.test(html));
 const insa = await ice('araclar/istanbul-insa.mjs');
-sina('İstanbul panoraması: sayfadaki çizim sahne/istanbul.mjs presetiyle birebir aynı (node araclar/istanbul-insa.mjs)', insa.yerlestir(html) === html);
+sina('İstanbul panoraması: sayfadaki çizim ve gorseller/semboller.svg sahne/istanbul.mjs presetiyle birebir aynı (node araclar/istanbul-insa.mjs)', insa.yerlestir(html) === html && oku('gorseller/semboller.svg') === (await ice('sahne/istanbul.mjs')).sembolDosyasi());
+for (const m of html.matchAll(/href="gorseller\/semboller\.svg#([a-z-]+)"/g)) sina(`sembol var: ${m[1]}`, oku('gorseller/semboller.svg').includes(`<symbol id="${m[1]}"`));
 sina('panorama blokları: Galata, cami, köprü, Kız Kulesi, martılar, vapur, dalgalar', ['blok--galata', 'blok--cami', 'blok--kopru', 'blok--kiz', 'blok--martilar', 'class="vapur"', 'dalga--4'].every((k) => html.includes(k)));
-sina('panorama v5: Ayasofya, Galata Köprüsü, yıldızlar, fener ışığı, tarama deseni', ['blok--ayasofya', 'blok--galata-koprusu', 'blok--yildizlar', 'class="huzme"', 'id="tarama-gun"', 'id="tarama-gece"'].every((k) => html.includes(k)));
+sina('panorama v5: Ayasofya, Galata Köprüsü, yıldızlar, fener ışığı, tarama deseni', ['blok--ayasofya', 'blok--galata-koprusu', 'blok--yildizlar', 'fener-hale', 'id="tarama-gun"', 'id="tarama-gece"'].every((k) => html.includes(k)));
 { const ist = await ice('sahne/istanbul.mjs'); sina('panorama sahne genişliği site.mjs ile aynı (-400…2000)', ist.SOL === -400 && ist.SAG === 2000 && /SAHNE_SOL = -400, SAHNE_SAG = 2000/.test(oku('site.mjs'))); }
 sina('kabin: üstten uçak (yatay SVG + dikey burun/kanat/kuyruk) ve 6 bölme gövdede', ['ucak__yatay', 'ucak__burun', 'ucak__kanat-d', 'ucak__kuyruk', 'ucak__isik--iskele', 'ucak__isik--sancak'].every((k) => html.includes(k)) && (html.match(/<div class="ucak" id="ucak">[\s\S]*?<\/ol>/)?.[0].match(/<li class="kabin__/g) || []).length === 6);
 sina('dil seçici: TR ve EN bayrağı', /<button class="dil" id="dil-dugme"[^>]*>[\s\S]*?data-dil="tr"[\s\S]*?<svg class="bayrak"[\s\S]*?data-dil="en"[\s\S]*?<svg class="bayrak"/.test(html));
 sina('menüde numara yok', !html.includes('menu__no'));
-sina('tarihçe: her şeritte resim karesi (11 kayıt + sıradaki)', (html.match(/<li class="serit [^"]*"><span class="serit__resim/g) || []).length === 12 && html.includes('id="rota-yil"'));
+{ const { KAYITLAR } = await ice('veri/tarihce.mjs'), insa = await ice('araclar/tarihce-insa.mjs');
+  sina(`tarihçe: her şeritte resim karesi (${KAYITLAR.length} kayıt + sıradaki)`, KAYITLAR.length >= 15 && (html.match(/<li class="serit [^"]*"( id="tarih-[a-z0-9-]+")?><span class="serit__resim/g) || []).length === KAYITLAR.length + 1 && html.includes('id="rota-yil"'));
+  sina('tarihçe: şeritler ve İngilizce metinleri veri/tarihce.mjs ile aynı (node araclar/tarihce-insa.mjs)', insa.htmlYerlestir(html) === html && insa.enYerlestir(oku('dil/en.mjs')) === oku('dil/en.mjs'));
+  sina('tarihçe: her şerit ayrıntıya açılır (#tarih-<kimlik>) ve kimlikler tekil', KAYITLAR.every((k) => html.includes(`id="tarih-${k.id}"`) && html.includes(`href="#tarih-${k.id}"`)) && new Set(KAYITLAR.map((k) => k.id)).size === KAYITLAR.length);
+  for (const k of KAYITLAR) {
+    sina(`tarihçe ${k.id}: TR ve EN ayrıntı dolu, kaynak var`, k.detay.length === 2 && k.detay.every((p) => p.length >= 2) && k.kod.length === 2 && k.baslik.length === 2 && k.ozet.length === 2 && k.kaynak.length >= 1);
+    for (const [u] of k.kaynak) sina(`tarihçe ${k.id}: kaynak notlarda (${u.slice(0, 70)})`, notlar.replace(/:80\//g, '/').includes(u.replace(/^https?:\/\/(web\.archive\.org\/web\/\d+\/)?/, '').replace(/^https?:\/\//, '').replace(/\/$/, '')));
+    sina(`tarihçe ${k.id}: kendini pazarlayan dil yok`, !/(eşsiz|benzersiz|muhteşem|harika|unique|amazing|world-class)/i.test(JSON.stringify(k)));
+  }
+  sina('tarihçe ayrıntısı: pencere ve tembel modül', html.includes('<dialog class="bilet ayrinti" id="ayrinti"') && oku('site.mjs').includes("import('./sahne/ayrinti.mjs')") && !/^import .*ayrinti/m.test(oku('site.mjs')));
+}
 sina('panorama: her parça blok içinde sıralı (data-s, data-k)', (html.match(/<g class="parca" data-k="\d+">/g) || []).length > 150);
 
 /* ── 7. iki dil ── */
@@ -165,12 +180,13 @@ sina('kenarlı alan çerçevesi ≥ 3:1 (#85837e / yüzey #f8f8f6 ve zemin #eceb
 
 /* tipografi: yalnız iki aile; v1'in ve sık görülen "hazır şablon" ailelerinin hiçbiri yok */
 const aileler = [...new Set([...css.matchAll(/font-family: '([^']+)'/g)].map((m) => m[1]))];
-sina('@font-face yalnız Instrument Sans ve Source Serif 4', aileler.length === 2 && aileler.includes('Instrument Sans') && aileler.includes('Source Serif 4'), aileler.join(', '));
-for (const y of ['Big Shoulders', 'JetBrains', 'Archivo', 'Inter', 'Space Grotesk', 'Montserrat', 'Poppins', 'Roboto']) { const r = new RegExp(`['"]${y}[\w ]*['"]`); sina(`yazı tipi ailesi yok: ${y}`, !r.test(css) && !r.test(html)); }
+sina('@font-face yalnız Jost ve IBM Plex Sans (yerel, OFL)', aileler.length === 2 && aileler.includes('Jost') && aileler.includes('IBM Plex Sans'), aileler.join(', '));
+for (const y of ['jost/jost-latin.woff2', 'jost/jost-latin-ext.woff2', 'ibm-plex-sans/ibm-plex-sans-latin.woff2', 'ibm-plex-sans/ibm-plex-sans-latin-ext.woff2', 'jost/OFL.txt', 'ibm-plex-sans/LICENSE.txt']) { let v = true; try { statSync(join(KOK, 'yazitipleri', y)); } catch { v = false; } sina(`yazı tipi dosyası: ${y}`, v); }
+for (const y of ['Big Shoulders', 'JetBrains', 'Archivo', 'Inter', 'Space Grotesk', 'Montserrat', 'Poppins', 'Roboto', 'Instrument Sans', 'Source Serif', 'Geist', 'Manrope', 'DM Sans']) { const r = new RegExp(`['"]${y}[\w ]*['"]`); sina(`yazı tipi ailesi yok: ${y}`, !r.test(css) && !r.test(html)); }
 sina('punto ölçeği 6 kademe (--t-1…--t-6)', [...css.matchAll(/^\s*--t-(\d): /gm)].length === 6);
 sina('CSS font-size yalnız ölçekten (var(--t-n), 1em ya da inherit)', [...css.matchAll(/font-size:\s*([^;}]+)/g)].every((m) => /^var\(--t-\d\)|^1em|^inherit/.test(m[1].trim())), [...css.matchAll(/font-size:\s*([^;}]+)/g)].map((m) => m[1]).filter((v) => !/^var\(--t-\d\)|^1em|^inherit/.test(v.trim())).join(' | '));
 /* palet: CSS'teki her onaltılık renk izinli kümede (logo türevi ton ailesi); mor/neon yok */
-const IZINLI = new Set(['#ecebe7', '#f8f8f6', '#ffffff', '#141414', '#4a4a48', '#cfcdc6', '#056b7a', '#03525e', '#dfeaeb', '#1a1a1a', '#0f0f0f', '#f2f2ef', '#b3b3ae', '#f2c200', '#85837e', '#a4262c', '#8fb7bd', '#2d7c87', '#fff', '#000']);   /* #2d7c87: gece haritasında grubu olan ülke (petrolün koyu zemindeki tonu) */   /* #000: yalnız yazdırma */
+const IZINLI = new Set(['#ecebe7', '#f8f8f6', '#ffffff', '#141414', '#4a4a48', '#cfcdc6', '#056b7a', '#03525e', '#dfeaeb', '#1a1a1a', '#0f0f0f', '#f2f2ef', '#b3b3ae', '#f2c200', '#85837e', '#a4262c', '#8fb7bd', '#2d7c87', '#fff', '#000', '#262624', '#2e2e2b', '#121211', '#20201e']);   /* son dördü: gece İstanbul'u (ay ışığında silüet) */   /* #2d7c87: gece haritasında grubu olan ülke (petrolün koyu zemindeki tonu) */   /* #000: yalnız yazdırma */
 const renkler = [...new Set([...css.matchAll(/#[0-9a-f]{3,6}\b/gi)].map((m) => m[0].toLowerCase()))];
 sina('CSS renkleri izinli palette', renkler.every((r) => IZINLI.has(r)), renkler.filter((r) => !IZINLI.has(r)).join(' '));
 const ton = (h) => { const [r, g, b] = [1, 3, 5].map((i) => parseInt(h.slice(i, i + 2), 16) / 255); const mx = Math.max(r, g, b), mn = Math.min(r, g, b), d = mx - mn; if (!d) return { h: 0, s: 0 }; const hh = mx === r ? ((g - b) / d) % 6 : mx === g ? (b - r) / d + 2 : (r - g) / d + 4; return { h: (hh * 60 + 360) % 360, s: d / (1 - Math.abs(mx + mn - 1)) }; };
@@ -217,7 +233,7 @@ const YASAK_EN = ['unforgettable', 'exciting', 'journey', 'passion', 'cutting-ed
 for (const y of YASAK_TR) sina(`TR'de yok: "${y}"`, !gorunurTR.toLocaleLowerCase('tr').includes(y));
 for (const y of YASAK_EN) sina(`EN'de yok: "${y}"`, !gorunurEN.toLowerCase().includes(y));
 sina('yer tutucu yok', !/lorem|ipsum|TODO|XXX|KURULUS_|YAZILAR|FOTOLAR|TAKVIM</.test(html));
-sina('kuruluş tarihi kaynakla aynı (2001: 4 Ocak, 7 Mayıs)', /<time>2001<\/time><p class="serit__kod"[^>]*>4 Ocak · İTÜ<\/p><h4[^>]*>Kuruluş<\/h4><p[^>]*>Kulüp 4 Ocak'ta İTÜ'de kuruldu\./.test(html) && /<time>2001<\/time><p class="serit__kod"[^>]*>7 Mayıs · İTÜ → Varşova<\/p>/.test(html) && notlar.includes('7th of May, 2001') && notlar.includes('(4th of Jan)'));
+sina('kuruluş tarihi kaynakla aynı (2001: 4 Ocak, 7 Mayıs)', /<time>2001<\/time><p class="serit__kod"[^>]*>4 Ocak · İTÜ<\/p><h4><a[^>]*>Kuruluş<\/a><\/h4><p[^>]*>Kulüp 4 Ocak'ta İTÜ'de kuruldu\./.test(html) && /<time>2001<\/time><p class="serit__kod"[^>]*>7 Mayıs · İTÜ → Varşova<\/p>/.test(html) && notlar.includes('7th of May, 2001') && notlar.includes('(4th of Jan)'));
 sina('doğrulanmamış XFLR5 sitede yok (kaynakta görülmedi)', !/XFLR5/.test(html + Object.values(enS).join(' ')));
 sina('sponsorluk: e-posta düğmesi doğrulanmış adrese konu satırıyla', /<a class="dugme dugme--birincil" id="sponsor-yaz" href="mailto:istanbul@euroavia\.eu\?subject=/.test(html) && /id="sponsor-kopyala"/.test(html));
 sina('meta açıklama 70–170 karakter', (() => { const m = html.match(/<meta name="description" content="([^"]+)"/); return m && m[1].length >= 70 && m[1].length <= 170; })());

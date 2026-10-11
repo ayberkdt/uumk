@@ -141,8 +141,9 @@ function sigdir(svg, gen, yuk, merkez) {
 }
 function sehirYerlestir() {
   const sahne = $('.giris__sahne').getBoundingClientRect(), gen = sahne.width, S = sahne.height, dar = innerWidth <= 860;
-  let h = dar ? Math.min(S * 0.56, gen * 0.92) : Math.min(S * 0.56, gen * 0.36);
-  {
+  const kisa = matchMedia('(max-height: 520px) and (orientation: landscape)').matches;   /* akış düzeni: şehir metnin altında */
+  let h = kisa ? Math.min(gen * 0.3, 300) : dar ? Math.min(S * 0.56, gen * 0.92) : Math.min(S * 0.56, gen * 0.36);
+  if (!kisa) {
     const m = $('.giris__metin > .ad').getBoundingClientRect(), o = ($('.giris__olgu').offsetParent ? $('.giris__olgu') : $('.giris__eylem')).getBoundingClientRect();
     const T = o.bottom - sahne.top + 18, sol = dar ? -1 : m.left - sahne.left - 12, sag = dar ? gen + 1 : Math.max(o.right, m.left + 640) - sahne.left + 12;
     for (let i = 0; i < 5; i++) {
@@ -159,12 +160,27 @@ function sehirYerlestir() {
 }
 sehirYerlestir(); addEventListener('dil-degisti', sehirYerlestir); document.fonts?.ready.then(sehirYerlestir);
 let ucus = null, sonP = -1;
-function hikayeGuncelle() {
-  const p = hikayePayi();
+/* kaydırma yumuşatma: tekerlek adımları sıçratmasın — çizilen pay hedefe zamana bağlı üstel yaklaşır (~350 ms) */
+const YUMUSAT = !AZ && SABIT_P === null && !prm.has('olc');
+let hedefP = 0, cizP = -1, akis = 0, akisT = 0;
+function hikayeCiz(p) {
   if (p === sonP) return;
   sonP = p;
-  if (!AZ) { adCiz(p); ist.style.setProperty('--ist-p', p.toFixed(3)); }
+  if (!AZ) { adCiz(p); ist.style.setProperty('--ist-p', p.toFixed(4)); }
   ucus?.ciz(p);
+}
+function akisKare(t) {
+  akis = 0;
+  const dt = Math.min(64, t - (akisT || t)); akisT = t;
+  const fark = hedefP - cizP;
+  cizP = Math.abs(fark) < 0.0004 ? hedefP : cizP + fark * (1 - Math.exp(-dt / 110));
+  hikayeCiz(cizP);
+  if (cizP !== hedefP) akis = requestAnimationFrame(akisKare); else akisT = 0;
+}
+function hikayeGuncelle() {
+  hedefP = hikayePayi();
+  if (!YUMUSAT || cizP < 0 || sonP === -1) { cizP = hedefP; hikayeCiz(hedefP); return; }
+  if (!akis) akis = requestAnimationFrame(akisKare);
 }
 ucus = ucusKur($('#ucus-tuval'), { az: AZ, metinAlt: () => { const t = $('#ucus-tuval').getBoundingClientRect(), o = ($('.giris__olgu').offsetParent ? $('.giris__olgu') : $('.giris__eylem')).getBoundingClientRect(); return o.bottom - t.top; }, sehirUst: () => ist.getBoundingClientRect().top - $('#ucus-tuval').getBoundingClientRect().top });
 $('#ucus-tuval').dataset.cizici = '2b';
@@ -200,6 +216,13 @@ function rotaGuncelle() {
   rotaYil.style.top = `${(rota.offsetTop + v * rota.offsetHeight).toFixed(1)}px`;
   rotaYil.style.opacity = !AZ && v > 0.01 && v < 0.99 ? '1' : '0';
 }
+
+/* şerite basınca kaydın ayrıntı sayfası; modül ilk dokunuşta yüklenir, #tarih-<kimlik> bağlantısı doğrudan açar */
+const ayrinti = () => import('./sahne/ayrinti.mjs');
+rota.addEventListener('click', (e) => { const a = e.target.closest('.serit__ac'); if (a) { e.preventDefault(); ayrinti().then((m) => m.ac(a.hash.slice(7))); } });
+rota.addEventListener('pointerover', ayrinti, { once: true });
+const tarihAdres = () => { if (location.hash.startsWith('#tarih-')) ayrinti().then((m) => m.ac(decodeURIComponent(location.hash.slice(7)))); };
+addEventListener('hashchange', tarihAdres); tarihAdres();
 
 let boyutZaman = 0;
 new ResizeObserver(() => { cancelAnimationFrame(boyutZaman); boyutZaman = requestAnimationFrame(() => { sonP = -1; isaretKoy(); sehirYerlestir(); kaydirma(); }); }).observe(document.body);
@@ -256,21 +279,24 @@ let yazilar = null;
 /* bölünmez boşluklar */
 const bag = (s) => s.replace(/(\d) (?=\p{L})/gu, '$1 ').replace(/ (\d{4})/g, ' $1');
 const PUL = ['kiz', 'galata', 'kopru', 'cami', 'vapur', 'ev'];
+/* yazıya özel kartpostal sahnesi (sahne/kartpostal.mjs KART_ESLEME ile aynı; dogrula sınar); bilinmeyen yazıda pul çizimi */
+const KART = { 'as-istanbul-temmuz-2026': 'hangar', 'as-istanbul-mayis-2026': 'muze', 'as-istanbul-temmuz-2025': 'kabin', 'akademik-yil-kapanisi-2024': 'mangal', 'turkish-technic-gezisi-2024': 'genis', 'lustrum-emeac-2024': 'lustrum' };
 function yazilariCiz() {
   if (!yazilar?.length) return;
   const d = etkinDil();
   /* AESTRO sayıları ve üçüncü sayının yazısı raftadır */
   yaziListe.replaceChildren(...yazilar.filter((y) => y.kaynak !== 'AESTRO' && y.id !== 'aestro-yolculugu').map((y, i) => {
     const li = document.createElement('li'); li.className = 'kartpostal';
-    li.innerHTML = `<svg class="kartpostal__resim" viewBox="0 0 100 100" aria-hidden="true" focusable="false"><use href="#pul-${PUL[i % PUL.length]}"/></svg><div class="kartpostal__yazi"><p class="kartpostal__damga"><time></time></p><h3><a></a></h3><p></p></div>`;
+    const pul = PUL[i % PUL.length];
+    li.innerHTML = `<svg class="kartpostal__resim" viewBox="0 0 160 120" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false"><use href="gorseller/semboller.svg#${KART[y.id] ? 'kart-' + KART[y.id] : 'pul-' + pul}"/></svg><div class="kartpostal__yazi"><span class="kartpostal__pul" aria-hidden="true"><svg viewBox="0 0 100 100" focusable="false"><use href="gorseller/semboller.svg#pul-${pul}"/></svg></span><p class="kartpostal__damga"><time></time></p><h3><a></a></h3><p class="kartpostal__ozet"></p><p class="kartpostal__adres" aria-hidden="true" lang="fr">Par avion · AS Istanbul → EUROAVIA</p></div>`;
     li.querySelector('time').textContent = tarihYaz(y.tarih);
     li.querySelector('time').dateTime = y.tarih;
-    if (y.kaynak && y.kaynak !== 'EUROAVIA') li.querySelector('.kartpostal__yazi').prepend(Object.assign(document.createElement('span'), { className: 'etiket', textContent: y.kaynak }));
+    if (y.kaynak && y.kaynak !== 'EUROAVIA') li.querySelector('.kartpostal__damga').after(Object.assign(document.createElement('span'), { className: 'etiket', textContent: y.kaynak }));
     const a = li.querySelector('a');
     a.textContent = bag((d === 'en' && y.baslik_en) || y.baslik_tr);
     if (y.baglanti) { a.href = y.baglanti; a.target = '_blank'; a.rel = 'noopener'; }
     else { a.href = `#yazi-${y.id}`; a.addEventListener('click', (e) => { e.preventDefault(); yaziAc(y); }); }
-    li.querySelector('.kartpostal__yazi > p:last-child').textContent = bag((d === 'en' && y.ozet_en) || y.ozet_tr);
+    li.querySelector('.kartpostal__ozet').textContent = bag((d === 'en' && y.ozet_en) || y.ozet_tr);
     return li;
   }));
 }

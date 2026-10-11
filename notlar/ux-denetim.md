@@ -1,3 +1,35 @@
+# YASA DENETİMİ — UUMK v6 · 2026-10-11 · denetleyici index 0 HATA · 4 UYARI (önce 1 HATA: gece lambalarının `transition: opacity var(--sure) ease 900ms` kısa yazımında 900 ms gecikme süre sanıldı → `transition-delay` ayrı yazıldı, davranış aynı). axe 0 ihlal (7 görünüm: 1440 ve 390 px TR/EN, ayrıntı sayfası açık 1440 TR ve 390 EN, kvkk).
+
+GÖREV BÜTÇESİ — tarihçe ayrıntı sayfası (#ayrinti, yeni görünüm) · yüzey: web · birincil görev: kaydı okumak, sonra komşu kayda geçmek · birincil eylem: yok (okuma görünümü; "Sonraki kayıt" ikincil) · eylem 4 (kapat, önceki, sonraki, kaynak bağlantıları ≤ 3) · seçenek 0 · form 0 · geri bildirim: modül ilk dokunuşta yüklenir, şerite fare gelince önceden çekilir (yerelde < 400 ms) · stil: mevcut jetonlar, yeni punto yok (t-1, t-2/t-6, t-3, t-4), gölge --g-1 · sisteme yüklenen: kayıt seçimi şeritten gelir, dil etkin dilden, adres çubuğu kendiliğinden #tarih-<kimlik>.
+
+| # | Yasa | Ölçüm (v6'da değişen) | Durum |
+|---|---|---|---|
+| 1 | Hick | nav 6 (değişmedi); ayrıntı sayfası 4 eylem türü | geçti |
+| 2 | Fitts | ayrıntı: kapat 44×44, önceki/sonraki 358×52, kaynak bağlantıları 44 px yükseklik (önce 33 → min-height 44); şeridin tamamı hedef 536×191 (köşedeki nokta da bağlantıya düşer) | geçti (ölçüldü, cekim js) |
+| 3 | Jakob | Esc kapatır (dialog), dış tık kapatır, ← → kayıtlar arasında, kapanınca odak açan şeride döner, paylaşılabilir #bağlantı | geçti (e2e) |
+| 4 | Seçim Yükü | seçenek kümesi yok | geçti |
+| 5 | Yakınlık | ayrıntı gövdesi: madde arası 6 px / blok arası 16 px / gövde → kaynaklar 24 px (oran 1:2,7 ve 1:1,5 kademeli) | geçti (ölçüldü) |
+| 6 | Benzerlik | 6 punto (e2e tipografi), 2 gölge; ayrıntı başlık bandı şeridin rengini ve sol kenar kalınlığını taşır | geçti |
+| 7 | Tekdüze Bağlılık | şerit ve ayrıntı aynı yapı (resim · yıl · kod · başlık) | geçti |
+| 8 | Ortak Bölge | ayrıntıda 3 bölge: başlık bandı, gövde, alt (kaynak + gezinti) | geçti |
+| 9 | Prägnanz | cam 0, ışıma 0, degrade 0 (fener halesi düz renk halka) | geçti |
+| 10 | Von Restorff | üst şeritte tek dolgun düğme "Giriş yap" (petrol); ayrıntıda dolgun düğme yok | geçti |
+| 11 | Miller | form değişmedi (6 alan) | geçti |
+| 12 | Sıra Konumu | nav ilk "Biz kimiz", son "Sponsorluk" (değişmedi); tarihçe kronolojik, ilk ve son kayıt kuruluşun kökü ve bugünkü yönetim | geçti |
+| 13 | Doherty | geçiş süresi `--sure` 560 ms (denetleyici değişkeni çözmediği için "240 ms" okuyor) — eşik 300'ün üstünde, 600 kırmızı çizginin altında; gerekçe: kullanıcının "Animasyonları daha smooth yap" isteği, üstel yavaşlama eğrisiyle algılanan süre kısalır; hareket azaltmada yok | UYARI (gerekçeli) |
+| 14 | Zeigarnik | ayrıntıda sıra göstergesi "6 / 15" | geçti |
+| 15 | Zirve-Son | değişmedi | geçti |
+| 16 | Parkinson | kayıt formu 6/6 zorunlu (değişmedi; hepsi hesap için gerekli) | UYARI (v2'den beri gerekçeli) |
+| 17 | Tesler | değişmedi | geçti |
+| 18 | Postel | değişmedi | geçti |
+| 19 | Occam | sayfa 3043 öğe, açılış 1843 (panorama SVG), kulüp 410 (uçak SVG) — çizim ayrıntısı kullanıcının isteği; ayrıntı metinleri sayfaya değil tembel modüle yazıldı | UYARI (gerekçeli) |
+| 20 | Pareto | ilk ekran değişmedi | geçti |
+
+Sonuç: 0 HATA · 4 UYARI (3 Occam/Parkinson eski gerekçeli + Doherty 560 ms, kullanıcı isteği) · TESLİM.
+Risk: Doherty satırında denetleyici değişkenli süreleri ölçmüyor; 560 ms değeri `getComputedStyle(documentElement).getPropertyValue('--sure')` ile tarayıcıda okundu.
+
+---
+
 # YASA DENETİMİ — UUMK v5 · 2026-10-11 · denetleyici index 0 HATA · 4 UYARI (önce 7: 600 ms ikon çizimi → 300, ayrı satırdaki 1,1 sn sonsuz animasyon süresi → kısa yazım, 4 gölge değeri → 2: bayrak ve sekme gölgesi çerçeveye döndü). axe 0 (7 görünüm; önce hareketli görünümde 1: geçilmemiş tarihçe şeritleri %25 opaktı → tam opak, yalnız kayar).
 
 Değişen satırlar (kalanlar v4 tablosuyla aynı): Hick — nav 6, numarasız; üst şerit eylemleri 3 (dil, giriş, menü) · Fitts — telefonda menü/giriş/dil ≥ 44 px (e2e üst şerit, 320–414) · Von Restorff — üst şeritte tek dolgun düğme "Giriş yap" · Benzerlik — 2 gölge (--g-1, kartpostal tabanı) · Doherty — geçişler ≤ 300 ms, kabin girişi 900 ms canlandırma (sayfayı bekletmez, hareket azaltmada yok) · Occam UYARI — sayfa 2986 öğe, çoğu SVG (panorama 1704, uçak); gerekçe: kullanıcının istediği daha ayrıntılı çizim ve gerçekçi uçak · Parkinson UYARI — değişmedi (kullanıcı kararı).

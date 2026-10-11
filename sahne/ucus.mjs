@@ -78,6 +78,7 @@ export function yorunge(anahtar) {
   return { nokta, eksen };
 }
 
+const KISA = globalThis.matchMedia?.('(max-height: 520px) and (orientation: landscape)') ?? { matches: false };   /* yatay telefon: açılış akışta, uçak metnin altındaki bantta */
 export function ucusKur(tuval, { az = false, metinAlt = null, sehirUst = null } = {}) {
   const g = tuval.getContext('2d');
   let gen = 0, yuk = 0, dpr = 1, S = 100, hw = 4, anahtar = GENIS, olcek = 0.85, yer = true, sehirY = 0, metinY = 0;
@@ -94,7 +95,7 @@ export function ucusKur(tuval, { az = false, metinAlt = null, sehirUst = null } 
     gen = tuval.clientWidth; yuk = tuval.clientHeight; sehirY = sehirUst ? sehirUst() : yuk * 0.7;
     tuval.width = Math.round(gen * dpr); tuval.height = Math.round(yuk * dpr);
     S = yuk / 8; hw = gen / (2 * S);
-    const dar = gen / yuk < 1.05;
+    const dar = gen / yuk < 1.05 || KISA.matches;
     anahtar = (dar ? DAR : GENIS).map(([q, x, y, z]) => [q, x * hw, y, z]);
     olcek = dar ? Math.min(0.62, hw * 0.3) : Math.min(0.9, 0.55 + hw * 0.05);
     /* dar ekranda yörünge açılış metninin altındaki banda sığar */
@@ -128,7 +129,7 @@ export function ucusKur(tuval, { az = false, metinAlt = null, sehirUst = null } 
   /* gökteki küçük kâğıt uçaklar: [hız, yükseklik payı, genlik, faz, ölçek] */
   const SURU = [[0.045, 0.18, 0.05, 0.0, 1.25], [0.032, 0.33, 0.04, 2.1, 0.9], [0.058, 0.08, 0.035, 4.0, 0.75]];
   function suru() {
-    const dar = gen / yuk < 1.05, x0 = dar ? 0 : gen * 0.5, gw = gen - x0 + 120;
+    const dar = gen / yuk < 1.05 || KISA.matches, x0 = dar ? 0 : gen * 0.5, gw = gen - x0 + 120;
     const y0 = dar ? Math.max(sehirY + 14, metinY + 30) : yuk * 0.1, yh = dar ? 46 : yuk * 0.34;
     const t = az ? 20 : zaman;
     (dar ? SURU.slice(0, 2) : SURU).forEach(([v, yp, a, faz, o], i) => {

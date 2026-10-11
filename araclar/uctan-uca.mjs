@@ -287,12 +287,12 @@ const SENARYO = {
     await bekle(1300);
     const r = await s.js(`(() => { const t = document.querySelector('#harita-tuval'); const d = t.getContext('2d').getImageData(0, 0, t.width, t.height).data; let petrol = 0; for (let j = 0; j < d.length; j += 16) if (d[j] > 215 && d[j + 1] > 170 && d[j + 1] < 215 && d[j + 2] < 60 && d[j + 3] > 200) petrol++;   /* seçili rota: gece sarısı */
       return { durum: __ag.cizici.durum(), km: document.querySelector('#ag-km').textContent, ad: document.querySelector('.ag__secim-ad').textContent, etiket: [...document.querySelectorAll('.harita__etiket:not([hidden])')].map((e) => e.textContent), petrol }; })()`);
-    if (r.durum.rota < 30 || r.durum.kara < 1000 || r.durum.secili?.ilerleme !== 1 || r.km !== '2.266' || !r.ad.startsWith('Brugge') || !r.etiket.includes('Brugge') || r.petrol < 50) throw new Error(JSON.stringify(r));
+    if (r.durum.rota < 30 || r.durum.kara < 1000 || (r.durum.ulke ?? 0) < 80 || r.durum.secili?.ilerleme !== 1 || r.km !== '2.266' || !r.ad.startsWith('Brugge') || !r.etiket.includes('Brugge') || r.petrol < 50) throw new Error(JSON.stringify(r));
     const donGorundu = await s.js(`!document.querySelector('.ag__don').hidden`);
     await s.js(`document.querySelector('.ag__don').click()`);
     const don = await s.js(`[document.querySelector('.ag__secim-ad').textContent, document.querySelector('.ag__don').hidden, __ag.cizici.durum().secili]`);
     if (!donGorundu || !don[0].startsWith('İstanbul') || !don[1] || don[2] !== null) throw new Error('dönüş: ' + JSON.stringify(don));
-    console.log(`      harita: ${r.durum.rota} rota, ${r.durum.kara} kara noktası · Ideathon seçildi → rota tamam, sayaç ${r.km} km, etiketler [${r.etiket.join(', ')}], sarı rota piksel ${r.petrol}`);
+    console.log(`      harita: ${r.durum.rota} rota, ${r.durum.ulke} ülke (${r.durum.kara} sınır noktası) · Ideathon seçildi → rota tamam, sayaç ${r.km} km, etiketler [${r.etiket.join(', ')}], sarı rota piksel ${r.petrol}`);
   },
   async 'EN: her çevrilebilir öğe sözlükteki İngilizce metinle aynı, kart ve küre İngilizce'(s) {
     await s.git('./?dil=en');
@@ -439,7 +439,7 @@ const SENARYO = {
     if (!a.site.includes('kvkk.html') || a.kanal.length !== 4 || a.hedef < 44 || !a.dip || kvkk !== 200) throw new Error(JSON.stringify(a) + ' kvkk ' + kvkk);
     console.log(`      footer: gece İstanbul'u ${gece.blok} blok, pencere ${isikOnce} → ${gece.yanik} · zemin ${a.zemin} (#1a1a1a), ${a.logolar.length} beyaz logo, adres + ${a.eposta}, site ${a.site.length} · kanal ${a.kanal.length} bağlantı (en küçük ${Math.round(a.hedef)} px), kvkk.html ${kvkk}`);
   },
-  async 'tipografi ve palet (tarayıcıda): yalnız iki yazı tipi yüklenir, 6 punto, başlık serif, gövde Instrument Sans'(s) {
+  async 'tipografi ve palet (tarayıcıda): yalnız iki yazı tipi yüklenir, 6 punto, başlık Jost, gövde IBM Plex Sans'(s) {
     await s.git('./?p=1');
     await s.js(OTUR);
     for (const sec of ['#gundem', '#etkinlikler', '#yazilar', '#kulup', '#ag', '#hesap']) { await s.js(`document.querySelector('${sec}').scrollIntoView({ behavior: 'instant' })`); await bekle(150); }
@@ -453,9 +453,9 @@ const SENARYO = {
       return { yuklu, punto, aile, h1g: getComputedStyle(document.querySelector('h1')).fontStretch, h1w: getComputedStyle(document.querySelector('h1')).fontWeight, h1: getComputedStyle(document.querySelector('h1')).fontFamily.split(',')[0], h2: getComputedStyle(document.querySelector('#gundem h2')).fontFamily.split(',')[0], govde: getComputedStyle(document.body).fontFamily.split(',')[0],
         birincil: getComputedStyle(document.querySelector('#giris-form .dugme--birincil')).backgroundColor };
     })()`);
-    const izinli = ['Instrument Sans', 'Source Serif 4'];
+    const izinli = ['IBM Plex Sans', 'Jost'];
     if (!r.yuklu.every((f) => izinli.includes(f)) || !r.aile.every((f) => izinli.includes(f)) || r.punto.length > 6) throw new Error(JSON.stringify(r));
-    if (!/Instrument Sans/.test(r.h1) || !/Instrument Sans/.test(r.h2) || r.h1g !== '78%' || r.h1w !== '700' || !/Instrument Sans/.test(r.govde) || r.birincil !== 'rgb(5, 107, 122)') throw new Error(JSON.stringify(r));
+    if (!/Jost/.test(r.h1) || !/Jost/.test(r.h2) || r.h1w !== '600' || !/IBM Plex Sans/.test(r.govde) || r.birincil !== 'rgb(5, 107, 122)') throw new Error(JSON.stringify(r));
     console.log(`      tipografi: yüklenen [${r.yuklu.join(', ')}] · kullanılan aileler [${r.aile.join(', ')}] · ${r.punto.length} punto (${r.punto.join(' ')}) · birincil düğme ${r.birincil} (#056b7a)`);
   },
   async 'kuruluş ve tarihçe: 2001 iki dilde, rota kaydırdıkça dolar, noktalar sırayla işaretlenir'(s) {
@@ -465,14 +465,14 @@ const SENARYO = {
     await s.js(`document.querySelector('#kulup').scrollIntoView({ behavior: 'instant' })`); await bekle(300);
     const r = await s.js(`(() => { const r = document.querySelector('#rota').getBoundingClientRect(); return { ust: Math.round(r.top), gecti: document.querySelectorAll('.rota__nokta[data-gecti]').length }; })()`);
     await s.js(`document.querySelector('#rota').scrollIntoView({ block: 'end', behavior: 'instant' }); window.scrollBy({ top: 400, behavior: 'instant' })`);
-    await kosulBekle(s, `document.querySelectorAll('.rota__nokta[data-gecti]').length === 11`, 4000);
-    const r2 = await s.js(`document.querySelectorAll('.rota__nokta[data-gecti]').length`);
+    await kosulBekle(s, `document.querySelectorAll('.rota__nokta[data-gecti]').length === document.querySelectorAll('.rota__nokta').length`, 4000);
+    const r2 = await s.js(`document.querySelectorAll('.rota__nokta[data-gecti]').length`), toplam = await s.js(`document.querySelectorAll('.rota__nokta').length`);
     await s.js(`document.querySelector('#dil-dugme').click()`);
     await kosulBekle(s, `document.documentElement.lang === 'en'`, 5000);
     let en = await s.js(`${nokta}.textContent`);
     [tr, en] = [tr, en].map((m) => m.replace(/ /g, ' '));   /* tarihlerde bölünmez boşluk */
-    if (!tr.includes('4 Ocak') || !tr.includes('7 Mayıs') || !tr.includes('EUROAVIA') || !en.includes('4 January') || !en.includes('7 May') || r2 < r.gecti || r2 !== 11) throw new Error(JSON.stringify({ tr, en, r, r2 }));
-    console.log(`      kuruluş: TR "${tr.slice(0, 70)}…" · EN "${en.slice(0, 60)}…" · tarihçe şeritleri ${r.gecti} → ${r2}/11`);
+    if (!tr.includes('4 Ocak') || !tr.includes('7 Mayıs') || !tr.includes('EUROAVIA') || !en.includes('4 January') || !en.includes('7 May') || r2 < r.gecti || toplam < 15 || r2 !== toplam) throw new Error(JSON.stringify({ tr, en, r, r2 }));
+    console.log(`      kuruluş: TR "${tr.slice(0, 70)}…" · EN "${en.slice(0, 60)}…" · tarihçe şeritleri ${r.gecti} → ${r2}/${toplam}`);
   },
   async 'EUROAVIA takvimi: yarım satır yok, "Tüm takvim" açar/kapatır'(s) {
     await s.git('./#ag');
@@ -492,10 +492,10 @@ const SENARYO = {
     const a = await s.js(olc);
     await s.js(`scrollBy({ top: 400, behavior: 'instant' })`); await bekle(250);
     const b = await s.js(olc);
-    await s.js(`document.querySelector('#rota').scrollIntoView({ block: 'end', behavior: 'instant' }); scrollBy({ top: 700, behavior: 'instant' })`); await kosulBekle(s, `document.querySelectorAll('.rota__nokta[data-gecti]').length === 11`, 3000);
-    const c = await s.js(olc);
-    if (a.cizgi !== 'dashed' || !(b.t > a.t) || !(b.gecti >= a.gecti) || c.t !== 1 || c.gecti !== 11) throw new Error(JSON.stringify({ a, b, c }));
-    console.log(`      telefonda tarihçe: iz ${a.t} → ${b.t} → ${c.t}, işaretli şerit ${a.gecti} → ${b.gecti} → ${c.gecti}/11`);
+    await s.js(`document.querySelector('#rota').scrollIntoView({ block: 'end', behavior: 'instant' }); scrollBy({ top: 700, behavior: 'instant' })`); await kosulBekle(s, `document.querySelectorAll('.rota__nokta[data-gecti]').length === document.querySelectorAll('.rota__nokta').length`, 3000);
+    const c = await s.js(olc), toplam = await s.js(`document.querySelectorAll('.rota__nokta').length`);
+    if (a.cizgi !== 'dashed' || !(b.t > a.t) || !(b.gecti >= a.gecti) || c.t !== 1 || toplam < 15 || c.gecti !== toplam) throw new Error(JSON.stringify({ a, b, c }));
+    console.log(`      telefonda tarihçe: iz ${a.t} → ${b.t} → ${c.t}, işaretli şerit ${a.gecti} → ${b.gecti} → ${c.gecti}/${toplam}`);
   },
   async 'açılış İstanbul’u: blok blok kurulur (parçalar önce görünmez, sonra hepsi), dalgalar ve vapur akar, gökte kâğıt uçaklar'(s) {
     await s.git('./?olc=1');
@@ -503,7 +503,7 @@ const SENARYO = {
     await kosulBekle(s, `document.querySelector('#istanbul').classList.contains('ist--kuruldu')`, 6000);
     const son = await s.js(`(() => { const ist = document.querySelector('#istanbul'), p = [...ist.querySelectorAll('.parca')];
       const d = ist.querySelector('.dalga--1'), v = ist.querySelector('.vapur-yol'), m1 = getComputedStyle(d).transform, v1 = getComputedStyle(v).transform;
-      return new Promise((r) => setTimeout(() => r({ gorunen: p.filter((e) => getComputedStyle(e).opacity === '1').length, n: p.length, dalga: m1 !== getComputedStyle(d).transform, vapur: v1 !== getComputedStyle(v).transform,
+      return new Promise((r) => setTimeout(() => r({ gorunen: p.filter((e) => getComputedStyle(e).opacity === '1').length, n: p.length, dalga: getComputedStyle(d).animationName === 'dalga-ak' && document.getAnimations().some((x) => x.animationName === 'dalga-ak' && x.playState === 'running'), vapur: getComputedStyle(v).animationName === 'vapur-git' && document.getAnimations().some((x) => x.animationName === 'vapur-git' && x.playState === 'running'),
         yer: ['galata', 'kiz', 'kopru', 'cami'].map((k) => { const b = ist.querySelector('.blok--' + k).getBoundingClientRect(); return b.width > 10 && b.bottom > 0 && b.top < innerHeight; }) }), 600)); })()`);
     /* kademe: inşayı yeniden başlat, animasyon zamanını elle ilerlet (gizli sekmede zaman çizelgesi durabilir) */
     const kademe = await s.js(`(() => { const ist = document.querySelector('#istanbul'), p = [...ist.querySelectorAll('.parca')];
@@ -548,9 +548,9 @@ const SENARYO = {
     if (r.a.join() !== 'password,Göster,false' || r.b.join() !== 'text,Gizle,true' || r.c !== 'password' || r.hedef < 44) throw new Error(JSON.stringify(r));
     console.log(`      parola: ${r.a.join('/')} → ${r.b.join('/')} → ${r.c} · düğme ${r.hedef} px`);
   },
-  async 'panorama sığar: 1366×768 · 1920×950 · 1440×900 · 390×844 — su bandı görünür, görüş kutusu sahnede, metin altındaki yapılar metne binmez'(s) {
+  async 'panorama sığar: 1366×768 · 1920×950 · 1440×900 · 2560×1440 · 390×844 · yatay 844×390 — su bandı görünür, görüş kutusu sahnede, metin altındaki yapılar metne binmez'(s) {
     const sonuc = [];
-    for (const [g, y] of [[1366, 768], [1920, 950], [1440, 900], [390, 844]]) {
+    for (const [g, y] of [[1366, 768], [1920, 950], [1440, 900], [2560, 1440], [390, 844], [844, 390]]) {
       await s.git('./?az=1', g, y); await s.js(OTUR);
       const r = await s.js(`(() => { const ist = document.querySelector('#istanbul'), sah = document.querySelector('.giris__sahne').getBoundingClientRect(), b = ist.getBoundingClientRect();
         const [x0, , vw] = ist.getAttribute('viewBox').split(' ').map(Number), su = ist.querySelector('.ist__yakin rect.s').getBoundingClientRect();
@@ -600,8 +600,51 @@ const SENARYO = {
     const y0 = await s.js(`document.querySelector('#rota-yil').textContent`); await s.js(`scrollBy({ top: 600, behavior: 'instant' })`); await kosulBekle(s, `document.querySelector('#rota-yil').textContent !== '${y0}'`, 5000);
     const b = await s.js(`[document.querySelector('#rota-yil').textContent, Math.round(document.querySelector('#rota-yil').getBoundingClientRect().top)]`);
     const yuklu = await kosulBekle(s, `[...document.querySelectorAll('.serit__resim img')].every((i) => i.complete && i.naturalWidth > 0)`, 5000);
-    if (a[2] !== 12 || a[3] < 4 || a[1] !== '1' || !(+b[0] > +a[0]) || !yuklu) throw new Error(JSON.stringify({ a, b, yuklu }));
-    console.log(`      tarihçe: 12 resim karesi (${a[3]} görsel) · rozet ${a[0]} → ${b[0]}`);
+    if (a[2] < 16 || a[2] !== (await s.js(`document.querySelectorAll('.rota__nokta').length`)) + 1 || a[3] < 6 || a[1] !== '1' || !(+b[0] > +a[0]) || !yuklu) throw new Error(JSON.stringify({ a, b, yuklu }));
+    console.log(`      tarihçe: ${a[2]} resim karesi (${a[3]} görsel) · rozet ${a[0]} → ${b[0]}`);
+  },
+  async 'yazılar: AESTRO rafında gerçek kapaklar yüklenir, kartpostallarda sahne ve pul sembolleri dosyada bulunur'(s) {
+    await s.git('./?az=1#yazilar', 1440, 900);
+    await kosulBekle(s, `document.querySelectorAll('.kartpostal').length >= 6`, 8000);
+    await s.js(`document.querySelector('.dergi').scrollIntoView({ block: 'center', behavior: 'instant' })`);
+    const kapak = await kosulBekle(s, `[...document.querySelectorAll('.dergi img')].every((i) => i.complete && i.naturalWidth > 0 && /sayi-[123]-(360|720)\\.jpg$/.test(i.currentSrc))`, 8000);
+    const r = await s.js(`(async () => {
+      const kapaklar = [...document.querySelectorAll('.dergi img')].map((i) => [i.currentSrc.split('/').pop(), i.width, i.height]);   /* naturalWidth srcset yoğunluğuna bölünür; görünen boyut yazılır */
+      const kullan = [...document.querySelectorAll('.kartpostal use')].map((u) => u.getAttribute('href'));
+      const svg = await (await fetch('gorseller/semboller.svg')).text();
+      const eksik = kullan.filter((h) => !svg.includes('<symbol id="' + h.split('#')[1] + '"'));
+      return { kapaklar, kullan: kullan.length, kart: kullan.filter((h) => h.includes('#kart-')).length, eksik };
+    })()`);
+    if (!kapak || r.kapaklar.length !== 3 || !r.kapaklar.every(([ad], i) => ad.startsWith(`sayi-${i + 1}-`)) || r.kart < 6 || r.eksik.length) throw new Error(JSON.stringify({ kapak, r }));
+    console.log(`      yazılar: kapaklar ${r.kapaklar.map(([a, g, y]) => `${a} ${g}×${y}`).join(', ')} · kartpostal sembolleri ${r.kullan} (${r.kart} sahne), eksik ${r.eksik.length}`);
+  },
+  async 'tarihçe ayrıntısı: şerite basınca kaydın sayfası açılır; önceki/sonraki, ← →, dil, kapatınca odak şeride döner, #tarih- bağlantısı doğrudan açar'(s) {
+    await s.git('./?az=1', 1440, 900);
+    const durum = `(() => { const d = document.querySelector('#ayrinti'); return { acik: d.open, h2: d.querySelector('h2').textContent, yil: d.querySelector('.ayrinti__yil').textContent, madde: d.querySelectorAll('.ayrinti__govde li').length, paragraf: d.querySelectorAll('.ayrinti__govde p').length, kaynak: [...d.querySelectorAll('.ayrinti__kaynaklar a')].map((a) => a.href), sira: d.querySelector('.ayrinti__sira').textContent, geri: d.querySelector('.ayrinti__yon[data-yon="-1"]').disabled, adres: location.hash, odak: document.activeElement?.className || '' }; })()`;
+    await s.js(`document.querySelector('#tarih-2003').scrollIntoView({ block: 'center', behavior: 'instant' })`); await bekle(200);
+    await s.js(`document.querySelector('#tarih-2003 .serit__ac').focus(); document.querySelector('#tarih-2003 .serit__ac').click()`);
+    await kosulBekle(s, `document.querySelector('#ayrinti').open`, 5000);
+    const a = await s.js(durum);
+    await s.js(`document.querySelector('.ayrinti__yon[data-yon="1"]').click()`); const b = await s.js(durum);
+    await s.js(`document.querySelector('#ayrinti').dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowLeft', bubbles: true }))`); const c = await s.js(durum);
+    await s.js(`document.querySelector('#dil-dugme').click()`); await kosulBekle(s, `document.documentElement.lang === 'en' && document.querySelector('#ayrinti h2').textContent === 'First time as hosts'`, 5000);
+    const d = await s.js(durum);
+    await s.js(`document.querySelector('.ayrinti__kapat').click()`); await kosulBekle(s, `!document.querySelector('#ayrinti').open && location.hash === ''`, 3000);
+    const e = await s.js(durum);
+    /* ilk kayıtta "önceki" kapalı */
+    await s.js(`document.querySelector('#tarih-1941 .serit__ac').click()`); await kosulBekle(s, `document.querySelector('#ayrinti').open`, 3000);
+    const f = await s.js(durum);
+    /* pencere kenarına (kaydırma çubuğu) tık kapatmaz, perdeye tık kapatır */
+    const perde = await s.js(`(() => { const d = document.querySelector('#ayrinti'), r = d.getBoundingClientRect(); const tik = (x, y) => d.dispatchEvent(new MouseEvent('click', { bubbles: true, clientX: x, clientY: y })); tik(r.right - 4, r.top + 60); const kenar = d.open; tik(4, 4); return { kenar, dis: d.open }; })()`);
+    if (!perde.kenar || perde.dis) throw new Error('perde: ' + JSON.stringify(perde));
+    if (!a.acik || a.yil !== '2003' || a.madde !== 7 || !a.kaynak.length || !/^#tarih-2003$/.test(a.adres) || b.yil !== '2012' || b.adres !== '#tarih-2012' || c.yil !== '2003'
+      || d.h2 !== 'First time as hosts' || e.acik || e.adres !== '' || !/serit__ac/.test(e.odak) || !f.geri || f.sira !== '1 / ' + (await s.js(`document.querySelectorAll('.rota__nokta').length`))) throw new Error(JSON.stringify({ a, b, c, d, e, f }));
+    /* doğrudan bağlantı */
+    await s.git('./?az=1#tarih-2024', 390, 844);
+    await kosulBekle(s, `document.querySelector('#ayrinti').open`, 5000);
+    const g = await s.js(`(() => { const d = document.querySelector('#ayrinti'), r = d.getBoundingClientRect(); return { ...${durum}, g: Math.round(r.width), taşma: document.documentElement.scrollWidth > innerWidth, resim: d.querySelector('.ayrinti__resim img')?.getAttribute('src') }; })()`);
+    if (!g.acik || g.yil !== '2024' || g.madde < 5 || g.g > 390 || g.taşma || !/lustrum-2024-960/.test(g.resim || '')) throw new Error(JSON.stringify(g));
+    console.log(`      ayrıntı: 2003 "${a.h2}" (${a.madde} madde, ${a.kaynak.length} kaynak, ${a.sira}) → sonraki ${b.yil} → ← ${c.yil} → EN "${d.h2}" → kapandı, odak şeritte, adres temiz · 1941'de önceki kapalı · #tarih-2024 telefonda doğrudan açıldı (${g.g} px)`);
   },
 };
 

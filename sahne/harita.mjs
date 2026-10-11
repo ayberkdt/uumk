@@ -1,11 +1,15 @@
 /* HARİTA — EUROAVIA ağının düz haritası (tuval 2B). Lambert azimut eşit alanlı izdüşüm, merkez Avrupa.
- * Katmanlar: (durağan, tampon tuvale bir kez) enlem/boylam ağı · kara noktaları (grubu olan ülkeler ayrı ton) · grup noktaları ·
+ * Katmanlar: (durağan, tampon tuvale bir kez) enlem/boylam ağı · ülkeler (Natural Earth 1:50m, veri/harita-ulkeler.mjs; grubu olan ülkeler petrol) · grup noktaları · pusula ·
  * ölçek çubuğu; (her kare) İstanbul'dan rotalar (görününce yakından uzağa sırayla çizilir) · rotalarda süzülen kâğıt uçaklar ·
  * İstanbul nabzı · seçilen rota (çizilirken ucunda uçak). Hareket azaltmada rotalar çizili gelir, uçak ve nabız yok.
  * API (sahne/ag.mjs): izdus(enlem, boylam) → [x, y, true] (CSS px) · vurgula(hedef|null) · istek() · gorunur(b). */
-import { MASKE, ADIM, ENLEM0 } from '../veri/kure-maske.mjs';
+import { ULKELER, Q } from '../veri/harita-ulkeler.mjs';
 /* gece paleti: EUROAVIA bölümü koyu zeminde (site.css .bolum--koyu); sarı = AS Istanbul'un rotaları ve uçakları */
-const GECE = { zemin: '#0f0f0f', ag: 'rgba(242, 242, 239, 0.06)', kara: '#3b3b38', uye: '#2d7c87', grup: '#f2f2ef', soluk: '#b3b3ae', sari: '#f2c200', rota: 'rgba(242, 194, 0, 0.26)' };
+const GECE = { zemin: '#0f0f0f', ag: 'rgba(242, 242, 239, 0.05)', kara: '#24241f', uye: '#123b41', uyeKenar: 'rgba(45, 124, 135, 0.9)', sinir: 'rgba(242, 242, 239, 0.13)', grup: '#f2f2ef', soluk: '#b3b3ae', sari: '#f2c200', rota: 'rgba(242, 194, 0, 0.3)' };
+const YAZI = '"IBM Plex Sans", system-ui, sans-serif';
+/* ülke halkaları: fark kodlu tamsayılardan [enlem, boylam] dizilerine (bir kez) */
+const ULKE = ULKELER.map(([uye, ad, halkalar]) => ({ uye, ad, halkalar: halkalar.map((k) => { const n = []; let x = 0, y = 0; for (let i = 0; i < k.length; i += 2) { x += k[i]; y += k[i + 1]; n.push([y / Q, x / Q]); } return n; }) }));
+const NOKTA = ULKE.reduce((t, u) => t + u.halkalar.reduce((a, h) => a + h.length, 0), 0);
 
 const rad = (d) => (d * Math.PI) / 180;
 const MERKEZ = { enlem: 46, boylam: 14 };
@@ -18,20 +22,15 @@ function lambert(enlem, boylam) {
   return [k * Math.cos(f) * Math.sin(l), -k * (Math.cos(f0) * Math.sin(f) - Math.sin(f0) * Math.cos(f) * Math.cos(l))];
 }
 
-/* maske → kara noktaları [enlem, boylam, tür] (yalnız harita çerçevesine yakın olanlar) */
-function karaNoktalari(c) {
-  const out = [];
-  MASKE.split('|').forEach((s, i) => {
-    const enlem = ENLEM0 + (i + 0.5) * ADIM;
-    if (enlem < c.g - 6 || enlem > c.k + 6) return;
-    const n = Math.max(1, Math.round((360 * Math.cos(rad(enlem))) / ADIM));
-    let j = 0;
-    for (const [, h, say] of s.matchAll(/([abc])(\d+)/g)) {
-      const k = Number(say);
-      if (h !== 'a') for (let q = 0; q < k; q++) { const boylam = -180 + ((j + q + 0.5) * 360) / n; if (boylam > c.b - 14 && boylam < c.d + 14) out.push([enlem, boylam, h === 'c' ? 2 : 1]); }
-      j += k;
-    }
-  });
+/* büyük daire: iki nokta arasında küre üzerinde ara noktalar [enlem, boylam] */
+function buyukDaire(e1, b1, e2, b2, n = 48) {
+  const v = (e, b) => [Math.cos(rad(e)) * Math.cos(rad(b)), Math.cos(rad(e)) * Math.sin(rad(b)), Math.sin(rad(e))];
+  const p = v(e1, b1), q = v(e2, b2), w = Math.acos(Math.min(1, p[0] * q[0] + p[1] * q[1] + p[2] * q[2])) || 1e-9, out = [];
+  for (let i = 0; i <= n; i++) {
+    const t = i / n, A = Math.sin((1 - t) * w) / Math.sin(w), B = Math.sin(t * w) / Math.sin(w);
+    const x = A * p[0] + B * q[0], y = A * p[1] + B * q[1], z = A * p[2] + B * q[2];
+    out.push([(Math.atan2(z, Math.hypot(x, y)) * 180) / Math.PI, (Math.atan2(y, x) * 180) / Math.PI]);
+  }
   return out;
 }
 
@@ -39,7 +38,6 @@ export function haritaKur(tuval, { gruplar, merkez, boyutDegisti, az = false }) 
   const g = tuval.getContext('2d');
   const ana = gruplar.find((x) => x[0] === merkez);
   const cerceve = { g: Math.min(...gruplar.map((x) => x[6])) - 3, k: Math.max(...gruplar.map((x) => x[6])) + 4, b: Math.min(...gruplar.map((x) => x[7])) - 4, d: Math.max(...gruplar.map((x) => x[7])) + 5 };
-  const kara = karaNoktalari(cerceve);
   const tampon = document.createElement('canvas'), tg = tampon.getContext('2d');
   let gen = 0, yuk = 0, dpr = 1, olcek = 1, ox = 0, oy = 0;
   let gorunur = false, girisT0 = null, dongu = 0, secili = null, secimT0 = 0, ustRota = null, odak = 0;
@@ -52,20 +50,14 @@ export function haritaKur(tuval, { gruplar, merkez, boyutDegisti, az = false }) 
   const kut = { x0: Math.min(...ham.map((h) => h[0])), x1: Math.max(...ham.map((h) => h[0])), y0: Math.min(...ham.map((h) => h[1])), y1: Math.max(...ham.map((h) => h[1])) };
   const izdus = (enlem, boylam) => { const [x, y] = lambert(enlem, boylam); return [ox + x * olcek, oy + y * olcek, true]; };
 
-  /* rotalar: ekranda İstanbul'dan gruba, ortası uzaklıkla orantılı kalkan ikinci derece eğri */
+  /* rotalar: İstanbul'dan gruba büyük daire yayı (gerçek uçuş rotası gibi), ekranda nokta dizisi */
   let rotalar = [];
+  const rotaYap = (e, b, g = null) => { const pts = buyukDaire(ana[6], ana[7], e, b).map(([pe, pb]) => izdus(pe, pb)); const l = Math.hypot(pts.at(-1)[0] - pts[0][0], pts.at(-1)[1] - pts[0][1]); return { g, pts, a: pts[0], b: pts.at(-1), l }; };
   function rotaKur() {
-    const [ax, ay] = izdus(ana[6], ana[7]);
-    rotalar = gruplar.filter((x) => x !== ana).map((x) => {
-      const [bx, by] = izdus(x[6], x[7]);
-      const mx = (ax + bx) / 2, my = (ay + by) / 2, l = Math.hypot(bx - ax, by - ay);
-      const nx = -(by - ay) / (l || 1), ny = (bx - ax) / (l || 1);
-      const yon = ny > 0 ? -1 : 1;    /* tepe her zaman yukarı */
-      return { g: x, a: [ax, ay], k: [mx + nx * l * 0.18 * yon, my + ny * l * 0.18 * yon], b: [bx, by], l };
-    }).sort((a, b) => a.l - b.l);
+    rotalar = gruplar.filter((x) => x !== ana).map((x) => rotaYap(x[6], x[7], x)).sort((a, b) => a.l - b.l);
   }
-  const egri = (r, t) => { const u = 1 - t; return [u * u * r.a[0] + 2 * u * t * r.k[0] + t * t * r.b[0], u * u * r.a[1] + 2 * u * t * r.k[1] + t * t * r.b[1]]; };
-  const egim = (r, t) => { const u = 1 - t; return Math.atan2(2 * u * (r.k[1] - r.a[1]) + 2 * t * (r.b[1] - r.k[1]), 2 * u * (r.k[0] - r.a[0]) + 2 * t * (r.b[0] - r.k[0])); };
+  const egri = (r, t) => { const n = r.pts.length - 1, f = Math.min(n - 1e-6, Math.max(0, t * n)), i = Math.floor(f), u = f - i, p = r.pts[i], q = r.pts[i + 1]; return [p[0] + (q[0] - p[0]) * u, p[1] + (q[1] - p[1]) * u]; };
+  const egim = (r, t) => { const [x1, y1] = egri(r, Math.max(0, t - 0.01)), [x2, y2] = egri(r, Math.min(1, t + 0.01)); return Math.atan2(y2 - y1, x2 - x1); };
   function rotaParca(r, t0, t1, n = 28) {
     g.beginPath();
     for (let i = 0; i <= n; i++) { const [x, y] = egri(r, t0 + ((t1 - t0) * i) / n); i ? g.lineTo(x, y) : g.moveTo(x, y); }
@@ -87,13 +79,16 @@ export function haritaKur(tuval, { gruplar, merkez, boyutDegisti, az = false }) 
     tg.strokeStyle = GECE.ag; tg.lineWidth = 1;
     for (let e = -10; e <= 80; e += 10) { tg.beginPath(); for (let b = -40; b <= 70; b += 2) { const [x, y] = izdus(e, b); b === -40 ? tg.moveTo(x, y) : tg.lineTo(x, y); } tg.stroke(); }
     for (let b = -40; b <= 70; b += 10) { tg.beginPath(); for (let e = -10; e <= 80; e += 2) { const [x, y] = izdus(e, b); e === -10 ? tg.moveTo(x, y) : tg.lineTo(x, y); } tg.stroke(); }
-    /* kara noktaları */
-    const r = Math.max(0.7, rad(ADIM) * olcek * 0.17);
-    for (const [e, b, t] of kara) {
-      const [x, y] = izdus(e, b);
-      if (x < -4 || y < -4 || x > gen + 4 || y > yuk + 4) continue;
-      tg.fillStyle = t === 2 ? GECE.uye : GECE.kara; tg.beginPath(); tg.arc(x, y, r, 0, Math.PI * 2); tg.fill();
-    }
+    /* ülkeler: dolgu, ince sınır; grubu olan ülkeler petrol tonunda ve açık petrol kenarlı */
+    const yol = (h) => { tg.beginPath(); h.forEach(([e, b], i) => { const [x, y] = izdus(e, b); i ? tg.lineTo(x, y) : tg.moveTo(x, y); }); tg.closePath(); };
+    tg.lineJoin = 'round';
+    for (const u of ULKE) for (const h of u.halkalar) { yol(h); tg.fillStyle = u.uye ? GECE.uye : GECE.kara; tg.fill(); tg.strokeStyle = GECE.sinir; tg.lineWidth = 0.7; tg.stroke(); }
+    for (const u of ULKE) if (u.uye) for (const h of u.halkalar) { yol(h); tg.strokeStyle = GECE.uyeKenar; tg.lineWidth = 1; tg.stroke(); }
+    /* pusula gülü (sol alt) */
+    { const px = 34, py = yuk - 40, R = 16; tg.save(); tg.translate(px, py); tg.strokeStyle = GECE.soluk; tg.fillStyle = GECE.soluk; tg.lineWidth = 1;
+      tg.beginPath(); tg.arc(0, 0, R + 5, 0, Math.PI * 2); tg.globalAlpha = 0.35; tg.stroke(); tg.globalAlpha = 1;
+      for (let k = 0; k < 4; k++) { tg.rotate(Math.PI / 2); tg.beginPath(); tg.moveTo(0, -R); tg.lineTo(4, 0); tg.lineTo(-4, 0); tg.closePath(); k === 3 ? tg.fill() : tg.stroke(); }
+      tg.restore(); tg.font = `600 10px ${YAZI}`; tg.textAlign = 'center'; tg.fillStyle = GECE.soluk; tg.fillText('K', px, py - R - 9); }
     /* gruplar */
     for (const x of gruplar) {
       if (x === ana) continue;
@@ -110,13 +105,13 @@ export function haritaKur(tuval, { gruplar, merkez, boyutDegisti, az = false }) 
       const aci = py > yuk ? Math.PI / 2 : py < 0 ? -Math.PI / 2 : px < 0 ? Math.PI : 0;
       const kx = Math.min(gen - 18, Math.max(18, px)), ky = Math.min(yuk - 40, Math.max(18, py));
       tg.save(); tg.translate(kx, ky); tg.rotate(aci); tg.fillStyle = GECE.grup; tg.beginPath(); tg.moveTo(7, 0); tg.lineTo(-5, -5); tg.lineTo(-5, 5); tg.closePath(); tg.fill(); tg.restore();
-      tg.fillStyle = GECE.grup; tg.font = '600 11px "Instrument Sans", system-ui, sans-serif'; tg.textAlign = 'left'; tg.fillText(x[3], kx + 10, ky + 4);
+      tg.fillStyle = GECE.grup; tg.font = `600 11px ${YAZI}`; tg.textAlign = 'left'; tg.fillText(x[3], kx + 10, ky + 4);
     }
     /* ölçek çubuğu: 500 km (merkezde) */
     const [x1, y1] = izdus(MERKEZ.enlem, MERKEZ.boylam), [x2] = izdus(MERKEZ.enlem, MERKEZ.boylam + 500 / (111.32 * Math.cos(rad(MERKEZ.enlem))));
     const L = Math.abs(x2 - x1), sx = gen - L - 24, sy = yuk - 22;
     tg.strokeStyle = GECE.soluk; tg.lineWidth = 1.2; tg.beginPath(); tg.moveTo(sx, sy - 5); tg.lineTo(sx, sy); tg.lineTo(sx + L, sy); tg.lineTo(sx + L, sy - 5); tg.moveTo(sx + L / 2, sy); tg.lineTo(sx + L / 2, sy - 3); tg.stroke();
-    tg.fillStyle = GECE.soluk; tg.font = '600 11px "Instrument Sans", system-ui, sans-serif'; tg.textAlign = 'center'; tg.fillText('500 km', sx + L / 2, sy - 9);
+    tg.fillStyle = GECE.soluk; tg.font = `600 11px ${YAZI}`; tg.textAlign = 'center'; tg.fillText('500 km', sx + L / 2, sy - 9);
     void y1;
   }
 
@@ -195,10 +190,8 @@ export function haritaKur(tuval, { gruplar, merkez, boyutDegisti, az = false }) 
   }
   function istek() { if (!dongu) dongu = requestAnimationFrame(kare); }
   function seciliRota(h) {
-    const [hx, hy] = izdus(h.enlem, h.boylam), [ax, ay] = izdus(ana[6], ana[7]);
-    const l = Math.hypot(hx - ax, hy - ay);
-    const nx = -(hy - ay) / (l || 1), ny = (hx - ax) / (l || 1), yon = ny > 0 ? -1 : 1;
-    return l > 2 ? { a: [ax, ay], k: [(ax + hx) / 2 + nx * l * 0.18 * yon, (ay + hy) / 2 + ny * l * 0.18 * yon], b: [hx, hy] } : null;
+    const r = rotaYap(h.enlem, h.boylam);
+    return r.l > 2 ? r : null;
   }
 
   new ResizeObserver(boyutla).observe(tuval);
@@ -212,6 +205,6 @@ export function haritaKur(tuval, { gruplar, merkez, boyutDegisti, az = false }) 
     istek,
     onizle(h) { ustRota = h ? seciliRota(h) : null; istek(); },
     gorunur(b) { gorunur = b; if (b) istek(); },
-    durum: () => ({ secili: secili ? { ad: secili.ad, ilerleme: secili.ilerleme } : null, rota: rotalar.length, kara: kara.length }),
+    durum: () => ({ secili: secili ? { ad: secili.ad, ilerleme: secili.ilerleme } : null, rota: rotalar.length, kara: NOKTA, ulke: ULKE.length }),
   };
 }

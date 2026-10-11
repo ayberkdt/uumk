@@ -19,6 +19,7 @@ export const JS_TR = {
   kayitlarim: 'Kayıtlı olduğun etkinlikler', kayitYok: 'Henüz bir etkinliğe kaydolmadın.',
   yukleniyor: 'Yükleniyor…', okuDevam: 'Yazıyı aç', disBaglanti: '{kaynak} sayfasında açılır',
   menuAc: 'Menüyü aç', menuKapat: 'Menüyü kapat',
+  ayrintiKaynak: 'Kaynaklar', ayrintiOnceki: 'Önceki kayıt', ayrintiSonraki: 'Sonraki kayıt',
   sponsorKonu: 'Sponsorluk — İTÜ UUMK', sponsorGovde: 'Merhaba,\n\n[Şirket] adına İTÜ UUMK ile sponsorluk ya da iş birliği hakkında görüşmek istiyoruz.\n\nAd soyad:\nŞirket:\nTelefon:\n',
   adresKopyalandi: '{adres} kopyalandı.', adresKopyalanamadi: 'Kopyalanamadı; adres: {adres}', parolaGoster: 'Göster', parolaGizle: 'Gizle',
   turGezi: 'Teknik gezi', turAtolye: 'Atölye', turKurs: 'Kurs', turYarisma: 'Yarışma', turSosyal: 'Sosyal', ucusKod: 'Uçuş',

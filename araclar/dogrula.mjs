@@ -273,6 +273,19 @@ const sunucuKod = oku('sunucu/sunucu.mjs');
 sina('sunucu/notlar/araclar/kaynak/.db dışarıya kapalı', /sunucu\|notlar\|araclar\|kaynak/.test(sunucuKod) && /db\|db-wal/.test(sunucuKod));
 const vi = (() => { try { return oku('.vercelignore'); } catch { return ''; } })();
 sina('.vercelignore: sunucu/, notlar/, araclar/, kaynak/', ['sunucu', 'notlar', 'araclar', 'kaynak'].every((k) => vi.includes(k)));
+/* v13: .vercelignore'da vendor/ (v3'ten kalma) three.js'i yayından düşürüyordu; Vercel'de kabin 3B'si v10'dan beri posterde kalıyordu.
+ * Sayfalardan başlayıp modül grafiğini (statik ve dinamik import) ve sayfa src/href'lerini izle: her yerel dosya var ve yayına gidiyor olmalı. */
+const yayinDisi = vi.split(/\r?\n/).map((l) => l.trim()).filter((l) => l && !l.startsWith('#')).map((l) => l.replace(/\/$/, ''));
+const disarida = (yol) => yayinDisi.some((k) => yol === k || yol.startsWith(k + '/'));
+const yayinEksik = new Set(), gezildi = new Set();
+const gez = (dosya) => {
+  if (gezildi.has(dosya)) return; gezildi.add(dosya);
+  if (!existsSync(join(KOK, dosya)) || disarida(dosya)) { yayinEksik.add(dosya); return; }
+  if (!/\.mjs$/.test(dosya)) return;
+  for (const m of oku(dosya).matchAll(/(?:\bfrom\s*|\bimport\s*\(\s*)['"](\.{1,2}\/[^'"]+)['"]/g)) gez(join(dirname(dosya), m[1]).replace(/\\/g, '/'));
+};
+for (const sayfa of ['index.html', '404.html', 'kvkk.html', 'yonetim.html']) for (const m of oku(sayfa).matchAll(/\b(?:src|href)="(?!https?:|mailto:|#|data:|\/\/)([^"#?]+\.(?:mjs|js|css|png|jpe?g|svg|webp|woff2|ico|pdf))"/g)) gez(m[1].replace(/^\.?\//, ''));
+sina('yayına giden her yerel dosya var ve .vercelignore dışında (sayfalar + modül grafiği, ' + gezildi.size + ' dosya; three.js dahil)', yayinEksik.size === 0 && gezildi.has('vendor/three-r184/three.module.min.js'), [...yayinEksik].join(', '));
 const boyut = (p) => statSync(join(KOK, p)).size;
 const acilis = ['site.mjs', 'ceviri.mjs', 'sahne/pano.mjs', 'sahne/hesap.mjs', 'sahne/ucus.mjs', 'sahne/renk.mjs'];   /* code128 (barkod) v9'dan beri biniş kartı açılınca iner */
 sina('barkod modülü tembel (biniş kartı açılınca)', oku('sahne/pano.mjs').includes("import('../lib/sunumatik/boarding_pass/code128.mjs')") && !/^import .*code128/m.test(oku('sahne/pano.mjs')));

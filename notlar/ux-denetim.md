@@ -1,3 +1,49 @@
+# YASA DENETİMİ — UUMK v11 (mobil + kapak uçağı) · 2026-10-11 gece · denetleyici index 0 HATA · 6 UYARI (v10 ile aynı) · axe 0 (390 TR, 360 EN, 1440 TR)
+
+Sonuç: 20/20 ölçüldü · 0 HATA · UYARIlar v10'daki gerekçelerle aynı (Hick kulüp 9, Parkinson, Occam, Pareto) · karar: TESLİM. Değişen satırlar (yalnız ≤ 760 px):
+
+| # | Yasa | Ölçüm | Eşik | Durum |
+|---|---|---|---|---|
+| 2 | Fitts | mobil-denetim.js: 320/360/390/414/740/820 px'te < 44 px hedef 0 (paragraf içi bağlantılar hariç) | ≥ 44 px | geçti |
+| 3 | Jakob | şeritler yatay kaydırma + kaydırma yakalama (tanıdık karusel deseni), sonraki kartın kenarı görünür; dikey kaydırma kaçırılmaz (overscroll-behavior-x) | 0 sapma | geçti |
+| 5 | Yakınlık | şerit kartları arası 16 px, kart dolgusu 16–24 px; künye satır arası 8 px, bölüm arası 64 px | ≤ 1:2 | geçti |
+| 13 | Doherty | kapak uçağı: tek adımda yön değişimi ≤ 3,3°, hız değişimi ≤ %2,4; 3B sahneler telefonda 30 kare/sn (tek kare normal hızda 4,1 ms) | < 400 ms | geçti |
+| 17 | Tesler | telefon sürümü otomatik (medya sorgusu), kullanıcıya seçenek sorulmaz; odaklanılabilir içeriği olmayan şerit yalnız kayarken odak alır | — | geçti |
+| 19 | Occam | telefonda sayfa 24.318 → 16.099 px (uzun listeler şeritte) | — | geçti (sayfa öğe sayısı UYARIsı değişmedi) |
+| 20 | Pareto | ilk ekran değişmedi | ≥ %60 | UYARI (v9 gerekçesi) |
+
+Risk: telefon ölçümleri masaüstü Chrome'da işlemci 4× yavaşlatılarak; gerçek cihazda ölçülmedi.
+
+# YASA DENETİMİ — UUMK v10 · 2026-10-11 akşam · denetleyici index 0 HATA · 6 UYARI · axe 0 ihlal (1440 TR, 390 EN)
+
+Sonuç: 20/20 ölçüldü · 0 HATA · denetleyicinin 6 UYARIsı 3 satırda (Hick, Parkinson, Occam) + Pareto göz testi UYARI, hepsi gerekçeli · karar: TESLİM. Değişen görünümler: kabin maketi + kart, gündem meydanı, kıyı, "Ne yapıyoruz", EUROAVIA seçim kartı ve takvim.
+
+| # | Yasa | Ölçüm | Eşik | Durum | Gerekçe (yalnız UYARI) |
+|---|---|---|---|---|---|
+| 1 | Hick | nav 7 · kulüp bölümü 9 eylem (6 bölme düğmesi + kartta önceki/sonraki/kapat) · kart açıkken kartta 3 | ≤ 7 · ≤ 5 | UYARI | 6 bölme düğmesi tek bir seçim kümesi (sekme gibi), maketin üstünde uzaya dağılır; kartın 3 düğmesi yalnız kart açıkken görünür. Eski yan liste satırları düğme değildi (yalnız fareyle vurgulanıyordu); bölme seçimi artık klavyeyle de yapılır, bu yüzden sayı arttı |
+| 2 | Fitts | bölme düğmesi 44 px yükseklik (e2e: masaüstü ve 390 px'te min 44) · kapat 44×44 · önceki/sonraki ≥ 44 | ≥ 44 px | geçti | |
+| 3 | Jakob | Esc kartı kapatır ve odağı düğmeye verir (e2e) · düğmeye ikinci basış kapatır · kaydırma kaçırılmaz | 0 sapma | geçti | |
+| 4 | Seçim Yükü | kabin: varsayılan seçimsiz, 6 bölme uzaysal | ≤ 5 ya da varsayılan | geçti | |
+| 5 | Yakınlık | iş satırı: çizim–metin 24 px, metin içi 6 px (1:4) · dönem durakları arası 16 px, güz–bahar arası 64 px (1:4) · kart başlık–metin 8 px, kart dolgusu 24 px | ≤ 1:2 | geçti | |
+| 6 | Benzerlik | 1 punto ailesi · 3 yarıçap · 2 gölge (düğme gölgesi kaldırıldı: önce 3 → şimdi 2) | ≤ 8 · ≤ 4 · ≤ 2 | geçti | |
+| 7 | Tekdüze Bağlılık | bölme düğmesi ile bölme arasında çizgi; seçili bölmenin zemini sarı | — | geçti | |
+| 8 | Ortak Bölge | 8 faaliyet kutusu kalktı (tek öğeli kutu yok), iş çizimleri tek çerçeve | 0 | geçti | |
+| 9 | Prägnanz | degrade 0 (kenar yumuşatma CSS maskesiyle değil sahne dokusunda) · cam 0 · ışıma 0 | 0 | geçti | |
+| 10 | Von Restorff | kabinde tek vurgu: seçili düğme (sarı numara) + seçili bölme | 1 | geçti | |
+| 11 | Miller | form değişmedi (max 6 alan) | ≤ 7 | geçti | |
+| 12 | Sıra Konumu | nav ilk "Biz kimiz", son "Sponsorluk" (değişmedi) · kabin 1 kokpit … 6 Tasarım (burundan kuyruğa) | birincil görevler | geçti | |
+| 13 | Doherty | düğme → kart anında (aynı kare) · kamera yaklaşması üstel, %90'ı ≈ 420 ms (hareket azaltmada anında) | < 400 ms yanıt | geçti | |
+| 14 | Zeigarnik | çok adımlı akış yok | — | geçti | |
+| 15 | Zirve-Son | boş gündem: sade metin kartı + Instagram (çizim bölüm başındaki meydanda, tekrar yok) · kart kapat | 3/3 | geçti | |
+| 16 | Parkinson | hesap formu 6/6 zorunlu | ≤ %50 | UYARI | Kullanıcı isteği (okul e-postası ve numarası zorunlu); değişmedi |
+| 17 | Tesler | maket kendiliğinden canlı, kontrol istemez · telefonda adlar karta taşınır · GPU yoksa poster ve aynı düğmeler | — | geçti | |
+| 18 | Postel | değişmedi | 0 | geçti | |
+| 19 | Occam | sayfa 3132 öğe · açılış 1843 (panorama çizimi) · kulüp 320 | ≤ 900 · ≤ 150 | UYARI | Öğeler SVG panorama ve kıyı çiziminin parçaları; kulüp bölümünde tarihçe şeritleri. "Ne yapıyoruz" 8 kart + 7 yıl maddesinden 4 iş + 7 durağa indi |
+| 20 | Pareto | ilk ekran değişmedi | ≥ %60 | UYARI | v9'daki gerekçe: açılış bilinçli olarak havadar |
+
+UYARI listesi (denetleyici): occam-density ×3 (açılış, kulüp, sayfa), hick-actions-per-view ×2 (kulüp 9, tarihçe ayrıntı penceresi 6 — v9'dan), parkinson-required ×1.
+Risk: kamera yaklaşmasının süresi koddan hesaplandı (1 − e^(−5,5·t)); tarayıcıda kareyle ölçülmedi.
+
 # YASA DENETİMİ — UUMK v9 · 2026-10-11 · denetleyici index 0 HATA · 5 UYARI (değişmedi), yonetim.html 0 · 0. axe 0 ihlal (1440 TR, 390 EN). Değişen satırlar: Zirve-Son — boş gündem 2,5B maket + düz bilgi metni (slogan yok), bildirim gönderilince "yönetim ekibine gönderildi; yanıt okul e-postana gelir" duyurusu · Hick — hesabım ekranında 2 menü satırı (+ yöneticiye 1) ve tek çıkış · Fitts — menü satırları tam genişlik, ≥ 44 px · Tesler — profil düzenle dolu gelir, gönderen bilgisi oturumdan (formda sorulmaz), yanıt adresi otomatik · Parkinson — bildirim formunda 2 alan (konu varsayılan seçili) · Postel — mesaj 2000 karakter, sayaçla; okul no boşluklar atılarak · Jakob — Esc/geri yok, "Hesabıma dön" düğmesi; alt bilgide "Sorun bildir" bağlantısı.
 
 ---

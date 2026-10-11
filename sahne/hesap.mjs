@@ -200,12 +200,6 @@ export function hesapKur({ panel, ustDugme, liste, durumAlani }) {
   function bos(baslik, aciklama) {
     const li = document.getElementById('bos-sablon').content.firstElementChild.cloneNode(true);
     li.querySelector('.bos__baslik').textContent = metin(baslik); li.querySelector('.bos__metin').textContent = metin(aciklama); li.querySelector('a').textContent = metin('bosTakip');
-    const io = new IntersectionObserver(async ([g]) => {
-      if (!g.isIntersecting) return; io.disconnect();
-      if (!(await import('./gpu.mjs')).donanimGpu()) return;
-      if ((await import('./bekleme3b.mjs')).beklemeKur(li.querySelector('canvas'), { az: document.documentElement.classList.contains('az') })) li.dataset.cizici = '3b';
-    });
-    io.observe(li);
     return li;
   }
   queueMicrotask(adresBak);

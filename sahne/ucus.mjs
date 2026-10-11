@@ -44,23 +44,42 @@ export function yorunge(anahtar) {
     let i = 0;
     while (i < anahtar.length - 2 && q > anahtar[i + 1][0]) i++;
     const a = anahtar[i], b = anahtar[i + 1];
-    const t = (q - a[0]) / (b[0] - a[0] || 1);
-    const p0 = anahtar[Math.max(0, i - 1)], p3 = anahtar[Math.min(anahtar.length - 1, i + 2)];
-    const cr = (k) => 0.5 * ((2 * a[k]) + (-p0[k] + b[k]) * t + (2 * p0[k] - 5 * a[k] + 4 * b[k] - p3[k]) * t * t + (-p0[k] + 3 * a[k] - 3 * b[k] + p3[k]) * t * t * t);
-    return [cr(1), cr(2), cr(3)];
+    /* zamana ölçekli Hermite: anahtarlar eşit aralıklı değil; teğet birim zamana göre → hız anahtarlarda sıçramaz */
+    const h = b[0] - a[0] || 1, t = (q - a[0]) / h, t2 = t * t, t3 = t2 * t;
+    const teg = (j, k) => { const o = anahtar[Math.max(0, j - 1)], s2 = anahtar[Math.min(anahtar.length - 1, j + 1)]; return (s2[k] - o[k]) / (s2[0] - o[0] || 1); };
+    const f = (k) => (2 * t3 - 3 * t2 + 1) * a[k] + (t3 - 2 * t2 + t) * h * teg(i, k) + (-2 * t3 + 3 * t2) * b[k] + (t3 - t2) * h * teg(i + 1, k);
+    return [f(1), f(2), f(3)];
   }
 
-  function eksen(q) {
+  /* hedef yön: hafif yatış + taklada eğriliğe dönük üst; ağırlık sınırda 0,06'lık geçişle */
+  function cerceve(q) {
     const e = 0.004;
+    q = sinir(q, e, 1 - e);
     const a = nokta(q - e), o = nokta(q), b = nokta(q + e);
     let ileri = fark(b, a);
     const hiz = boy(ileri) / (2 * e);
     ileri = birim(ileri.every((v) => Math.abs(v) < 1e-9) ? [-1, 0, 0] : ileri);
     const ivme = kat(ek(fark(b, kat(o, 2)), a), 1 / (e * e));
-    const dik = fark(ivme, kat(ileri, ic(ivme, ileri)));
-    const kavis = kat(dik, 1 / Math.max(hiz * hiz, 1e-6));
-    const takla = q > TAKLA[0] && q < TAKLA[1];
-    let yukari = ek(kat(kavis, takla ? 1.1 : 0.32), [0, takla ? 0.55 : 0.9, 0]);
+    const kavis = kat(fark(ivme, kat(ileri, ic(ivme, ileri))), 1 / Math.max(hiz * hiz, 1e-6));
+    const yum = (x) => { x = sinir(x); return x * x * (3 - 2 * x); };
+    const w = yum((q - TAKLA[0]) / 0.04) * (1 - yum((q - TAKLA[1] + 0.055) / 0.04));   /* geçiş pencerenin içinde */
+    return { ileri, hedef: ek(kat(kavis, 0.32 + 3.2 * w), [0, 0.9 - 0.86 * w, 0]) };
+  }
+  /* üst vektör tablosu: önceki üst ileri yöne dik izdüşürülür ve hedefe yumuşakça yaklaşır; böylece yatış hiçbir karede
+   * birden değişmez (eskiden her kare bağımsız hesaplanıyordu, taklanın tepesinde 180° ters dönüş vardı) */
+  const NT = 1600, ustler = [];
+  let ust = [0, 1, 0];
+  for (let i = 0; i <= NT; i++) {
+    const { ileri, hedef } = cerceve(i / NT);
+    let u = fark(ust, kat(ileri, ic(ust, ileri))); u = boy(u) < 1e-6 ? [0, 1, 0] : birim(u);
+    let h = fark(hedef, kat(ileri, ic(hedef, ileri))); h = boy(h) < 1e-6 ? u : birim(h);
+    ust = birim(ek(kat(u, 0.88), kat(h, 0.12))); if (i === 0) ust = h;
+    ustler.push(ust);
+  }
+  function eksen(q) {
+    const { ileri } = cerceve(q), o = nokta(q);
+    const k = sinir(q) * NT, i = Math.min(NT - 1, Math.floor(k)), t = k - i;
+    let yukari = ek(kat(ustler[i], 1 - t), kat(ustler[i + 1], t));
     yukari = fark(yukari, kat(ileri, ic(yukari, ileri)));
     yukari = boy(yukari) < 1e-6 ? [0, 1, 0] : birim(yukari);
     return { o, ileri, yukari, sag: birim(dis(yukari, ileri)) };
@@ -216,8 +235,8 @@ export function ucusKur(tuval, { az = false, metinAlt = null, sehirUst = null } 
       const bakis = birim(fark(kamera, orta));
       const arka = ic(n, bakis) < 0;
       const parlak = (0.6 + 0.4 * Math.abs(ic(n, ISIK))) * y.ton * (arka ? 0.9 : 1);
-      return { iz: w.map(izdus), derin: orta[2], parlak, bant: y.bant?.map((l) => izdus(dunya(l))) };
-    }).sort((a, b) => a.derin - b.derin);
+      return { iz: w.map(izdus), derin: orta[2], arka, parlak, bant: y.bant?.map((l) => izdus(dunya(l))) };
+    }).sort((a, b) => (b.arka - a.arka) || (a.derin - b.derin));   /* önce arkası dönük yüzler: eşit derinlikte sıra kareden kareye değişip titremesin */
     const kagit = [251, 251, 248], koyu = [196, 195, 188];
     g.lineJoin = 'round';
     for (const y of yuzler) {

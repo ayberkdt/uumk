@@ -100,19 +100,19 @@ export function haritaKur(tuval, { gruplar, merkez, boyutDegisti, az = false }) 
       tg.beginPath(); tg.arc(px, py, 2.6, 0, Math.PI * 2);
       if (x[1].startsWith('P')) { tg.strokeStyle = GECE.grup; tg.lineWidth = 1.3; tg.fillStyle = GECE.zemin; tg.fill(); tg.stroke(); } else { tg.fillStyle = GECE.grup; tg.fill(); }
     }
-    /* çerçeve dışı gruplar: kenarda o yöne uçan mini uçak + ad */
+    /* çerçeve dışı gruplar: kara üstünde şehir gibi durmasın diye tam kenarda, o yönü gösteren bir etiket (ok + ad) */
     for (const x of gruplar) {
       const [px, py] = izdus(x[6], x[7]);
       if (px >= 0 && py >= 0 && px <= gen && py <= yuk) continue;
-      /* mini uçak taşılan kenara uçar: alttaysa aşağı, soldaysa sola… */
-      const aci = py > yuk ? Math.PI / 2 : py < 0 ? -Math.PI / 2 : px < 0 ? Math.PI : 0;
-      const kx = Math.min(gen - 18, Math.max(18, px)), ky = Math.min(yuk - 40, Math.max(18, py));
-      ucak(kx, ky, aci, 15, GECE.grup, tg);
-      tg.fillStyle = GECE.grup; tg.font = `600 11px ${YAZI}`; tg.textAlign = 'left'; tg.fillText(x[3], kx + 13, ky + 4);
+      const ok = py > yuk ? '↓' : py < 0 ? '↑' : px < 0 ? '←' : '→', yazi = `${x[3]} ${ok}`;
+      tg.font = `600 11px ${YAZI}`; const w = tg.measureText(yazi).width + 14, h = 20;
+      const kx = Math.min(gen - w - 8, Math.max(8, px - w / 2)), ky = py > yuk ? yuk - h - 8 : py < 0 ? 8 : Math.min(yuk - h - 8, Math.max(8, py - h / 2));
+      tg.fillStyle = GECE.zemin; tg.strokeStyle = GECE.sinir; tg.lineWidth = 1; tg.beginPath(); tg.roundRect(kx + 0.5, ky + 0.5, w, h, 4); tg.fill(); tg.stroke();
+      tg.fillStyle = GECE.grup; tg.textAlign = 'left'; tg.fillText(yazi, kx + 7, ky + 14);
     }
-    /* ölçek çubuğu: 500 km (merkezde) */
+    /* ölçek çubuğu: 500 km (sağ üst köşe; altta Mısır'ın ve gruplarının üstüne binmesin) */
     const [x1, y1] = izdus(MERKEZ.enlem, MERKEZ.boylam), [x2] = izdus(MERKEZ.enlem, MERKEZ.boylam + 500 / (111.32 * Math.cos(rad(MERKEZ.enlem))));
-    const L = Math.abs(x2 - x1), sx = gen - L - 24, sy = yuk - 22;
+    const L = Math.abs(x2 - x1), sx = gen - L - 20, sy = 34;
     tg.strokeStyle = GECE.soluk; tg.lineWidth = 1.2; tg.beginPath(); tg.moveTo(sx, sy - 5); tg.lineTo(sx, sy); tg.lineTo(sx + L, sy); tg.lineTo(sx + L, sy - 5); tg.moveTo(sx + L / 2, sy); tg.lineTo(sx + L / 2, sy - 3); tg.stroke();
     tg.fillStyle = GECE.soluk; tg.font = `600 11px ${YAZI}`; tg.textAlign = 'center'; tg.fillText('500 km', sx + L / 2, sy - 9);
     void y1;

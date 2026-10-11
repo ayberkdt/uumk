@@ -166,14 +166,37 @@ function ufukGuncelle() {
   }
 }
 
-const maketEl = $('#maket');
+const maketEl = $('#maket'), kabinEl = $('#kabin'), imler = $$('.maket__imler > li', maketEl), kabinKart = $$('.kabin__kart', maketEl);
+let maket = null, kabinSecili = -1;
+kabinEl.hidden = true;
+/* poster üstündeki düğme konumları (geniş ve kare poster, %): satır içi style yerine data-konum → CSS değişkeni */
+imler.forEach((l) => { const [x, y, xm, ym] = l.dataset.konum.split(' '); Object.entries({ x, y, xm, ym }).forEach(([k, v]) => l.style.setProperty('--' + k, v + '%')); });
+function kabinSec(i, odak = false) {
+  kabinSecili = i;
+  imler.forEach((l, j) => l.firstElementChild.setAttribute('aria-expanded', String(j === i)));
+  kabinKart.forEach((k, j) => k.toggleAttribute('data-secili', j === i));
+  kabinEl.hidden = i < 0; maket?.sec(i);
+  if (odak && i >= 0) imler[i].firstElementChild.focus();
+}
+imler.forEach((l, i) => l.firstElementChild.addEventListener('click', () => kabinSec(kabinSecili === i ? -1 : i)));
+kabinEl.addEventListener('click', (e) => { const d = e.target.closest('[data-kabin]'); if (!d) return; const n = +d.dataset.kabin, i = kabinSecili; if (n) kabinSec((i + n + 6) % 6); else { kabinSec(-1); imler[i]?.firstElementChild.focus(); } });
+maketEl.addEventListener('keydown', (e) => { if (e.key === 'Escape' && kabinSecili >= 0) { const i = kabinSecili; kabinSec(-1); imler[i].firstElementChild.focus(); } });
 gozle(maketEl, { yakin: '700px', ilk: async () => {
   if (!(await import('./sahne/gpu.mjs')).donanimGpu()) return;
-  const liste = $$('.kabin > li', maketEl), imler = $$('.maket__imler li', maketEl);
-  const m = (await import('./sahne/maket3b.mjs')).maketKur($('#maket-tuval'), { imler, az: AZ, secildi: (i) => liste.forEach((l, j) => l.toggleAttribute('data-secili', j === i)) });
-  if (!m) return;
-  maketEl.dataset.cizici = '3b'; if (prm.has('olc')) globalThis.__maket = m;
-  liste.forEach((l, i) => { l.addEventListener('pointerenter', () => m.sec(i)); l.addEventListener('pointerleave', () => m.sec(-1)); l.addEventListener('click', () => m.sec(i)); });
+  maket = (await import('./sahne/maket3b.mjs')).maketKur($('#maket-tuval'), { imler, az: AZ, secildi: (i) => kabinSec(i), kartSagda: () => innerWidth > 760 });
+  if (!maket) return;
+  maketEl.dataset.cizici = '3b'; maket.sec(kabinSecili); if (prm.has('olc')) globalThis.__maket = maket;
+} });
+
+/* telefonda yana kaydırılan şeritler: içinde odaklanılacak öğe yoksa klavyeyle kaydırılabilsin diye yalnız kayarken odak alır */
+const seritYokla = () => $$('.fotolar, .bicimler').forEach((e) => { if (e.scrollWidth > e.clientWidth + 1) e.tabIndex = 0; else e.removeAttribute('tabindex'); });
+seritYokla(); addEventListener('resize', seritYokla);
+
+const meydanEl = $('#meydan');
+gozle(meydanEl, { yakin: '500px', ilk: async () => {
+  if (!(await import('./sahne/gpu.mjs')).donanimGpu()) return;
+  const m = (await import('./sahne/meydan3b.mjs')).meydanKur($('.meydan__tuval', meydanEl), { az: AZ });
+  if (m) { meydanEl.dataset.cizici = '3b'; if (prm.has('olc')) globalThis.__meydan = m; }
 } });
 
 const rota = $('#rota'), rotaNokta = $$('#rota .serit:not(.serit--sirada)'), rotaYil = $('#rota-yil');

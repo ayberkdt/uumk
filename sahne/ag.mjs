@@ -79,7 +79,7 @@ export async function agKur({ kap, liste, secim, km, az = false }) {
   const secAd = secim.querySelector('.ag__secim-ad'), secAlt = secim.querySelector('.ag__secim-alt'), don = secim.querySelector('.ag__don');
   don?.addEventListener('click', () => { grupSec(merkez); liste.focus(); });
   function paneliYaz(baslik, tur, alt) {
-    secAd.replaceChildren(document.createTextNode(`${baslik} · `), Object.assign(document.createElement('span'), { textContent: tur }));
+    secAd.replaceChildren(document.createTextNode(baslik), Object.assign(document.createElement('span'), { textContent: tur }));
     secAlt.textContent = alt;
   }
   function grupSec(g) {
@@ -171,7 +171,9 @@ export async function agKur({ kap, liste, secim, km, az = false }) {
   tum.setAttribute('aria-controls', liste.id); liste.after(tum);
   let acik = false;
   function sigdir() {
-    const sinirPx = 24 * parseFloat(getComputedStyle(document.documentElement).fontSize);
+    /* iki sütunda takvim, soldaki harita ve seçim kartının bittiği yere kadar uzar; tek sütunda 24rem */
+    const rem = parseFloat(getComputedStyle(document.documentElement).fontSize), lr = liste.getBoundingClientRect(), sr = secim.getBoundingClientRect();
+    const yanYana = sr.right < lr.left, sinirPx = yanYana ? Math.max(24 * rem, sr.bottom - lr.top - 64) : 24 * rem;
     let h = 0, n = 0;
     for (const s of secenekler) { const y = s.getBoundingClientRect().height; if (h + y > sinirPx) break; h += y; n++; }   /* kesirli yükseklik: yuvarlama 1 px satır göstermesin */
     const maks = acik ? 'none' : `${(h + 1).toFixed(2)}px`;   /* +1: üst çizgi */
@@ -181,7 +183,7 @@ export async function agKur({ kap, liste, secim, km, az = false }) {
     tum.textContent = acik ? (en() ? 'Show less' : 'Daha az göster') : en() ? `Full calendar (${secenekler.length})` : `Tüm takvim (${secenekler.length})`;
   }
   tum.addEventListener('click', () => { acik = !acik; sigdir(); if (!acik) liste.scrollTop = 0; });
-  sigdir(); new ResizeObserver(() => sigdir()).observe(liste); document.fonts?.ready.then(sigdir);   /* satır yüksekliği yazı tipiyle değişir */
+  sigdir(); const izle = new ResizeObserver(() => sigdir()); izle.observe(liste); izle.observe(secim); document.fonts?.ready.then(sigdir);   /* satır yüksekliği yazı tipiyle değişir */
   let sonSecim = null;
   addEventListener('dil-degisti', () => { listeYaz(); sigdir(); eIst.textContent = en() ? 'Istanbul' : 'İstanbul'; sonSecim?.(); });
   if (en()) listeYaz();

@@ -1,4 +1,4 @@
-# İTÜ UUMK · EUROAVIA AS Istanbul — web sitesi (v9)
+# İTÜ UUMK · EUROAVIA AS Istanbul — web sitesi (v11)
 
 İTÜ Uçak Uzay Mühendisliği Kulübü'nün sitesi: gündem ve etkinlik kayıtları (hesap ya da misafir), son etkinlikler, yazılar,
 kulüp ve EUROAVIA ağı. Türkçe ve İngilizce. Bağımlılık yok: tarayıcı tarafı bağımsız ES modülleri (WebGL gerekmez); sunucu
@@ -75,12 +75,13 @@ veriyor; EUROAVIA'nın bugünkü sitesindeki "1999" gerekçesiz ve EUROAVIA'nın
 ## Araçlar
 
 ```
-node araclar/dogrula.mjs                     # ~1320 sınama, tarayıcısız (açılış yörüngesi, panorama = preset dahil)
+node araclar/dogrula.mjs                     # ~1600 sınama, tarayıcısız (açılış yörüngesi, panorama = preset dahil)
 node araclar/istanbul-insa.mjs [--sina]      # İstanbul panoramasını sahne/istanbul.mjs'ten index.html'e, pul ve kartpostal sembollerini gorseller/semboller.svg'ye yazar
 node araclar/tarihce-insa.mjs [--sina]       # tarihçe şeritlerini veri/tarihce.mjs'ten index.html'e, İngilizcelerini dil/en.mjs'e yazar (kayıt değişince)
 node araclar/harita-insa.mjs                 # Natural Earth 1:50m ülkelerinden veri/harita-ulkeler.mjs'i üretir (kaynak dosya .cekim-gecici altında)
 node araclar/sunucu-sina.mjs                 # 73 sınama: API, güvenlik, kayıt akışları, 404 sayfası (geçici veritabanıyla)
-node araclar/uctan-uca.mjs                   # 35 senaryo, başsız Chrome (sunucu --deneme ile açık olmalı; sınama etkinliklerini önce ve sonra siler)
+node araclar/cekim.mjs <adres> <klasör> 390 844 "js=$(cat araclar/mobil-denetim.js)"   # telefonda taşma, taşan içerik, çakışan metin, < 44 px hedef
+node araclar/uctan-uca.mjs                   # 37 senaryo, başsız Chrome (sunucu --deneme ile açık olmalı; sınama etkinliklerini önce ve sonra siler)
 node araclar/erisilebilirlik.mjs 1440x900    # axe-core
 node araclar/cekim.mjs <adres> <klasör> [g] [y] [adım…]
 node "C:\Users\ayber\Desktop\Custom Yetenekler\ux-yasalari\scripts\ux-yasa-denetimi.mjs" index.html --tablo
@@ -95,7 +96,7 @@ node "C:\Users\ayber\Desktop\Custom Yetenekler\ux-yasalari\scripts\ux-yasa-denet
 | `sahne/ucus.mjs` | Açılıştaki uçak: yörünge, koordineli uçuş yönü, çizim; gökteki küçük kâğıt uçaklar; adın hâl pencereleri |
 | `sahne/istanbul.mjs` | İstanbul panoraması preseti (yapı taşları → bloklar → sahne); yalnız üretim zamanında (`araclar/istanbul-insa.mjs`) çalışır |
 | `sahne/hesap.mjs` | Hesap paneli, etkinlik kartları, misafir formu |
-| `sahne/maket3b.mjs` · `sahne/gpu.mjs` · `sahne/tarih-ikon.mjs` | Kabin ekipleri maketi (tembel three.js) · donanım GPU sınaması · tarihçe karelerinin çizimleri (üretim zamanı) |
+| `sahne/maket3b.mjs` · `sahne/meydan3b.mjs` · `sahne/maket-ortak.mjs` · `sahne/gpu.mjs` · `sahne/tarih-ikon.mjs` | Kabin ekipleri maketi (bölme düğmeleri + bilgi kartı; canlı figürler, apron araçları) · gündem bölümünün havaalanı maketi (iniş-kalkış döngüsü) · ikisinin ortak parçaları (tembel three.js; GPU yoksa `gorseller/kabin-maket-*`, `meydan-*` posterleri) · donanım GPU sınaması · tarihçe ve "Ne yapıyoruz" çizimleri (üretim zamanı) |
 | `sahne/kartpostal.mjs` · `sahne/ayrinti.mjs` | Dönem raporu kartpostallarının ön yüz çizimleri (üretim zamanı) · tarihçe ayrıntı sayfası (ilk tıklamada yüklenir) |
 | `sahne/pano.mjs` · `ag.mjs` · `harita.mjs` · `renk.mjs` | Pano + biniş kartı · EUROAVIA denetleyicisi · harita · palet |
 | `sunucu/` | `sunucu.mjs` (HTTP + statik), `api.mjs`, `vt.mjs` (şema), `guvenlik.mjs`, `posta.mjs`, `ayar.mjs`, `yonet.mjs` |

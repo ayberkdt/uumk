@@ -64,3 +64,42 @@ export const TARIH_IKON = {
     <rect x="27" y="22" width="10" height="20" rx="5" fill="${K}" ${ana}/><path d="M29 28h6M29 32h6M29 36h6" ${ince}/><path d="M24 36q0 10 8 10t8-10M32 46V54M26 54H38" fill="none" ${ana}/>
     <path d="M4 58h4M10 56v4M14 54v8M18 57v2M46 57v2M50 54v8M54 56v4M58 58h2" stroke="${S}" stroke-width="1.4" stroke-linecap="round"/>`),
 };
+
+/* NE YAPIYORUZ çizimleri (64×64, aynı çizgi dili): teknik gezi, seminer, model uçak atölyesi, yazılım eğitimi.
+ * semboller.svg'ye <symbol id="is-…"> olarak yazılır. */
+export const IS_IKON = {
+  /* teknik gezi: hangarda sehpasında jet motoru, baretli üç ziyaretçi, tavanda kiriş */
+  gezi: c(`<rect width="64" height="64" fill="${PA}"/>
+    <path d="M0 14L32 4L64 14" fill="none" ${ana}/><path d="M0 18L32 8L64 18" fill="none" ${ince}/>${[8, 20, 32, 44, 56].map((x) => `<path d="M${x} ${x < 32 ? 11.5 - (x / 32) * 6 : 5.5 + ((x - 32) / 32) * 6}V${x < 32 ? 16 - (x / 32) * 6 : 10 + ((x - 32) / 32) * 6}" ${ince}/>`).join('')}
+    <g transform="translate(25 34)"><rect x="-15" y="-9" width="26" height="18" rx="8" fill="${K}" ${ana}/><ellipse cx="11" cy="0" rx="4" ry="9" fill="${G}" ${ana}/>${[0, 45, 90, 135].map((a) => `<path d="M11 0l${(Math.cos(a / 57.3) * 3.2).toFixed(1)} ${(Math.sin(a / 57.3) * 7.4).toFixed(1)}M11 0l${(-Math.cos(a / 57.3) * 3.2).toFixed(1)} ${(-Math.sin(a / 57.3) * 7.4).toFixed(1)}" ${ince}/>`).join('')}<circle cx="11" cy="0" r="1.6" fill="${M}"/>
+      <path d="M-15-4h-4v8h4" fill="${G}" ${ana}/><rect x="-6" y="-9.5" width="4" height="19" fill="${P}" ${ince}/></g>
+    <path d="M12 44L16 53M36 44L32 53M10 53H40" fill="none" ${ana}/>
+    ${[[46, P], [52, S], [58, K]].map(([x, r]) => kisi(x, 56, r, 1.25) + `<path d="M${x - 2.2} ${56 - 8.6}a2.2 2.2 0 0 1 4.4 0z" fill="${S}" ${ince}/>`).join('')}
+    <rect y="56" width="64" height="8" fill="${G}"/><path d="M0 56H64" ${ana}/><path d="M4 60h10M22 60h10M40 60h10" stroke="${S}" stroke-width="1.2"/>`),
+  /* seminer: perdede kanat profili ve akım çizgileri, kürsüde konuşmacı, ön sırada dinleyiciler */
+  seminer: c(`<rect width="64" height="64" fill="${Z}"/>
+    <rect x="8" y="5" width="40" height="25" fill="${K}" ${ana}/><path d="M8 8H48" ${ince}/>
+    <path d="M14 21q6-7 18-6q8 1 12 4q-8 3-30 2z" fill="${P}" ${ince}/>${[12, 17, 26].map((y) => `<path d="M10 ${y}q12-3 22-2t14 2" fill="none" stroke="${P}" stroke-width="0.6" opacity="0.7"/>`).join('')}
+    <path d="M44 11l3-3" stroke="${R}" stroke-width="1.2"/>
+    ${kisi(55, 40, S, 1.3)}<path d="M50 40h11v10h-11z" fill="${PK}" ${ana}/><path d="M53 40l-2-5" ${ince}/><circle cx="51" cy="34.6" r="1" fill="${M}"/>
+    ${[6, 15, 24, 33, 42].map((x, i) => `<circle cx="${x}" cy="52" r="3.6" fill="${[K, P, G, S, K][i]}" ${ince}/><path d="M${x - 5} 64q0-8 5-8t5 8z" fill="${[P, K, PK, K, R][i]}" ${ince}/>`).join('')}`),
+  /* model uçak atölyesi: tezgâhta balsa model, maket bıçağı ve cetvel; gökte kumandayla uçan model */
+  atolye: c(`<rect width="64" height="64" fill="${PA}"/>${bulut(4, 14, 0.8)}
+    <g transform="translate(44 15) rotate(-12)"><path d="M-12 0L10-1Q13 0 10 1.4L-12 2z" fill="${K}" ${ana}/><path d="M-3-7h6l1 8h-8z" fill="${S}" ${ince}/><path d="M-3 9h6l1-8h-8z" fill="${S}" ${ince}/><path d="M-12 0l-2-5h3l3 5z" fill="${P}" ${ince}/><path d="M11.4-3v7" ${ince}/></g>
+    <path d="M38 22q-6 6-12 10" fill="none" stroke="${M}" stroke-width="0.5" stroke-dasharray="1.5 1.5"/>
+    <rect x="18" y="30" width="10" height="7" rx="1.4" fill="${KO}" ${ana}/><path d="M21 30v-4M25 30v-3" ${ince}/><circle cx="21" cy="33.4" r="1" fill="${S}"/><circle cx="25" cy="33.4" r="1" fill="${S}"/>
+    <rect x="4" y="42" width="56" height="5" fill="${G}" ${ana}/><path d="M8 47v12M56 47v12" ${ana}/>
+    <g transform="translate(22 39)"><path d="M-12 0L12 0L10 2L-12 2z" fill="${K}" ${ince}/><path d="M-4-1L6-1L8 3L-6 3z" fill="${K}" ${ince}/>${[-2, 1, 4].map((x) => `<path d="M${x}-1V3" ${ince}/>`).join('')}</g>
+    <path d="M40 41l12-2" stroke="${M}" stroke-width="1.4"/><path d="M40 41l-3 .6" stroke="${S}" stroke-width="1.6"/><rect x="44" y="42.6" width="12" height="1.6" fill="${S}" ${ince}/>
+    <rect y="59" width="64" height="5" fill="${G}"/><path d="M0 59H64" ${ana}/>`),
+  /* yazılım eğitimi: ekranda ağ örgülü kanat ve renk ölçeği, klavye, kupa */
+  yazilim: c(`<rect width="64" height="64" fill="${Z}"/>
+    <rect x="6" y="6" width="52" height="34" rx="2" fill="${KO}" ${ana}/><rect x="9" y="9" width="46" height="26" fill="#0f0f0f"/>
+    <path d="M13 28L44 15L52 18L22 31z" fill="${P}" stroke="${PA}" stroke-width="0.4"/>${[0.2, 0.4, 0.6, 0.8].map((t) => `<path d="M${13 + 31 * t} ${28 - 13 * t}L${22 + 30 * t} ${31 - 13 * t}" stroke="${PA}" stroke-width="0.4"/>`).join('')}<path d="M17.5 29.5L48 16.5" stroke="${PA}" stroke-width="0.4"/>
+    <path d="M38 19L44 15L52 18L46 21z" fill="${S}" opacity="0.8"/><path d="M28 23L38 19L46 21L36 25z" fill="${R}" opacity="0.55"/>
+    ${[0, 1, 2, 3, 4].map((i) => `<rect x="11" y="${11 + i * 3}" width="3" height="3" fill="${[R, S, K, PA, P][i]}"/>`).join('')}
+    <path d="M28 40v6h8v-6" fill="${G}" ${ince}/><path d="M22 47h20" ${ana}/>
+    <rect x="6" y="50" width="40" height="8" rx="1.4" fill="${K}" ${ana}/>${Array.from({ length: 12 }, (_, i) => `<rect x="${8.4 + i * 3.1}" y="52" width="2.2" height="1.8" fill="${G}"/><rect x="${8.4 + i * 3.1}" y="54.6" width="2.2" height="1.8" fill="${G}"/>`).join('')}
+    <path d="M51 49h7v9q0 2-2 2h-3q-2 0-2-2z" fill="${P}" ${ana}/><path d="M58 51q3 0 3 3t-3 3" fill="none" ${ince}/><path d="M53 46q1-2 0-3M56 46q1-2 0-3" ${ince}/>
+    <rect y="60" width="64" height="4" fill="${G}"/>`),
+};

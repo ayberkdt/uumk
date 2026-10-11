@@ -61,20 +61,22 @@ export const SAYFA = {
   neYapiyoruz: 'What we do',
   fa1: 'Technical trips', fa1p: 'Twice a year: one to maintenance and engine companies in Istanbul (Turkish Technic, myTECHNIC, Turkish Engine Center), one to defence and space companies in Ankara and Eskişehir (Aselsan, TUSAŞ, Roketsan, Havelsan, TÜBİTAK Uzay). We talk one-to-one with engineers, technicians and managers.', fa1s: 'Latest: Pegasus and TUSAŞ (2026), Turkish Technic (2024)',
   fa2: 'Seminars and panels', fa2p: 'We host guests from the defence industry, civil aviation, space technology and astrophysics at the faculty and interview them before the seminar. The 2019 panel “Dört Bir Yandan Havacılık” had guests from TR Motors, Turkish Airlines, ITU and GE Aviation.', fa2s: 'Latest: Turkish Technic workshop, May 2025',
-  fa3: 'Masabaşı and A’dan Z’ye', fa3p: 'In 2020–21 we ran two online series, from space law to helicopters and from aircraft accidents to Formula 1 aerodynamics. The recordings are available as podcasts (Turkish).',
+ 
   fa4: 'Model aircraft workshops', fa4p: 'One workshop each in autumn and spring: we build model aircraft with Turkish Aeronautical Association instructors in the faculty workshop and fly them at the faculty at the end. In 2026 a certified model aircraft and RC course opened with SİVEK.',
   fa5: 'Software training', fa5p: 'We run training in programs used in courses and in industry: MATLAB, SolidWorks, LaTeX, Abaqus, ANSYS.',
-  fa6: 'AESTRO magazine', fa6p: 'Our aerospace magazine; three issues so far (2021, 2022, 2025). The third issue was prepared by 19 volunteer writers over about six months.', fa6b: 'Issues',
-  fa7p: 'As AS Istanbul we take part in symposia, workshops and congresses. We hosted the EMEAC congress in 2003, and EUROAVIA’s 65th anniversary (Lustrum) and EMEAC in Istanbul in 2024.', fa7b: 'Network and calendar',
-  fa8: 'Club life', fa8p: 'At the opening barbecue new and old members meet; the closing barbecue is the board’s last event. The Yeşilköy Aviation Museum visit starts with breakfast, and a member is our guide. Film nights, a game night at the start of term and a table football tournament.',
-  kabinBaslik: 'Cabin teams', kabinGiris: 'After joining, you can work in any cabin team that matches your interests. The club is run by a board elected at the general assembly; the last election was in May 2026.',
+ 
+ 
+ 
+  kabinBaslik: 'Cabin teams', kabinGiris: 'After joining, you can work in a cabin team that matches your interests. The club is run by a board elected at the general assembly; the last election was in May 2026. Tap a compartment in the model to see what that team does.',
+  kabinOnceki: '← Previous', kabinSonraki: 'Next →', kabinKapat: 'Close card',
   kokpit: 'Board', kokpitP: 'The cockpit: runs the club and plans the term’s events.',
   e1: 'Events', e1p: 'Organises seminars, panels, workshops and technical trips, and social meet-ups such as the opening barbecue and film nights.',
   e2: 'R&D', e2p: 'Creates opportunities for members’ technical development; this team also built the club’s 2024 website.',
   e3: 'Sponsorship', e3p: 'Partners with companies so that members can get products, training and services.',
   e4: 'Promotion', e4p: 'Runs the club’s social media; the club’s public face.', e5: 'Design', e5p: 'Designs posters, club merchandise and social media visuals.',
-  ritim: 'Our year', guz: 'Autumn', bahar: 'Spring', y1: 'Opening barbecue', y2: 'Start-of-term game night and table football tournament', y3: 'Model aircraft workshop', y4: 'General assembly and board election', y5: 'Closing barbecue',
-  yilBoyunca: '<b>All year:</b> two technical trips, seminars, the Yeşilköy Aviation Museum visit, film nights and EUROAVIA events.',
+  guz: 'Autumn', bahar: 'Spring', y1: 'Opening barbecue', y2: 'Start-of-term game night and table football tournament', y3: 'Model aircraft workshop', y4: 'General assembly and board election', y5: 'Closing barbecue',
+  yilBoyunca: '<b>All year:</b> two technical trips, seminars, the Yeşilköy Aviation Museum visit that starts with breakfast (a member is our guide), film nights and <a href="#ag">EUROAVIA events</a>. Issues of our magazine AESTRO are in the <a href="#yazilar">Writing</a> section.',
+  y1n: 'New and old members meet', y3n: 'With Turkish Aeronautical Association instructors', y5n: 'The board’s last event',
   tarihce: 'History', tarihceGiris: 'Key moments of the faculty and the club since 1941. Tap an entry to open its details, photos and sources.', ayrintiGez: 'History entries', ayrintiKapat: 'Close the entry', fotoOnceki: 'Previous photo', fotoSonraki: 'Next photo', fotoKapat: 'Close the photo', ayrintiOnceki: 'Previous entry', ayrintiSonraki: 'Next entry', lejFakulte: 'Faculty', lejKulup: 'Club',
   /* tarihce:basla — araclar/tarihce-insa.mjs üretir */
   r1941k: 'ITU · Faculty of Mechanical Engineering', r1941b: 'Roots', r1941: 'Aeronautical engineering began as a branch of the ITU Faculty of Mechanical Engineering and became a department in 1944.',

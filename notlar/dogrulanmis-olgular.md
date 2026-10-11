@@ -183,3 +183,14 @@ Minho = University of Minho (Braga); Forlì-Bologna = Forlì; Kocaeli = İzmit; 
 | 2026-1…4 | Mayıs ve Temmuz 2026 bültenleri (yukarıdaki sırayla) | festival, model uçak atölyesi, kutu oyunu, tişört |
 | 2026-5 | https://www.instagram.com/ituuumk/p/DXzDI6JDebW/ (önceden indirilmiş) | Pegasus hangarı |
 | logo-as-istanbul-beyaz.svg | https://euroavia.eu/wp-content/uploads/ist.svg (notlar/logo-foto-kurulus.md #6) | renk #003366 → #f2f2ef, görüş kutusu çizim sınırına (134 112 756 800) |
+
+## v10 eki — 11 Ekim 2026 akşam
+
+- **İzmir'in statüsü AS olarak gösteriliyor — dayanak kullanıcı beyanı** (Ayberk, 11 Ekim 2026: "izmir AS oldu"). Bu oturumda
+  okunan resmî kaynakların hepsi hâlâ PAS diyor: https://euroavia.eu/lg/izmir/ ("PAS", "Since 2022", Izmir University of Economics),
+  https://blog.euroavia.eu/2026/07/29/fowo-izmir-2026/ ("EUROAVIA PAS İzmir", 29 Temmuz 2026), https://blog.euroavia.eu/2026/03/30/pas-izmir-march-2026-updates/.
+  Statü değişiklikleri AMEAC'ta oylanır; ExMEAC & AMEAC 2026 Dresden'de 20–27 Eylül 2026'da yapıldı (euroavia.eu/events "Previous Events").
+  Kararların yayımlanmış kaydı bulunamadı. euroavia.eu/lg/izmir AS'ye dönünce bu not "doğrulandı" diye güncellenmeli; dönmezse kulüpten teyit istenmeli.
+- "Ne yapıyoruz" dönem akışındaki kısa notlar mevcut metinlerden alındı (yeni olgu yok): "Yeni ve eski üyeler tanışır" ve "Yönetim kurulunun
+  son etkinliği" eski "Kulüp hayatı" metninden (fa8p), "Türk Hava Kurumu eğitmenleriyle" model uçak atölyesi metninden (fa4p).
+- **Güncelleme (11 Ekim 2026, v11):** kullanıcı "PAS kalsın" dedi → İzmir yeniden PAS (resmî sayfayla aynı). Yukarıdaki AS notu geçersiz.

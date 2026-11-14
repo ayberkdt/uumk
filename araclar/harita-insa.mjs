@@ -52,7 +52,7 @@ for (const ozellik of veri.features) {
 const cerceveUye = new Set(GRUPLAR.filter((g) => g[6] >= C.e0 && g[6] <= C.e1 && g[7] >= C.b0 && g[7] <= C.b1).map((g) => NE_AD[g[4]] || g[4]));   /* çerçeve dışı (Lagos) kenarda okla gösterilir */
 const eksik = [...cerceveUye].filter((u) => !ulkeler.some((x) => x[1] === u));
 if (eksik.length) { console.error('Natural Earth\'te bulunamayan üye ülke:', eksik.join(', ')); process.exit(1); }
-const govde = `/* HARİTA ÜLKELERİ — üretildi: araclar/harita-insa.mjs (Natural Earth 1:50m ülkeler, kamu malı). Elle düzenlemeyin.
+const govde = `/* HARİTA ÜLKELERİ — Natural Earth 1:50m ülkeler (kamu malı).
  * ${ulkeler.length} ülke, ${nokta} nokta; [üye mi, ad (NE ADMIN), halkalar]. Halka: 1/${Q}° adımlı tamsayılar, ilk nokta mutlak, sonrakiler fark (x=boylam, y=enlem). */
 export const Q = ${Q};
 export const ULKELER = ${JSON.stringify(ulkeler)};

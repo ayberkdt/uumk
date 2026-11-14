@@ -1,8 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 300" width="640" height="300">
-<!-- Boş gündem çizimi (v13): A1 kapısı kapalı, kayıt bankosu kapalı levhalı, kemerli bariyer çekili, koltukta kedi uyuyor; camın
-     ardında kule (radar döner, tepe lambası yanar), rüzgâr tulumu dalgalanır, yolcu uçağı taksi eder (çakar lambaları), uzakta bir uçak
-     kalkar, bulutlar kayar. Telefonda ortadan 4:3 kırpılır (x 120–520): kapı tabelası, levha, bariyer, kedi ve kule o aralıkta.
-     Hareket azaltmada her şey durur. Renkler site paletinden. -->
+<!-- Boş gündem çizimi -->
 <style>
 .c{stroke:#141414;stroke-width:2;stroke-linejoin:round;stroke-linecap:round}
 .i{stroke:#141414;stroke-width:1.2;stroke-linejoin:round;stroke-linecap:round}

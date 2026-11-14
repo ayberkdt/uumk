@@ -1,4 +1,4 @@
-/* KÜRE MASKESİ — üretildi: araclar/kure-maske.py (Natural Earth 1:50m ülkeler, kamu malı). Elle düzenlemeyin.
+/* KÜRE MASKESİ — Natural Earth 1:50m ülkeler (kamu malı).
  * adım 0.8°, 220 satır; a deniz · b kara · c EUROAVIA grubu olan ülke. Noktalar: deniz 45911, kara 17778, üye ülke 739. */
 export const ADIM = 0.8;
 export const ENLEM0 = -88;

@@ -1,4 +1,4 @@
-/* HESAP — hesap paneli ve gündem kartları (sunucu/api.mjs istemcisi). Ayrıntı: notlar/tasarim.md "Modül notları". */
+/* HESAP — hesap paneli ve gündem kartları (/api istemcisi). */
 import { metin, hataMetni, etkinDil } from '../ceviri.mjs';
 
 const $ = (s, k = document) => k.querySelector(s);

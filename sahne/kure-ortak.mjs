@@ -1,5 +1,4 @@
-/* KÜRE ORTAK — ağ küresinin saf parçaları (three'siz): maske çözümü, küresel koordinat, büyük daire yayı, döndürme ve izdüşüm.
- * three sürümü (kure.mjs) ve 2B yedek (kure2b.mjs) aynı döndürme durumunu ve aynı izdüşümü kullanır; etiketler ikisinde de aynı yere düşer.
+/* KÜRE ORTAK — ağ küresinin saf parçaları : maske çözümü, küresel koordinat, büyük daire yayı, döndürme ve izdüşüm.
  * Eksenler: y yukarı; boylam 0 kameraya (+z) bakar. */
 import { MASKE, ADIM, ENLEM0 } from '../veri/kure-maske.mjs';
 

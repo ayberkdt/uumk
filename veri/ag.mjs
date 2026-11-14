@@ -1,5 +1,4 @@
-/* EUROAVIA AĞI — üretildi: notlar/euroavia-ag.tsv (kaynak https://euroavia.eu/lg/, 10.10.2026; koordinatlar Wikipedia API).
- * Elle düzenleme: önce TSV, sonra bu dosya; araclar/dogrula.mjs ikisini karşılaştırır. Sayılar (grup, ülke, mesafe) buradan hesaplanır. */
+/* EUROAVIA AĞI — kaynak https://euroavia.eu/lg/ (10.10.2026; koordinatlar Wikipedia API). Sayılar (grup, ülke, mesafe) buradan hesaplanır. */
 
 /** [kod, tür, ad (EUROAVIA yazımı), Türkçe ad, ülke (EN), ülke (TR), enlem, boylam] */
 export const GRUPLAR = [

@@ -552,50 +552,22 @@ const SENARYO = {
     }
     console.log('      ' + sonuc.join(' · '));
   },
-  async 'kabin maketi: kart hep açık, tur kendiliğinden ilerler; seçince ya da durdurunca durur, ⏸ yeniden başlatır; başvuru düğmesi üye alım formuna; WebGL yoksa poster, yazılımsal çizicide 1x piksel canlı sahne; masaüstünde kart sahnenin sol altında; WebGL ile tuvale tıklayınca bölme seçilir; telefonda 4:3 sahne, kart altta, taşma yok'(s) {
-    const secili = `[...document.querySelectorAll('.kabin__kart')].findIndex((k) => k.hasAttribute('data-secili'))`;
-    await s.git('./?webgl=0', 1440, 900);
-    await kosulBekle(s, `!!document.querySelector('#maket') && !!document.querySelector('.maket__imler > li').style.getPropertyValue('--x')`, 8000);   /* site.mjs bağlandı */
-    await s.js(`document.querySelector('#maket').scrollIntoView({ block: 'center', behavior: 'instant' })`);
-    const poster = await kosulBekle(s, `(() => { const i = document.querySelector('.maket__poster'); return i.complete && i.naturalWidth > 0; })()`, 6000);
-    const a = await s.js(`({ n: document.querySelectorAll('.maket__im').length, kartAcik: !document.querySelector('#kabin').hidden && getComputedStyle(document.querySelector('.kabin__kart[data-secili]')).visibility === 'visible', ilk: ${secili}, cta: document.querySelector('.kabin__basvur').textContent, href: document.querySelector('.kabin__basvur').href, cizici: document.querySelector('#maket').dataset.cizici || 'yok', posterOp: getComputedStyle(document.querySelector('.maket__poster')).opacity, hedef: Math.min(...[...document.querySelectorAll('.maket__im')].map((b) => b.getBoundingClientRect().height)), icerde: [...document.querySelectorAll('.maket__im')].every((b) => { const r = b.getBoundingClientRect(), k = document.querySelector('.maket__sahne').getBoundingClientRect(); return r.left >= k.left && r.right <= k.right && r.top >= k.top && r.bottom <= k.bottom; }), tur: document.querySelector('#maket').hasAttribute('data-tur'), yonlendirme: /bölmeye basınca/.test(document.querySelector('.kabin-kap').textContent) })`);
-    const ilerledi = await kosulBekle(s, `${secili} === 1`, 9000);
-    await s.js(`document.querySelectorAll('.maket__im')[2].click()`); await bekle(200);
-    const k1 = await s.js(`({ i: ${secili}, ad: document.querySelector('.kabin__kart[data-secili] h4').textContent, basili: document.querySelectorAll('.maket__im')[2].getAttribute('aria-pressed'), durdu: document.querySelector('.kabin__tur').getAttribute('aria-pressed'), tur: document.querySelector('#maket').hasAttribute('data-tur'), cta: document.querySelector('.kabin__basvur').textContent })`);
-    await s.js(`document.querySelector('[data-kabin="1"]').click()`); await bekle(100);
-    const k2 = await s.js(`document.querySelector('.kabin__kart[data-secili] h4').textContent`);
-    await bekle(7600);
-    const k3 = await s.js(`document.querySelector('.kabin__kart[data-secili] h4').textContent`);
-    await s.js(`document.querySelector('.kabin__tur').click()`); await bekle(100);
-    const k4 = await s.js(`({ durdu: document.querySelector('.kabin__tur').getAttribute('aria-pressed'), tur: document.querySelector('#maket').hasAttribute('data-tur') })`);
-    /* yazılımsal çizici (başsız Chrome, SwiftShader): ?webgl olmadan da 3B kurulur, 1x piksel; kart sahnenin sol altında, uçağın kuyruğuna değmez */
+  async 'kabin ekipleri: düz uçak çizimi yüklenir (three.js ve tuval yok), 6 ekip kartı hep açık, karta gelince çizimde bölmesi yanar ve tersi; "Üye ol" üye alım formuna; telefonda çizim yana kayar, burundan başlar, sayfa taşmaz'(s) {
     await s.git('./', 1440, 900);
-    await kosulBekle(s, `!!document.querySelector('#maket')`, 8000);
-    await s.js(`document.querySelector('#maket').scrollIntoView({ block: 'center', behavior: 'instant' })`);
-    const yazilim = await kosulBekle(s, `document.querySelector('#maket').dataset.cizici === '3b'`, 20000);
-    const y = await s.js(`(() => { const t = document.querySelector('#maket-tuval'), sa = document.querySelector('.maket__sahne').getBoundingClientRect(), ka = document.querySelector('#kabin').getBoundingClientRect(); return { kok: document.documentElement.dataset.cizici, px: t.width === Math.round(t.clientWidth), icerde: ka.left >= sa.left && ka.bottom <= sa.bottom && ka.right < sa.left + sa.width * 0.4 && ka.top > sa.top + sa.height * 0.4 }; })()`);
-    /* yazılımsal GPU'da maketi zorla kur (?webgl=1, hareket azaltma): tur kapalı başlar; tuvalde bir bölmeye tıklayınca o ekip seçilir */
-    await s.git('./?webgl=1&az=1', 1440, 900);
-    await kosulBekle(s, `!!document.querySelector('#maket')`, 8000);
-    await s.js(`document.querySelector('#maket').scrollIntoView({ block: 'center', behavior: 'instant' })`);
-    const kuruldu = await kosulBekle(s, `document.querySelector('#maket').dataset.cizici === '3b'`, 20000);
-    let b = {};
-    if (kuruldu) {
-      await bekle(400);
-      b = await s.js(`(() => { const ilkTur = document.querySelector('.kabin__tur').getAttribute('aria-pressed'); const imler = [...document.querySelectorAll('.maket__imler > li')], c = document.querySelector('#maket-tuval').getBoundingClientRect(), m = imler.map((li) => { const r = li.getBoundingClientRect(); return [r.left, r.top]; });
-        /* 5. bölmenin tabanı: numaranın altında, kabin tabanı yüksekliğinde */
-        const [x, y] = m[4]; document.querySelector('#maket-tuval').dispatchEvent(new MouseEvent('click', { clientX: x, clientY: y + c.height * 0.12, bubbles: true }));
-        return { ilkTur, imKonum: imler.every((e) => /translate\\(/.test(e.style.transform)), secili: ${secili} }; })()`);
-    }
+    await kosulBekle(s, `!!document.querySelector('.kabin-plan img')`, 6000);
+    await s.js(`document.querySelector('.kabin-plan').scrollIntoView({ block: 'center', behavior: 'instant' })`);
+    const yuklu = await kosulBekle(s, `(() => { const i = document.querySelector('.kabin-plan img'); return i.complete && i.naturalWidth > 0; })()`, 6000);
+    const a = await s.js(`(() => { const r = (e) => e.getBoundingClientRect(), img = r(document.querySelector('.kabin-plan img')), li = [...document.querySelectorAll('.kabin-plan li')].map(r), kart = [...document.querySelectorAll('.ekip')];
+      return { bolme: li.length, icerde: li.every((b) => b.left >= img.left && b.right <= img.right + 1 && b.top >= img.top && b.bottom <= img.bottom), sira: li.every((b, i) => i === 0 || b.left < li[i - 1].left), kart: kart.length, gorunur: kart.every((k) => getComputedStyle(k).visibility === 'visible' && r(k).height > 60), cta: document.querySelector('.kabin-kap__alt a').href, tuval: !!document.querySelector('#kulup canvas, #maket'), three: performance.getEntriesByType('resource').some((e) => /three|maket/.test(e.name)) }; })()`);
+    const yanar = async (sec, hedef) => { const m = await s.js(`(() => { const e = document.querySelector('${sec}'); e.scrollIntoView({ block: 'center', behavior: 'instant' }); const b = e.getBoundingClientRect(); return [Math.round(b.left + b.width / 2), Math.round(b.top + b.height / 2)]; })()`); await bekle(100); for (const d of [0, 2]) await s.cdp('Input.dispatchMouseEvent', { type: 'mouseMoved', x: m[0] + d, y: m[1] }); await bekle(300); return s.js(`(() => { const c = getComputedStyle(document.querySelector('${hedef}')); return c.outlineColor + ' ' + c.outlineStyle; })()`); };
+    const kartla = await yanar('.ekip:nth-child(3)', '.kabin-plan li:nth-child(3)'), baska = await s.js(`getComputedStyle(document.querySelector('.kabin-plan li:nth-child(4)')).outlineColor`);
+    const bolmeyle = await yanar('.kabin-plan li:nth-child(5)', '.ekip:nth-child(5)');
     await s.git('./', 390, 844);
-    await kosulBekle(s, `!!document.querySelector('#maket') && !!document.querySelector('.maket__imler > li').style.getPropertyValue('--x')`, 8000);
-    await s.js(`document.querySelector('#maket').scrollIntoView({ behavior: 'instant' })`); await bekle(400);
-    const t = await s.js(`(() => { const sa = document.querySelector('.maket__sahne').getBoundingClientRect(), ka = document.querySelector('#kabin').getBoundingClientRect(); return { sw: document.documentElement.scrollWidth, gen: Math.round(sa.width), oran: +(sa.width / sa.height).toFixed(2), altta: ka.top >= sa.bottom - 1, hedef: Math.min(...[...document.querySelectorAll('.maket__im'), ...document.querySelectorAll('.kabin__ok')].map((x) => x.getBoundingClientRect().height)) }; })()`);
-    if (!poster || a.n !== 6 || !a.kartAcik || a.ilk !== 0 || a.cta !== 'Üye ol' || !a.href.startsWith('https://forms.gle/') || a.cizici !== 'yok' || a.posterOp !== '1' || a.hedef < 44 || !a.icerde || !a.tur || a.yonlendirme || !ilerledi
-      || k1.i !== 2 || k1.ad !== 'Ar-Ge' || k1.basili !== 'true' || k1.durdu !== 'true' || k1.tur || k1.cta !== 'Bu ekibe başvur' || k2 !== 'Sponsorluk' || k3 !== 'Sponsorluk' || k4.durdu !== 'false' || !k4.tur
-      || !yazilim || y.kok !== 'yazilim' || !y.px || !y.icerde
-      || !kuruldu || b.ilkTur !== 'true' || !b.imKonum || b.secili !== 4 || t.sw > 390 || Math.abs(t.oran - 1.33) > 0.02 || !t.altta || t.hedef < 44) throw new Error(JSON.stringify({ poster, a, ilerledi, k1, k2, k3, k4, yazilim, y, kuruldu, b, t }));
-    console.log(`      kabin (?webgl=0 poster): kart açık (1/6 Yönetim kurulu, "Üye ol" → üye alım formu), yönlendirme cümlesi yok · tur 7 sn'de Etkinlik'e geçti · Ar-Ge seçilince tur durdu, düğme "Bu ekibe başvur" · sonraki → Sponsorluk, 7,6 sn sonra hâlâ Sponsorluk · ⏸ turu yeniden başlattı · yazılımsal çizicide 3B kuruldu (1x piksel), kart sahnenin sol altında · ?webgl=1&az=1: tur kapalı, tuvalde 5. bölme seçildi · telefonda ${t.gen} px 4:3 sahne, kart altta, hedefler ≥ 44 px, taşma yok`);
+    await kosulBekle(s, `!!document.querySelector('.kabin-plan img')`, 6000);
+    await s.js(`document.querySelector('.kabin-plan').scrollIntoView({ block: 'center', behavior: 'instant' })`); await bekle(300);
+    const t = await s.js(`(() => { const p = document.querySelector('.kabin-plan'), b1 = document.querySelector('.kabin-plan li:nth-child(1)').getBoundingClientRect(); return { sw: document.documentElement.scrollWidth, kayar: p.scrollWidth > p.clientWidth + 100, burun: b1.left >= 0 && b1.right <= innerWidth, tekSutun: new Set([...document.querySelectorAll('.ekip')].map((k) => Math.round(k.getBoundingClientRect().left))).size === 1 }; })()`);
+    if (!yuklu || a.bolme !== 6 || !a.icerde || !a.sira || a.kart !== 6 || !a.gorunur || !a.cta.startsWith('https://forms.gle/') || a.tuval || a.three || !/242, 194, 0/.test(kartla) || /242, 194, 0/.test(baska) || !/20, 20, 20\) solid/.test(bolmeyle) || t.sw > 390 || !t.kayar || !t.burun || !t.tekSutun) throw new Error(JSON.stringify({ yuklu, a, kartla, baska, bolmeyle, t }));
+    console.log(`      kabin: çizim yüklendi, three.js/tuval yok · 6 bölme çizimin içinde, burundan kuyruğa · 6 kart açık · 3. karta gelince 3. bölme sarı çerçeve (4. sönük) · 5. bölmeye gelince 5. kart çerçeveli · telefonda çizim yana kayar, 1. bölme ekranda, sayfa ${t.sw} px`);
   },
   async 'boş gündem: kayıt kapalıyken çizimli kapı kartı (kapalı banko, uyuyan kedi, taksi eden uçak) ve Instagram bağlantısı; 3B meydan bandı yok'(s) {
     /* sunucu yokmuş gibi: /api/durum 503 döner (yayındaki statik barındırma) */
@@ -613,7 +585,7 @@ const SENARYO = {
     if (!hazir || g.meydan || g.baslik !== 'Etkinlik kaydı bu sitede şu an kapalı' || !String(g.link).includes('instagram.com/ituuumk') || g.resim !== 'gorseller/kapi.svg' || g.oran < 0.7) throw new Error(JSON.stringify({ hazir, g }));
     console.log(`      boş gündem: "${g.baslik}" kartı, kapı çizimi yüklendi, Instagram bağlantısı · kart yüksekliği duyurular sütununun ${Math.round(g.oran * 100)}%'i · telefonda çizim kart genişliğinde (${m.gen} px, 4:3) · meydan bandı yok`);
   },
-  async 'Biz kimiz: künye yok, kimlik paneli (iki logo, aralarında uçak), "Tarihçemizi keşfet" tarihçeye indirir, başlığın çizgisi uzar, odak başlıkta'(s) {
+  async 'Biz kimiz: künye yok, kimlik paneli pasaport (iki logo, damgalar, uçak), "Tarihçeye git" tarihçeye indirir, başlığın çizgisi uzar, odak başlıkta'(s) {
     await s.git('./', 1440, 900);
     await kosulBekle(s, `!!document.querySelector('#tarihce-git')`, 6000);
     await s.js(`document.querySelector('#kulup').scrollIntoView({ block: 'start', behavior: 'instant' })`);
@@ -625,15 +597,19 @@ const SENARYO = {
     if (!ucus || k.kunye || k.donem || k.logolar !== 2 || k.kutular !== 5 || !indi || son.hash !== '#tarihce' || parseFloat(son.cizgi) < 40) throw new Error(JSON.stringify({ ucus, k, indi, son }));
     console.log(`      Biz kimiz: künye ve Güz/Bahar akışı yok, 5 kutu, 2 logo, uçak uçtu · düğme tarihçeye indirdi (${son.hash}), çizgi ${son.cizgi}, odak başlıkta`);
   },
-  async 'kulüp kartı: askılı kart; yazdıkça ad, baş harfler, okul numarası ve barkod dolar; imleçle eğilir, bırakınca sallanır'(s) {
+  async 'kulüp kartı: biniş kartı; yazdıkça ad, baş harfler, okul numarası ve barkod dolar; koçan sağda (telefonda altta); doğrulanınca damga "Doğrulandı"'(s) {
     await s.git('./', 1440, 900);
     await s.js(`document.querySelector('#hesap').scrollIntoView({ block: 'start', behavior: 'instant' }); document.querySelector('#sekme-kayit').click()`);
     await kosulBekle(s, `!!document.querySelector('#kulup-karti [data-kart="barkod"] rect')`, 6000);   /* sahne/kart.mjs yüklendi */
     await s.js(`(() => { const f = document.querySelector('#kayit-form'), y = (n, v) => { const i = f.querySelector('[name=' + n + ']'); i.value = v; i.dispatchEvent(new Event('input', { bubbles: true })); }; y('ad', 'Deneme'); y('soyad', 'İlkay'); y('okul_no', '110220031'); })()`); await bekle(100);
-    const k = await s.js(`(() => { const k = document.querySelector('#kulup-karti'), a = (n) => k.querySelector('[data-kart="' + n + '"]'); return { durum: k.dataset.durum, ad: a('ad').textContent, bas: a('bas').textContent, kod: a('kod').textContent, cubuk: a('barkod').querySelectorAll('rect').length, aski: getComputedStyle(k.querySelector('.kart__aski')).height }; })()`);
-    const e = await s.js(`(() => { const k = document.querySelector('#kulup-karti'), r = k.getBoundingClientRect(); k.dispatchEvent(new PointerEvent('pointermove', { pointerType: 'mouse', clientX: r.right - 10, clientY: r.top + 40, bubbles: true })); const ry = k.style.getPropertyValue('--ry'); k.dispatchEvent(new PointerEvent('pointerleave', { pointerType: 'mouse' })); return { ry, salin: k.classList.contains('salin'), sifir: k.style.getPropertyValue('--ry') === '' }; })()`);
-    if (k.durum !== 'canli' || k.ad !== 'Deneme İlkay' || k.bas !== 'Dİ' || k.kod !== 'UUMK-0031' || k.cubuk < 2 * k.kod.length || parseFloat(k.aski) < 40 || parseFloat(e.ry) < 4 || !e.salin || !e.sifir) throw new Error(JSON.stringify({ k, e }));
-    console.log(`      kulüp kartı: "${k.ad}", baş harfler ${k.bas}, ${k.kod}, barkodda ${k.cubuk} çubuk · imleç sağda → eğim ${e.ry}, bırakınca sallandı`);
+    const k = await s.js(`(() => { const k = document.querySelector('#kulup-karti'), a = (n) => k.querySelector('[data-kart="' + n + '"]'), ana = k.querySelector('.kart__ana').getBoundingClientRect(), kc = k.querySelector('.kart__kocan').getBoundingClientRect(); return { durum: k.dataset.durum, ad: a('ad').textContent, bas: a('bas').textContent, kod: a('kod').textContent, cubuk: a('barkod').querySelectorAll('rect').length, sagda: kc.left >= ana.right - 1 && Math.abs(kc.top - ana.top) < 2, aski: !!k.querySelector('.kart__aski') }; })()`);
+    await s.js(`dispatchEvent(new CustomEvent('hesap-degisti', { detail: { ad: 'Deneme', soyad: 'İlkay', okul_no: '110220031', eposta: 'deneme@itu.edu.tr', dogrulandi: true } }))`); await bekle(100);
+    const d = await s.js(`(() => { const k = document.querySelector('#kulup-karti'); return { dogru: k.hasAttribute('data-dogrulandi'), damga: k.querySelector('[data-kart="durum"]').textContent, eposta: k.querySelector('[data-kart="eposta"]').textContent }; })()`);
+    await s.git('./', 390, 844);
+    await s.js(`document.querySelector('#hesap').scrollIntoView({ block: 'start', behavior: 'instant' })`); await bekle(300);
+    const m = await s.js(`(() => { const k = document.querySelector('#kulup-karti'), ana = k.querySelector('.kart__ana').getBoundingClientRect(), kc = k.querySelector('.kart__kocan').getBoundingClientRect(); return { altta: kc.top >= ana.bottom - 1, sw: document.documentElement.scrollWidth }; })()`);
+    if (k.durum !== 'canli' || k.ad !== 'Deneme İlkay' || k.bas !== 'Dİ' || k.kod !== 'UUMK-0031' || k.cubuk < 2 * k.kod.length || !k.sagda || k.aski || !d.dogru || d.damga !== 'Doğrulandı' || d.eposta !== 'deneme@itu.edu.tr' || !m.altta || m.sw > 390) throw new Error(JSON.stringify({ k, d, m }));
+    console.log(`      kulüp kartı: "${k.ad}", baş harfler ${k.bas}, ${k.kod}, barkodda ${k.cubuk} çubuk, koçan sağda · doğrulanınca damga "${d.damga}" · telefonda koçan altta, sayfa ${m.sw} px`);
   },
   async 'üst şerit: bayraklı dil anahtarı etkin dili gösterir; 320–414 px telefonda menü ve hesap düğmesi ekranda, hedefler ≥ 44 px'(s) {
     await s.git('./', 1440, 900);
@@ -718,7 +694,7 @@ const SENARYO = {
     const a = await s.js(durum);
     await s.js(`document.querySelector('.ayrinti__yon[data-yon="1"]').click()`); const b = await s.js(durum);
     await s.js(`document.querySelector('#ayrinti').dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowLeft', bubbles: true }))`); const c = await s.js(durum);
-    await s.js(`document.querySelector('#dil-dugme').click()`); await kosulBekle(s, `document.documentElement.lang === 'en' && document.querySelector('#ayrinti h2').textContent === 'First time as hosts'`, 5000);
+    await s.js(`document.querySelector('#dil-dugme').click()`); await kosulBekle(s, `document.documentElement.lang === 'en' && document.querySelector('#ayrinti .ayrinti__kaynak-bas').textContent === 'Sources'`, 5000);
     const d = await s.js(durum);
     await s.js(`document.querySelector('.ayrinti__kapat').click()`); await kosulBekle(s, `!document.querySelector('#ayrinti').open && location.hash === ''`, 3000);
     const e = await s.js(durum);
@@ -729,7 +705,7 @@ const SENARYO = {
     const perde = await s.js(`(() => { const d = document.querySelector('#ayrinti'), r = d.getBoundingClientRect(); const tik = (x, y) => d.dispatchEvent(new MouseEvent('click', { bubbles: true, clientX: x, clientY: y })); tik(r.right - 4, r.top + 60); const kenar = d.open; tik(4, 4); return { kenar, dis: d.open }; })()`);
     if (!perde.kenar || perde.dis) throw new Error('perde: ' + JSON.stringify(perde));
     if (!a.acik || a.yil !== '2003' || a.madde !== 7 || !a.kaynak.length || !/^#tarih-2003$/.test(a.adres) || b.yil !== '2012' || b.adres !== '#tarih-2012' || c.yil !== '2003'
-      || d.h2 !== 'First time as hosts' || e.acik || e.adres !== '' || !/serit__ac/.test(e.odak) || !f.geri || f.sira !== '1 / ' + (await s.js(`document.querySelectorAll('.rota__nokta').length`))) throw new Error(JSON.stringify({ a, b, c, d, e, f }));
+      || d.h2 !== 'EMEAC 2003' || (await s.js(`document.querySelector('#ayrinti .ayrinti__kaynak-bas').textContent`)) !== 'Sources' || e.acik || e.adres !== '' || !/serit__ac/.test(e.odak) || !f.geri || f.sira !== '1 / ' + (await s.js(`document.querySelectorAll('.rota__nokta').length`))) throw new Error(JSON.stringify({ a, b, c, d, e, f }));
     /* doğrudan bağlantı */
     await s.git('./?az=1#tarih-2024', 390, 844);
     await kosulBekle(s, `document.querySelector('#ayrinti').open`, 5000);

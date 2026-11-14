@@ -80,7 +80,7 @@ for i in range(nsatir):
 metin = '|'.join(satirlar)
 cikti = os.path.join(KOK, 'veri', 'kure-maske.mjs')
 with open(cikti, 'w', encoding='utf-8', newline='\n') as o:
-    o.write('/* KÜRE MASKESİ — üretildi: araclar/kure-maske.py (Natural Earth 1:50m ülkeler, kamu malı). Elle düzenlemeyin.\n')
+    o.write('/* KÜRE MASKESİ — Natural Earth 1:50m ülkeler (kamu malı).\n')
     o.write(f' * adım {ADIM}°, {nsatir} satır; a deniz · b kara · c EUROAVIA grubu olan ülke. Noktalar: deniz {toplam["a"]}, kara {toplam["b"]}, üye ülke {toplam["c"]}. */\n')
     o.write(f'export const ADIM = {ADIM};\nexport const ENLEM0 = -88;\nexport const MASKE = \'{metin}\';\n')
 print(f'{cikti}: {len(metin)} karakter, kara {toplam["b"]}, üye {toplam["c"]}, deniz {toplam["a"]}')

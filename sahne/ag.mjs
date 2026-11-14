@@ -1,6 +1,5 @@
 /* AĞ — EUROAVIA haritasının denetleyicisi: harita (sahne/harita.mjs), seçim listesi (listbox), üzerine gelme etiketi,
- * seçim paneli ve mesafe sayacı. Sayılar veri/ag.mjs'ten hesaplanır; HTML'deki sayılar JS'siz okuma içindir ve dogrula.mjs ile
- * eşitliği sınanır. */
+ * seçim paneli ve mesafe sayacı. Sayılar veri/ag.mjs'ten hesaplanır; HTML'deki sayılar JS'siz okuma içindir. */
 import { GRUPLAR, TAKVIM, TURLER, MERKEZ, grup, mesafe, mesafeKoord } from '../veri/ag.mjs';
 import { haritaKur } from './harita.mjs';
 import { etkinDil } from '../ceviri.mjs';
@@ -190,6 +189,6 @@ export async function agKur({ kap, liste, secim, km, az = false }) {
 
   /* başlangıç: İstanbul seçili; sayılar HTML'deki ile aynı */
   grupSec(merkez);
-  if (new URLSearchParams(location.search).has('olc')) globalThis.__ag = { cizici };   /* sınama kancası */
+  if (new URLSearchParams(location.search).has('olc')) globalThis.__ag = { cizici };
   return { gorunur: (b) => cizici.gorunur(b), olaySec, grupSec };
 }

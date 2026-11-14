@@ -1,4 +1,4 @@
-# İTÜ UUMK · EUROAVIA AS Istanbul — web sitesi (v13)
+# İTÜ UUMK · EUROAVIA AS Istanbul — web sitesi (v15)
 
 İTÜ Uçak Uzay Mühendisliği Kulübü'nün sitesi: gündem ve etkinlik kayıtları (hesap ya da misafir), son etkinlikler, yazılar,
 kulüp ve EUROAVIA ağı. Türkçe ve İngilizce. Bağımlılık yok: tarayıcı tarafı bağımsız ES modülleri (WebGL gerekmez); sunucu
@@ -57,13 +57,13 @@ site açılır, kayıt bölümü "sunucuya ulaşılamıyor" der ve yazılar `ver
 | Bölüm | İçerik |
 |---|---|
 | Açılış | Sabit ana başlık; ad kendiliğinden döner (İTÜ Uçak Uzay Mühendisliği Kulübü → AS Istanbul/EUROAVIA → İTÜ UUMK), kâğıt uçak yörüngesini zamanla uçar, blok blok kurulan İstanbul panoraması; altında deniz sürer ve bizim kıyının rıhtımında biter (vapur kaydırdıkça karşıya geçer), "Gündem" + "Üye ol" |
-| 01 Biz kimiz | Kısa giriş + "Tarihçemizi keşfet" (düğmenin uçağı kalkar, sayfa tarihçeye iner, başlığın çizgisi uzar) ve kimlik paneli (iki logonun üstünde İTÜ UUMK'dan AS Istanbul'a takla atarak uçan uçak, izi arkasından çizilir); "Ne yapıyoruz" 5 resimli kutu (teknik gezi, yazılım, seminer, atölye, kulüp hayatı); kabin ekipleri 2,5B kesit maketinde (three.js; donanım GPU'su yoksa yazılımsal çizicide 1x piksel ~15 kare/sn, WebGL hiç yoksa poster; uçak yavaşça salınır ve hep bütün, kâğıda gölgesiyle oturur; numaralar duvarın üstünde; zemin koyu beton apron (taksi çizgisi, park alanı sınırı, servis yolu, A1), sahne masaüstünde ekran genişliğinde (2,2:1), telefonda 4:3; kart ≥ 1360 px'te sahnenin sol altında, daha dar ekranda altta; tur 7 sn'de bir sonraki ekibe geçer, süre çubuğunun ucunda uçak; "Bu ekibe başvur" üye alım formuna); koyu bantta resimli "uçuş şeritleri" tarihçesi (15 kayıt, 1941–2026; ayrıntı sayfası, `#tarih-<kimlik>` bağlantısı, uçakla ilerleyen yıl rozeti) |
+| 01 Biz kimiz | Kısa giriş + "Tarihçeye git" (düğmenin uçağı kalkar, sayfa tarihçeye iner, başlığın çizgisi uzar) ve kimlik paneli pasaport olarak (görününce kapak açılır, İTÜ damgası "04.01.2001" basılır, uçak EUROAVIA sayfasına uçar ve vize damgası "VARŞOVA 07.05.2001" basılır; hareket azaltmada ve JS'siz açık ve damgalı); "Ne yapıyoruz" 5 resimli kutu (teknik gezi, yazılım, seminer, atölye, kulüp hayatı); kabin ekipleri düz yan kesit uçak çiziminde (`gorseller/kabin.svg`, `araclar/kabin-cizim.mjs` üretir: kokpitte pilot ve planlayan yönetici, etkinlikte dinleyiciler ve koltukta uyuyan kedi, Ar-Ge'de süzülen dron, sponsorlukta el sıkışma ve koliler, tanıtımda halka ışık, tasarımda şövale; bulutlar geçer) + altında 6 ekip kartı hep açık; karta gelince çizimde bölmesi sarı çerçeveyle yanar, bölmeye gelince kartı (CSS :has, JS yok); telefonda çizim yana kayar ve burundan başlar; tek "Üye ol"; koyu bantta resimli "uçuş şeritleri" tarihçesi (15 kayıt, 1941–2026; ayrıntı sayfası, `#tarih-<kimlik>` bağlantısı, uçakla ilerleyen yıl rozeti) |
 | 02 Gündem | Kayda açık etkinlikler (sunucudan; ilk 4, kalanı "göster"; kayıt kapalıyken ya da etkinlik yokken çizimli kapı kartı `gorseller/kapi.svg`: kapalı A1 kapısı, uyuyan kedi, kule ve dönen radar, taksi eden uçak; telefonda ortadan 4:3 kırpılır) + duyurular (2026–27 programı, yeni öğrenciler, EUROAVIA Ideathon 2026) |
 | 03 Son etkinlikler | Kalkış panosu (10 etkinlik) + biniş kartı (rota, tür, uçuş kodu, damga, fotoğraf, dile göre tarih) + 3 fotoğraf |
-| 04 Yazılar | AESTRO rafı (3 sayının gerçek kapağı, okuma bağlantılarıyla) + AS Istanbul'un 6 EUROAVIA dönem raporu kartpostal olarak (her raporun içeriğinden bir ön yüz çizimi, pul, posta damgası); yönetimden eklenen yazılar sitenin kendi okuyucusunda açılır |
+| 04 Yazılar | AESTRO: solda dergi adı ve hikâyesi, sağda 3 sayının gerçek kapağı koltuk sırtı ceplerinde (baş örtüsü, mandallı tepsi, file cep; üstüne gelince kapak cepten yükselir; okuma bağlantılarıyla) + AS Istanbul'un 6 EUROAVIA dönem raporu kartpostal olarak (her raporun içeriğinden bir ön yüz çizimi, pul, posta damgası); yönetimden eklenen yazılar sitenin kendi okuyucusunda açılır |
 | 05 EUROAVIA | Koyu "gece haritası": 40 grup / 15 ülke, İstanbul'dan sarı rotalar ve uçaklar, seçimde odak + km sayacı; ağın 2025–26 takvimi (5 tam satır + "Tüm takvim", geçmişler soluk) |
-| 06 Sponsorluk | Doğrulanmış rakam şeridi, fotoğraflı 4 iş birliği biçimi (geçmiş örnekleriyle), birlikte çalışılan kurumlar (yalnız ad), "E-posta yaz" (konu satırı hazır) + "Adresi kopyala" |
-| 07 Hesap | "Check-in" paneli, parola göster/gizle, askılı "Kulüp kartın" (forma yazdıkça ad, baş harfler ve barkod dolar; imleci izleyerek eğilir, bırakınca sallanır), giriş / hesap aç / parola / profil, kayıtlarım, hesabı sil |
+| 06 Sponsorluk | Doğrulanmış olgular 4 satırlık defterde, uçak postası zarfında iletişim (pul, "Par avion"; "E-posta yaz" konu satırı hazır + "Adresi kopyala"), fotoğraflı 4 iş birliği biçimi (geçmiş örnekleriyle; simge ve numara yok), birlikte çalışılan kurumlar bagaj etiketlerinde (yalnız ad) |
+| 07 Hesap | "Check-in" paneli, parola göster/gizle, "Kulüp kartın" biniş kartı olarak (kalkış İTÜ → varış Gündem; forma yazdıkça yolcu adı, okul numarası, koçanda baş harfler, kod ve barkod dolar; durum damgası, doğrulanınca "Doğrulandı" damgası basılır; telefonda koçan altta), giriş / hesap aç / parola / profil, kayıtlarım, hesabı sil |
 
 ## Kaynak disiplini
 
@@ -79,6 +79,7 @@ node araclar/dogrula.mjs                     # ~1600 sınama, tarayıcısız (a�
 node araclar/istanbul-insa.mjs [--sina]      # İstanbul panoramasını sahne/istanbul.mjs'ten index.html'e, pul ve kartpostal sembollerini gorseller/semboller.svg'ye yazar
 node araclar/tarihce-insa.mjs [--sina]       # tarihçe şeritlerini veri/tarihce.mjs'ten index.html'e, İngilizcelerini dil/en.mjs'e yazar (kayıt değişince)
 node araclar/harita-insa.mjs                 # Natural Earth 1:50m ülkelerinden veri/harita-ulkeler.mjs'i üretir (kaynak dosya .cekim-gecici altında)
+node araclar/kabin-cizim.mjs                 # kabin ekipleri çizimini (gorseller/kabin.svg) üretir; bölme oranları site.css .kabin-plan ile aynı (dogrula sınar)
 node araclar/sunucu-sina.mjs                 # 73 sınama: API, güvenlik, kayıt akışları, 404 sayfası (geçici veritabanıyla)
 node araclar/cekim.mjs <adres> <klasör> 390 844 "js=$(cat araclar/mobil-denetim.js)"   # telefonda taşma, taşan içerik, çakışan metin, < 44 px hedef
 node araclar/uctan-uca.mjs                   # 37 senaryo, başsız Chrome (sunucu --deneme ile açık olmalı; sınama etkinliklerini önce ve sonra siler)
@@ -96,9 +97,9 @@ node "C:\Users\ayber\Desktop\Custom Yetenekler\ux-yasalari\scripts\ux-yasa-denet
 | `sahne/ucus.mjs` | Açılıştaki uçak: yörünge, koordineli uçuş yönü, çizim; gökteki küçük kâğıt uçaklar; adın hâl pencereleri |
 | `sahne/istanbul.mjs` | İstanbul panoraması preseti (yapı taşları → bloklar → sahne); yalnız üretim zamanında (`araclar/istanbul-insa.mjs`) çalışır |
 | `sahne/hesap.mjs` | Hesap paneli, etkinlik kartları, misafir formu |
-| `sahne/biz.mjs` · `sahne/kart.mjs` · `sahne/maket3b.mjs` · `sahne/maket-ortak.mjs` · `sahne/gpu.mjs` · `sahne/tarih-ikon.mjs` | Biz kimiz davranışları: kimlik uçağı, tarihçeye uçuş, kabin turu (bölüme yaklaşınca yüklenir) · kulüp kartının barkodu, eğimi, sallanması (hesap bölümüne yaklaşınca) · kabin ekipleri maketi (canlı figürler, bagaj treni, yakıt aracı) ve ortak parçaları (tembel three.js; donanım GPU'su yoksa yavaş kip, WebGL yoksa `gorseller/kabin-maket-*` posterleri) · donanım GPU sınaması · tarihçe ve "Ne yapıyoruz" çizimleri (üretim zamanı) |
+| `sahne/biz.mjs` · `sahne/kart.mjs` · `sahne/tarih-ikon.mjs` | Biz kimiz davranışları: kimlik uçağı, tarihçeye uçuş (bölüme yaklaşınca yüklenir) · kulüp kartının barkodu (hesap bölümüne yaklaşınca) · tarihçe ve "Ne yapıyoruz" çizimleri (üretim zamanı) |
 | `sahne/kartpostal.mjs` · `sahne/ayrinti.mjs` | Dönem raporu kartpostallarının ön yüz çizimleri (üretim zamanı) · tarihçe ayrıntı sayfası (ilk tıklamada yüklenir) |
-| `sahne/pano.mjs` · `ag.mjs` · `harita.mjs` · `renk.mjs` | Pano + biniş kartı · EUROAVIA denetleyicisi · harita · palet |
+| `sahne/pano.mjs` · `code128.mjs` · `ag.mjs` · `harita.mjs` · `renk.mjs` | Pano + etkinlik penceresi · barkod (pencere açılınca yüklenir) · EUROAVIA denetleyicisi · harita · palet |
 | `sunucu/` | `sunucu.mjs` (HTTP + statik), `api.mjs`, `vt.mjs` (şema), `guvenlik.mjs`, `posta.mjs`, `ayar.mjs`, `yonet.mjs` |
 | `veri/` | `ag.mjs` (EUROAVIA), `tarihce.mjs` (tarihçe kayıtları, TR + EN ayrıntı ve kaynaklar), `harita-ulkeler.mjs` (Natural Earth, kamu malı), `kure-maske.mjs`, `yazilar.json` |
 | `gorseller/` | Logolar (kulübün 2023 site logosundan kırpıldı; beyaz sürümler alt bilgi için), fotoğraflar, AESTRO kapakları (`aestro/`), `semboller.svg` (üretilir), favicon |

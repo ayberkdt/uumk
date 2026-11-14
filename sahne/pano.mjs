@@ -1,4 +1,4 @@
-/* PANO — kalkış panosu ve biniş kartı. Ayrıntı: notlar/tasarim.md. */
+/* PANO — etkinlik panosu ve ayrıntı penceresi. */
 import { metin } from '../ceviri.mjs';
 
 const HARF = 'ABCÇDEFGĞHIİJKLMNOÖPRSŞTUÜVYZ0123456789';
@@ -67,7 +67,7 @@ export function panoKur({ tablo, pencere, az = false }) {
     k.setAttribute('aria-label', en ? `Open the post on ${m.dataset.kaynakAd} (new tab)` : `Gönderiyi ${m.dataset.kaynakAd}'da aç (yeni sekme)`);
     const kod = `UUMK-${id.toUpperCase()}`;
     alan('kod').textContent = kod;
-    import('../lib/sunumatik/boarding_pass/code128.mjs').then(({ code128Svg }) => { alan('barkod').innerHTML = code128Svg(kod, { height: 60, label: `Barkod: ${kod}` }); });
+    import('./code128.mjs').then(({ code128Svg }) => { alan('barkod').innerHTML = code128Svg(kod, { height: 60, label: `Barkod: ${kod}` }); });
     acan = document.activeElement;
     if (!pencere.open) pencere.showModal();
     if (gecmis) history.replaceState(null, '', `#etkinlik-${id}`);

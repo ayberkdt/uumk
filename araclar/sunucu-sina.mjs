@@ -222,7 +222,7 @@ const ana = await fetch(KOK + '/');
 sina('ana sayfa 200 + CSP başlığı', ana.status === 200 && !!ana.headers.get('content-security-policy'));
 sina('yol aşımı engellenir', (await fetch(KOK + '/..%2F..%2Fantratech/index.html')).status === 404);
 { const y = await fetch(KOK + '/a/b/olmayan-sayfa'), m = await y.text();
-  sina('olmayan sayfa: 404 + kulübün 404 sayfası (HTML)', y.status === 404 && /text\/html/.test(y.headers.get('content-type')) && m.includes('Bu rota haritada yok')); }
+  sina('olmayan sayfa: 404 + kulübün 404 sayfası (HTML)', y.status === 404 && /text\/html/.test(y.headers.get('content-type')) && m.includes('Sayfa bulunamadı')); }
 
 console.log(`\n${gecen} geçti · ${dusen} düştü`);
 sunucu.close(); vt.close();

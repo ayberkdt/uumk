@@ -1,4 +1,4 @@
-/* ÇEVİRİ — TR (index.html) / EN (dil/en.mjs). Ayrıntı: notlar/tasarim.md "Modül notları". */
+/* ÇEVİRİ — TR (index.html) / EN (dil/en.mjs). */
 
 export const DILLER = ['tr', 'en'];
 const ANAHTAR = 'uumk-dil';
@@ -23,7 +23,6 @@ export const JS_TR = {
   sponsorKonu: 'Sponsorluk — İTÜ UUMK', sponsorGovde: 'Merhaba,\n\n[Şirket] adına İTÜ UUMK ile sponsorluk ya da iş birliği hakkında görüşmek istiyoruz.\n\nAd soyad:\nŞirket:\nTelefon:\n',
   adresKopyalandi: '{adres} kopyalandı.', adresKopyalanamadi: 'Kopyalanamadı; adres: {adres}', parolaGoster: 'Göster', parolaGizle: 'Gizle',
   turGezi: 'Teknik gezi', turAtolye: 'Atölye', turKurs: 'Kurs', turYarisma: 'Yarışma', turSosyal: 'Sosyal', ucusKod: 'Uçuş',
-  kabinBasvur: 'Bu ekibe başvur', kabinUyeOl: 'Üye ol', kabinNot: 'Önce üye ol, sonra bu ekipte görev al.', kabinNotYonetim: 'Genel kurulda seçilir; önce üye ol.',
   dahaFazla: 'Diğer {n} etkinliği göster', takvimeEkle: 'Takvime ekle', kartAd: 'Ad Soyad', kartTaslak: 'Henüz hesap yok', kartCanli: 'Hesap açılıyor', kartDogrulandi: 'Doğrulandı', kartBekliyor: 'Doğrulama bekliyor',
   'h-ad-gerekli': 'Adını yaz.', 'h-soyad-gerekli': 'Soyadını yaz.', 'h-eposta-gecersiz': 'Geçerli bir e-posta adresi yaz.',
   'h-eposta-okul': 'Okul e-postanı yaz (@{alan}).', 'h-okul-no-gecersiz': 'Okul numaran yalnız rakamlardan oluşmalı.',
@@ -34,7 +33,7 @@ export const JS_TR = {
   'h-kayit-kapali': 'Bu etkinliğin kaydı kapandı.', 'h-kontenjan-doldu': 'Kontenjan doldu.', 'h-etkinlik-yok': 'Etkinlik bulunamadı.',
   'h-belirtec-gecersiz': 'Bağlantı geçersiz ya da süresi dolmuş.', 'h-oturum-yok': 'Oturumun kapanmış. Yeniden giriş yap.',
   'h-parola-yanlis': 'Mevcut parola yanlış.', 'h-konu-gecersiz': 'Bir konu seç.', 'h-mesaj-kisa': 'Mesajın en az 10 karakter olmalı.',
-  hesapGirisli: 'Hesabın açık. Kayda açık etkinliklere gündemden tek tıkla kaydolursun; bilgilerin karttan gelir.', hesapGirisliBekliyor: 'Hesabın açıldı. Tek tıkla kayıt için önce okul e-postana gelen bağlantıyla hesabını doğrula.',
+  hesapGirisli: 'Hesabın açık. Kayda açık etkinliklere gündemden tek tıkla kaydolursun; bilgilerin hesabından gelir.', hesapGirisliBekliyor: 'Hesabın açıldı. Tek tıkla kayıt için önce okul e-postana gelen bağlantıyla hesabını doğrula.',
   rozetDogrulandi: 'E-posta doğrulandı', rozetBekliyor: 'E-posta doğrulanmadı', rozetYonetici: 'Yönetici',
   profilKaydedildi: 'Profilin güncellendi.', parolaDegisti: 'Parolan değiştirildi; diğer cihazlardaki oturumlar kapandı.',
   bildirimGitti: 'Mesajın yönetim ekibine gönderildi. Yanıt okul e-posta adresine gelir.', bildirimKaydedildi: 'Mesajın kaydedildi; e-posta şu an gönderilemedi, yönetim ekibi siteden görecek.',

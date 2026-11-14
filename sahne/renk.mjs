@@ -1,5 +1,4 @@
-/* RENK — sahnelerin paleti; site.css :root jetonlarıyla aynı (araclar/dogrula.mjs sınar).
- * Kaynak: kulübün logosu (petrol #056b7a UUMK yazısı, lacivert #003366 EUROAVIA Istanbul işareti). */
+/* RENK — sahnelerin paleti; site.css :root jetonlarıyla aynı. */
 export const RENK = {
   kagit: '#ecebe7',
   murekkep: '#141414',

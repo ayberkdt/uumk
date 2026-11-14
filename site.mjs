@@ -1,4 +1,4 @@
-/* UUMK — sayfa denetleyicisi. Ayrıntı: notlar/tasarim.md. */
+/* UUMK — sayfa denetleyicisi. */
 import { dilKur, metin, hataMetni, etkinDil } from './ceviri.mjs';
 import { panoKur } from './sahne/pano.mjs';
 import { hesapKur, api } from './sahne/hesap.mjs';
@@ -166,8 +166,8 @@ function ufukGuncelle() {
   }
 }
 
-/* 01 Biz kimiz: kimlik uçağı, tarihçeye uçuş, kabin turu ve maketi — bölüme yaklaşınca yüklenir (sahne/biz.mjs) */
-gozle($('#kulup'), { yakin: '600px', ilk: () => import('./sahne/biz.mjs').then((m) => m.bizKur({ az: AZ, prm, gozle })) });
+/* 01 Biz kimiz: kimlik uçağı ve tarihçeye uçuş — bölüme yaklaşınca yüklenir (sahne/biz.mjs) */
+gozle($('#kulup'), { yakin: '600px', ilk: () => import('./sahne/biz.mjs').then((m) => m.bizKur({ az: AZ, gozle })) });
 
 /* telefonda yana kaydırılan şeritler: içinde odaklanılacak öğe yoksa klavyeyle kaydırılabilsin diye yalnız kayarken odak alır */
 const seritYokla = () => $$('.fotolar, .bicimler').forEach((e) => { if (e.scrollWidth > e.clientWidth + 1) e.tabIndex = 0; else e.removeAttribute('tabindex'); });
@@ -215,7 +215,7 @@ addEventListener('dil-degisti', hesapGirisYaz);
 const kart = $('#kulup-karti'), kartAlan = (k) => kart.querySelector(`[data-kart="${k}"]`);
 let kartKullanici = null;
 function kartYaz(v, durum) {
-  kart.dataset.durum = durum;
+  kart.dataset.durum = durum; kart.toggleAttribute('data-dogrulandi', durum === 'profil' && !!v.dogrulandi);
   const ad = `${v.ad || ''} ${v.soyad || ''}`.trim();
   kartAlan('ad').textContent = ad || metin('kartAd');
   kartAlan('okul_no').textContent = v.okul_no || '— — — — — — — —';
@@ -226,9 +226,9 @@ function kartYaz(v, durum) {
   kartEk?.barkod(kod);
   kartAlan('durum').textContent = durum === 'profil' ? metin(v.dogrulandi ? 'kartDogrulandi' : 'kartBekliyor') : durum === 'canli' ? metin('kartCanli') : metin('kartTaslak');
 }
-/* kartın barkodu, eğimi ve sallanması hesap bölümüne yaklaşınca yüklenir (sahne/kart.mjs) */
+/* kartın barkodu hesap bölümüne yaklaşınca yüklenir (sahne/kart.mjs) */
 let kartEk = null;
-gozle(kart, { yakin: '600px', ilk: async () => { kartEk = (await import('./sahne/kart.mjs')).kartKur(kart, AZ); kartEk.barkod(kartAlan('kod').textContent); } });
+gozle(kart, { yakin: '600px', ilk: async () => { kartEk = (await import('./sahne/kart.mjs')).kartKur(kart); kartEk.barkod(kartAlan('kod').textContent); } });
 const kayitForm = $('#kayit-form');
 function formdanKart() {
   if (kartKullanici) return;

@@ -6,3 +6,11 @@ kaynak/
 README.md
 siteyi-ac.cmd
 sunucu.ps1
+.vercelignore
+.gitignore
+.gitattributes
+sahne/istanbul.mjs
+sahne/kartpostal.mjs
+sahne/tarih-ikon.mjs
+sahne/kure-ortak.mjs
+veri/kure-maske.mjs

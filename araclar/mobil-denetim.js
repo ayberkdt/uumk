@@ -8,7 +8,7 @@
   const gizliAta = (e) => { for (let p = e; p; p = p.parentElement) { if (p.hidden || p.closest?.('[aria-hidden="true"], dialog:not([open]), template')) return true; const c = getComputedStyle(p); if (c.display === 'none' || c.visibility === 'hidden' || +c.opacity < 0.05) return true; } return false; };
   const kirpanAta = (e) => { for (let p = e.parentElement; p && p !== document.body; p = p.parentElement) { const c = getComputedStyle(p); if (/(hidden|clip|auto|scroll)/.test(c.overflowX)) return p; } return null; };
   const ad = (e) => { let s = e.tagName.toLowerCase(); if (e.id) s += '#' + e.id; const k = (e.getAttribute('class') || '').trim().split(/\s+/).filter(Boolean).slice(0, 2); if (k.length) s += '.' + k.join('.'); const t = (e.textContent || '').trim().replace(/\s+/g, ' ').slice(0, 30); return t ? `${s} «${t}»` : s; };
-  const hepsi = [...document.body.querySelectorAll('*')].filter((e) => !gizliAta(e) && gorunur(e) && !e.closest('.gorunmez, .maket__ad'));
+  const hepsi = [...document.body.querySelectorAll('*')].filter((e) => !gizliAta(e) && gorunur(e) && !e.closest('.gorunmez'));
   /* kırpan atanın (kaydırma kutusu, overflow gizli) dışında kalan kısım görünmez: çakışma sayılmaz */
   const kirpilmis = (e, r) => { for (let p = e.parentElement; p && p !== document.body; p = p.parentElement) { const c = getComputedStyle(p); if (/(hidden|clip|auto|scroll)/.test(c.overflowY + c.overflowX)) { const q = p.getBoundingClientRect(); if (r.bottom <= q.top + 1 || r.top >= q.bottom - 1 || r.right <= q.left + 1 || r.left >= q.right - 1) return true; } } return false; };
   const tasma = [], kesik = [], cakisma = [], kucuk = [];

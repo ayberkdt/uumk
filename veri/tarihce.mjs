@@ -1,5 +1,5 @@
-/* TARİHÇE — zaman çizelgesi kayıtları (TR + EN), ayrıntı sayfaları ve kaynakları. Tek kaynak: araclar/tarihce-insa.mjs bu dosyadan
- * index.html'deki şeritleri ve gizli ayrıntı metinlerini, dil/en.mjs'deki şerit anahtarlarını üretir. Her olgu notlar/dogrulanmis-olgular.md'de.
+/* TARİHÇE — zaman çizelgesi kayıtları (TR + EN), ayrıntı sayfaları ve kaynakları. index.html'deki şeritler,
+ * gizli ayrıntı metinleri ve dil/en.mjs'deki şerit anahtarları bu dosyadan üretilir.
  * resim: { cizim: 'kimlik' } (sahne/tarih-ikon.mjs) | { foto: 'ad', alt: 'anahtar' } | { logo: 'dosya', g, y } | { dergi: n }
  * galeri: [[dosya (gorseller/tarihce/<dosya>-480|960.jpg), TR altyazı, EN altyazı, kaynak adresi]]. kaynak: [url, etiket, İngilizce etiket?]. detay: paragraf dizisi; '•' ile başlayan satır madde olur. */
 export const KAYITLAR = [
@@ -36,18 +36,18 @@ export const KAYITLAR = [
       '• 11 Ocak: ilk seminer, "Avrupa Birliği Sürecinde Eğitim ve Öğrenci Değişim Olanakları" (Kültür Sanat Birliği Büyük Salonu).',
       '• 13 Ocak: kuruluş Taksim\'de bir partiyle kutlandı.',
       '• 22 Mart: İTÜ uçak mezunu Cevat Sunol "Amatör Uçak İmalatı ve Cosy Classic Projesi"ni anlattı; 40\'tan fazla kişi katıldı.',
-      'Kulübün 2001 sayfası ilk haftaları kendi sesiyle anlatıyor. 11 Ocak\'taki ilk seminerin konuşmacısı Arş. Gör. Alper Akyüz\'dü; sayfaya göre Kültür Sanat Birliği\'nden kaynaklanan teknik aksaklıklara rağmen sohbet havasında, keyifli bir tartışma oldu.',
+      '11 Ocak\'taki ilk seminerin konuşmacısı Arş. Gör. Alper Akyüz\'dü; kulübün 2001 sayfasına göre Kültür Sanat Birliği\'nden kaynaklanan teknik aksaklıklara rağmen sohbet havasında, keyifli bir tartışma oldu.',
       'Kuruluş, 13 Ocak Cumartesi akşamı Taksim\'deki Cafe Guitar\'da bir partiyle kutlandı. Kulüp 40–50 kişilik yer ayırmıştı; kampüste duyuru yapılmamasına rağmen İTÜ\'den ve dışından 70\'e yakın kişi geldi. Pasta kesildi, önce DJ çaldı, sonra canlı müzik başladı; son saatte "açık sahne"de seyirciler sırayla yeteneklerini gösterdi ve kulüp başkanı hayatında ilk kez bas gitar çaldı.',
-      'Şubat ve mart da hareketliydi: 2 Şubat\'ta yine Cafe Guitar\'da canlı müzikli bir toplantı yapıldı; Cevat Sunol\'un "Amatör Uçak İmalatı ve Cosy Classic Projesi" semineri iki bölüm sürdü (28 Şubat ve 22 Mart, Fen Edebiyat Fakültesi Y1 amfisi).',
+      '2 Şubat\'ta yine Cafe Guitar\'da canlı müzikli bir toplantı yapıldı. Cevat Sunol\'un "Amatör Uçak İmalatı ve Cosy Classic Projesi" semineri iki bölüm sürdü (28 Şubat ve 22 Mart, Fen Edebiyat Fakültesi Y1 amfisi).',
     ], [
       'The club was founded at ITU on 4 January 2001. The first board served from 4 January to 31 May 2001; its advisers were Prof. Dr. A. Rüstem Aslan and Prof. Dr. M. Adil Yükselen.',
       'First events on the club’s 2001 page:',
       '• 11 January: the first seminar, “Education and Student Exchange Opportunities in the EU Process” (Kültür Sanat Birliği main hall).',
       '• 13 January: the founding was celebrated with a party in Taksim.',
       '• 22 March: ITU aeronautics graduate Cevat Sunol talked about “Amateur Aircraft Building and the Cosy Classic Project”; more than 40 people attended.',
-      'The club’s 2001 page tells the first weeks in its own voice. The speaker at the first seminar on 11 January was research assistant Alper Akyüz; according to the page, despite technical problems at the venue, it turned into a friendly, enjoyable discussion.',
+      'The speaker at the first seminar on 11 January was research assistant Alper Akyüz; according to the club’s 2001 page, despite technical problems at the venue, it turned into a friendly, enjoyable discussion.',
       'The founding was celebrated on the evening of Saturday 13 January at Cafe Guitar in Taksim. The club had booked room for 40–50 people; without any campus announcement, nearly 70 people from ITU and beyond came. There was a cake, a DJ and then live music; in the last hour an “open stage” let guests show their talents, and the club president played bass guitar for the very first time.',
-      'February and March were busy too: on 2 February there was another live-music meet-up at Cafe Guitar, and Cevat Sunol’s seminar “Amateur Aircraft Building and the Cosy Classic Project” ran in two parts (28 February and 22 March, Faculty of Science and Letters, Y1 lecture hall).',
+      'On 2 February there was another live-music meet-up at Cafe Guitar, and Cevat Sunol’s seminar “Amateur Aircraft Building and the Cosy Classic Project” ran in two parts (28 February and 22 March, Faculty of Science and Letters, Y1 lecture hall).',
     ]],
     kaynak: [['https://web.archive.org/web/20011103085611/http://www.uumk.itu.edu.tr/belge/uumk_yk.htm', 'İlk yönetim kurulu (2001)', 'First board (2001)'], ['https://web.archive.org/web/20011103093209/http://www.uumk.itu.edu.tr/etkinlik/index.htm', 'Etkinlikler (2001)', 'Events (2001)']] },
   { id: '2001-mayis', yil: '2001', tur: 'ag', anahtar: 't4', resim: { logo: 'gorseller/logo-as-istanbul-beyaz-120.png', g: 120, y: 118 },
@@ -65,7 +65,7 @@ export const KAYITLAR = [
     kaynak: [['https://web.archive.org/web/20020202032911/http://www.uumk.itu.edu.tr/aboutist.htm', 'EUROAVIA Istanbul (2002)'], ['https://euroavia.eu/lg/istanbul/', 'euroavia.eu']] },
   { id: '2001-ekim', yil: '2001', tur: 'ag', anahtar: 'tf', resim: { cizim: '2001-ekim' },
     kod: ['14–21 Ekim · İstanbul', '14–21 October · Istanbul'], baslik: ['Fly-In İstanbul', 'Fly-In Istanbul'],
-    ozet: ['Kulübün düzenlediği ilk uluslararası EUROAVIA etkinliği: bir haftalık Fly-In.', 'The club’s first international EUROAVIA event: a week-long Fly-In.'],
+    ozet: ['Kulüp bir haftalık bir EUROAVIA Fly-In\'i düzenledi; Avrupa\'dan havacılık öğrencileri İstanbul\'da ağırlandı.', 'The club organised a week-long EUROAVIA Fly-In, hosting aerospace students from across Europe in Istanbul.'],
     detay: [[
       'EUROAVIA\'nın İstanbul yerel grubu 14–21 Ekim 2001\'de bir Fly-In düzenledi; Avrupa\'daki havacılık öğrencileri bir hafta İstanbul\'da ağırlandı.',
       'Katılım ücreti 90 Euro\'ydu; programdaki bütün ulaşım, yemekler ve konaklama buna dahildi. Etkinlikten sonra kulüp sitesinde fotoğraflar ve hikâyelerle bir sayfa açıldı.',
@@ -75,7 +75,7 @@ export const KAYITLAR = [
     ]],
     kaynak: [['https://web.archive.org/web/20020609210700/http://www.uumk.itu.edu.tr/fly-in.htm', 'Fly-In Istanbul (2002)']] },
   { id: '2003', yil: '2003', tur: 'ag', anahtar: 'k3', resim: { cizim: '2003' },
-    kod: ['EMEAC · İstanbul', 'EMEAC · Istanbul'], baslik: ['İlk ev sahipliği', 'First time as hosts'],
+    kod: ['EMEAC · İstanbul', 'EMEAC · Istanbul'], baslik: ['EMEAC 2003', 'EMEAC 2003'],
     ozet: ['AS Istanbul, EUROAVIA\'nın EMEAC kongresini İstanbul\'da düzenledi; katılımcı listesinde 24 kişi vardı.', 'AS Istanbul organised EUROAVIA’s EMEAC congress in Istanbul; the participant list had 24 names.'],
     detay: [[
       'EMEAC, EUROAVIA\'nın seçim kongresi. AS Istanbul 2003\'te kongreyi İstanbul\'da düzenledi; başvurular AS Istanbul\'a yapılıyordu.',
@@ -96,11 +96,11 @@ export const KAYITLAR = [
     detay: [[
       'İTÜ, AIAA\'nın Design/Build/Fly (DBF) yarışmasına 1998\'den beri katılıyor. Kulübün eski sitesindeki geçmiş projeler:',
       '• 2000–01: The Bosphorus Blue', '• 2001–02: ATA-4', '• 2002–03: Uçakçılar', '• 2003–04: ATA-5', '• 2004–05: ATA-6 ve Hezarfen',
-      'Kulübün 2023 sitesine göre ATA İHA Takımı UUMK bünyesinde çalışıyor; sonuçları AIAA DBF 2012\'de 4., 2014\'te 6. ve TÜBİTAK Uluslararası İHA Yarışması 2021\'de 2. Takımın bugünkü durumu doğrulanmadı.',
+      'Kulübün 2023 sitesine göre ATA İHA Takımı UUMK bünyesinde çalışıyor; sonuçları AIAA DBF 2012\'de 4., 2014\'te 6. ve TÜBİTAK Uluslararası İHA Yarışması 2021\'de 2.',
     ], [
       'ITU has taken part in AIAA’s Design/Build/Fly (DBF) competition since 1998. Past projects on the club’s old site:',
       '• 2000–01: The Bosphorus Blue', '• 2001–02: ATA-4', '• 2002–03: Uçakçılar', '• 2003–04: ATA-5', '• 2004–05: ATA-6 and Hezarfen',
-      'According to the club’s 2023 site the ATA UAV Team works within UUMK; its results are 4th at AIAA DBF 2012, 6th in 2014 and 2nd at the TÜBİTAK International UAV Competition 2021. The team’s current status was not verified.',
+      'According to the club’s 2023 site the ATA UAV Team works within UUMK; its results are 4th at AIAA DBF 2012, 6th in 2014 and 2nd at the TÜBİTAK International UAV Competition 2021.',
     ]],
     galeri: [['2012-1', '2006 ekibi', 'The 2006 team', 'https://web.archive.org/web/20240919102423/https://uumk.itu.edu.tr/ata-iha-takimi/'],
       ['2012-2', 'ATA-7 yarışmada', 'ATA-7 at the competition', 'https://web.archive.org/web/20240919102423/https://uumk.itu.edu.tr/ata-iha-takimi/'],
@@ -113,7 +113,7 @@ export const KAYITLAR = [
     kod: ['İTÜ · Her yıl', 'ITU · Every year'], baslik: ['Havacılık Günleri', 'Aviation Days'],
     ozet: ['UUMK ve İTÜ Havacılık Kulübü\'nün birlikte düzenlediği İTÜ Havacılık Günleri başladı.', 'ITU Aviation Days, organised by UUMK together with the ITU Aviation Club, began.'],
     detay: [[
-      'İTÜ Havacılık Günleri, UUMK ile İTÜ Havacılık Kulübü\'nün iştirakıyla düzenleniyor ve 2015\'ten beri her yıl yapılıyor.',
+      'İTÜ Havacılık Günleri\'ni UUMK ile İTÜ Havacılık Kulübü birlikte düzenliyor; etkinlik 2015\'ten beri her yıl yapılıyor.',
       'Etkinlik sektörel ve sportif havacılığı bir araya getiriyor; kulübün sitesi onu bu türden Türkiye\'deki ilk organizasyon olarak tanıtıyor.',
     ], [
       'ITU Aviation Days is organised by UUMK together with the ITU Aviation Club and has been held every year since 2015.',
@@ -122,7 +122,7 @@ export const KAYITLAR = [
     kaynak: [['https://web.archive.org/web/20241109185947/https://uumk.itu.edu.tr/havacilik-gunleri/', 'Havacılık Günleri (2024)', 'Aviation Days (2024)']] },
   { id: '2018', yil: '2018', tur: 'ag', anahtar: 'te', resim: { cizim: '2018' },
     kod: ['7–14 Nisan · İstanbul', '7–14 April · Istanbul'], baslik: ['EMEAC 2018', 'EMEAC 2018'],
-    ozet: ['EMEAC kongresi yeniden İstanbul\'da: 50 katılımcıyla bir hafta.', 'The EMEAC congress in Istanbul again: a week with 50 participants.'],
+    ozet: ['EMEAC kongresi yeniden İstanbul\'da yapıldı; 50 katılımcıyla bir hafta sürdü.', 'The EMEAC congress was held in Istanbul again: a week with 50 participants.'],
     detay: [[
       'AS Istanbul, EUROAVIA\'nın seçim kongresi EMEAC\'ı 2018\'de yeniden İstanbul\'da ağırladı.',
       'Kongre 50 katılımcıyla 7 Nisan akşamı karşılama yemeğiyle başladı ve 14 Nisan akşamı veda yemeğiyle bitti. Saatler süren toplantıların yanında katılımcılar İstanbul\'un kültürel ve sosyal mekânlarını gezdi.',
@@ -137,7 +137,7 @@ export const KAYITLAR = [
     kaynak: [['https://web.archive.org/web/20240919102246/https://uumk.itu.edu.tr/euroavia/', 'Kulübün EUROAVIA sayfası (2024)', 'The club’s EUROAVIA page (2024)']] },
   { id: '2019', yil: '2019', tur: 'kulup', anahtar: 't6', resim: { cizim: '2019' },
     kod: ['Panel · Fakülte', 'Panel · Faculty'], baslik: ['Dört Bir Yandan Havacılık', 'Dört Bir Yandan Havacılık'],
-    ozet: ['Savunma sanayi, sivil havacılık, akademi ve yeni mezun bakışı aynı panelde: TR Motors, THY, İTÜ ve GE Aviation\'dan konuklar.', 'Defence industry, civil aviation, academia and a recent graduate on one panel: guests from TR Motors, Turkish Airlines, ITU and GE Aviation.'],
+    ozet: ['Panelde savunma sanayi, sivil havacılık, akademi ve yeni mezunlardan birer konuk vardı: TR Motors, THY, İTÜ ve GE Aviation.', 'The panel had one guest each from the defence industry, civil aviation, academia and recent graduates: TR Motors, Turkish Airlines, ITU and GE Aviation.'],
     detay: [[
       'Panelde havacılığın dört alanından dört konuk vardı:',
       '• Savunma sanayi: TR Motors Genel Müdürü Dr. Osman Dur', '• Sivil havacılık: Türk Hava Yolları Genel Müdürü Bilal Ekşi', '• Akademi: İTÜ Uçak ve Uzay Bilimleri Fakültesi öğretim üyesi Dr. Hülya Cebeci', '• Yeni mezun: GE Aviation mühendisi Yağmur Gençoğlu',
@@ -203,12 +203,12 @@ export const KAYITLAR = [
     kod: ['Nisan · AESTRO 3', 'April · AESTRO 3'], baslik: ['Üçüncü sayı', 'Third issue'],
     ozet: ['AESTRO\'nun üçüncü sayısı Nisan\'da 19 gönüllü yazarla çıktı; Mayıs\'ta Turkish Technic mühendisleriyle atölye yaptık.', 'The third issue of AESTRO came out in April with 19 volunteer writers; in May we held a workshop with Turkish Technic engineers.'],
     detay: [[
-      'Salgın ve 2023 depreminin ardından iki yıl ara veren AESTRO, Nisan 2025\'te üçüncü sayısıyla döndü. Sayıyı 19 gönüllü yazar yaklaşık altı ayda hazırladı; baş editör Muhammed Emin Özcan\'dı. Kapakta Cem Doğut ile özel röportaj var.',
+      'Salgın ve 2023 depremi yüzünden ara veren AESTRO\'nun üçüncü sayısı Nisan 2025\'te çıktı. Sayıyı 19 gönüllü yazar yaklaşık altı ayda hazırladı; baş editör Muhammed Emin Özcan\'dı. Kapakta Cem Doğut ile özel röportaj var.',
       'Konular arasında Starship, Parker Solar Probe, uçuş simülatörleri ve yarış arabası aerodinamiği var.',
       '13 Mayıs 2025\'te Turkish Technic\'ten Kerem Said Gürman ve Dr. Yusuf Kahraman İTÜ\'de kabin modifikasyonu ve kabin güvenliğini anlattı; yaklaşık 30 kişi katıldı.',
       'Atölyede Kahoot ile bir bilgi yarışması da yapıldı; kazananlar ödüllerini aldı.',
     ], [
-      'After a two-year pause because of the pandemic and the 2023 earthquake, AESTRO returned with its third issue in April 2025. It was prepared by 19 volunteer writers over about six months; the chief editor was Muhammed Emin Özcan. The cover lists a special interview with Cem Doğut.',
+      'After a pause because of the pandemic and the 2023 earthquake, the third issue of AESTRO came out in April 2025. It was prepared by 19 volunteer writers over about six months; the chief editor was Muhammed Emin Özcan. The cover lists a special interview with Cem Doğut.',
       'Topics include Starship, the Parker Solar Probe, flight simulators and race car aerodynamics.',
       'On 13 May 2025, Kerem Said Gürman and Dr. Yusuf Kahraman from Turkish Technic talked at ITU about cabin modification and cabin safety; about 30 people attended.',
       'The workshop also had a Kahoot quiz about the topics; the winners received prizes.',
@@ -220,15 +220,15 @@ export const KAYITLAR = [
     kod: ['Mayıs · Genel kurul', 'May · General assembly'], baslik: ['Yeni yönetim', 'New board'],
     ozet: ['Mayıs 2026\'da yeni yönetim kurulu seçildi; Pegasus ve TUSAŞ teknik gezileri yapıldı.', 'A new board was elected in May 2026; we went on technical trips to Pegasus and TUSAŞ.'],
     detay: [[
-      'Bahar 2026\'da kulüp; kulüpler festivali, tanışma toplantısı, model uçak atölyesi, havacılık müzesi gezisi, TUSAŞ teknik gezisi ve kutu oyunu gecesi düzenledi.',
+      'Bahar 2026 programında kulüpler festivali, tanışma toplantısı, model uçak atölyesi, havacılık müzesi gezisi, TUSAŞ teknik gezisi ve kutu oyunu gecesi vardı.',
       'Pegasus teknik gezisinde bakım operasyonları izlendi ve mühendislerle görüşüldü. Mayıs 2026\'da yeni yerel yönetim kurulu seçildi; yeni yönetim 2026–27 dönemini planlıyor.',
       'Kulübün 2026 tişörtü yarışmayla seçildi (sonuç 8 Nisan): ön yüz Kağan Köseoğlu\'nun, arka yüz Ayberk Demirkanat\'ın.',
-      'Mayıs bülteni baharı kulüpler festivaliyle açıyor: yeni öğrencilerle yüz yüze tanışma. Ardından elleri kirleten bir model uçak atölyesi ("biraz deneme yanılmayla") ve kutu oyunu gecesi geldi. Temmuz bülteni dönemi Pegasus Hava Yolları teknik gezisiyle ve tişört tasarım yarışmasıyla kapatıyor; bülten Ahmet Buğra Çalışkan ve AS Istanbul yerel yönetim kurulu imzalı.',
+      'Mayıs bültenine göre kulüpler festivalinde yeni öğrencilerle yüz yüze tanışıldı; uygulamalı model uçak atölyesi "biraz deneme yanılmayla" ilerledi. Temmuz bülteni Ahmet Buğra Çalışkan ve AS Istanbul yerel yönetim kurulu imzalı.',
     ], [
-      'In spring 2026 the club held the clubs’ festival, a meet-up, a model aircraft workshop, an aviation museum visit, a technical trip to TUSAŞ and a board game night.',
+      'The spring 2026 programme included the clubs’ festival, an introductory meeting, a model aircraft workshop, an aviation museum visit, a technical trip to TUSAŞ and a board game night.',
       'On the Pegasus technical trip we watched maintenance operations and met engineers. A new local board was elected in May 2026 and is planning the 2026–27 term.',
       'The club’s 2026 T-shirt was chosen through a contest (result on 8 April): the front by Kağan Köseoğlu, the back by Ayberk Demirkanat.',
-      'The May update opens the spring with the clubs’ festival — meeting new students face to face — followed by a hands-on model aircraft workshop (“with a bit of trial and error”) and a board game night. The July update closes the term with the Pegasus Airlines technical tour and the T-shirt design competition; it is signed by Ahmet Buğra Çalışkan and the AS Istanbul local board.',
+      'According to the May update, the clubs’ festival was a chance to meet new students face to face, and the hands-on model aircraft workshop went on “with a bit of trial and error”. The July update is signed by Ahmet Buğra Çalışkan and the AS Istanbul local board.',
     ]],
     galeri: [['2026-1', 'Kulüpler festivali', 'The clubs\' festival', 'https://blog.euroavia.eu/2026/05/31/as-istanbul-may-2026-updates/'],
       ['2026-2', 'Model uçak atölyesi', 'Model aircraft workshop', 'https://blog.euroavia.eu/2026/05/31/as-istanbul-may-2026-updates/'],

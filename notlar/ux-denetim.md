@@ -1,3 +1,57 @@
+# YASA DENETİMİ — UUMK v15 eki (kabin çizimi yeniden, AESTRO koltuk sırtı ayrıntısı, metin ve sızıntı temizliği, pasaport kimlik paneli) · 2026-11-15 · denetleyici index 0 HATA · 6 UYARI
+
+Sonuç: 20/20 ölçüldü · 0 HATA (ilk koşuda 1: kapak geçişi 1100 ms → 600 ms) · 6 UYARI (5'i önceki gerekçelerle; yeni 1: Doherty 600 ms, gerekçeli) · TESLİM
+
+| # | Yasa | Ölçüm | Eşik | Durum | Gerekçe (yalnız UYARI) |
+|---|---|---|---|---|---|
+| 1 | Hick | kimlik paneli 0 eylem; AESTRO 3 kapak; kabin 1; ayrıntı penceresi 6 (v8) | ≤ 5 | UYARI | yalnız ayrıntı penceresi (v8 gerekçesi) |
+| 2 | Fitts | değişen yüzeyde yeni hedef yok; "Tarihçeye git" düğmesi aynı boyutta | ≥ 44 px | geçti | |
+| 3 | Jakob | pasaport damgası ve vize kalıbı tanıdık; kapak yalnız bir kez açılır, kaydırmayı kaçırmaz | — | geçti | |
+| 4 | Seçim Yükü | değişmedi | — | geçti | |
+| 5 | Yakınlık | pasaport sayfası içi 1,6cqw (~9 px) / sayfalar arası kıvrım; kimlik–adres 16 px | ≤ 1:2 | geçti | |
+| 6 | Benzerlik | köşe yarıçapı 4 (koltuk üstü tek değer, masaüstü ve telefonda aynı oran; tepsi ve cep r-1/r-2'ye çekildi: önce 7 → şimdi 4) · gölge 2 · damga renkleri paletten (petrol, hata kırmızısı) | ≤ 4 · ≤ 2 | geçti | |
+| 7 | Tekdüze Bağlılık | logo, ad ve tarih aynı sayfada; damga o sayfanın tarihini taşır | — | geçti | |
+| 8 | Ortak Bölge | pasaport tek nesne; kimlik paneli artık kutu içinde kutu değil | 0 iç içe | geçti | |
+| 9 | Prägnanz | degrade/cam/ışıma 0; güvenlik deseni ve cep dokusu SVG desen | 0 | geçti | |
+| 10 | Von Restorff | Biz kimiz'de tek birincil "Tarihçeye git"; pasaportta eylem yok | 1 | geçti | |
+| 11 | Miller | değişmedi | ≤ 7 | geçti | |
+| 12 | Sıra Konumu | okuma sırası İTÜ UUMK → AS Istanbul (DOM'da kapak/İTÜ sayfası önce) | — | geçti | |
+| 13 | Doherty | kapak açılışı 600 ms (bir kez, süs; içerik JS'siz de açık); damgalar 420 ms | < 300 / ≤ 600 | UYARI | tek seferlik açılış; bilgiyi bekletmez (hareket azaltmada ve JS'siz baştan açık) |
+| 14 | Zeigarnik | değişmedi | — | geçti | |
+| 15 | Zirve-Son | animasyonun son karesi tasarlı: açık pasaport, iki damga, inmiş uçak (az kipinin başlangıcı da bu) | — | geçti | |
+| 16 | Parkinson | değişmedi | ≤ %50 | UYARI | kullanıcı isteği (v12) |
+| 17 | Tesler | animasyon görününce kendiliğinden; ayar yok | — | geçti | |
+| 18 | Postel | değişmedi | — | geçti | |
+| 19 | Occam | sayfa 3118 öğe; giriş ve tarihçe değişmedi | ≤ 900 | UYARI | v12 gerekçesi |
+| 20 | Pareto | değişmedi | ≥ %60 | UYARI (v9) | v9 gerekçesi |
+
+# YASA DENETİMİ — UUMK v15 (kabin çizimi ve ekip kartları, AESTRO koltuk cepleri, sponsorluk zarfı ve defteri, biniş kartı) · 2026-11-14 · denetleyici index 0 HATA · 5 UYARI
+
+Sonuç: 20/20 ölçüldü · 0 HATA · denetleyicide 5 UYARI, tabloda 4 UYARI satırı (Hick-ayrıntı, Parkinson, Occam, Pareto; hepsi v8–v12'den, gerekçeler değişmedi; v14'teki kabin Hick ve Doherty uyarıları kabin turu kalktığı için düştü) · TESLİM
+
+| # | Yasa | Ölçüm | Eşik | Durum | Gerekçe (yalnız UYARI) |
+|---|---|---|---|---|---|
+| 1 | Hick | kabin 9 eylem → 1 ("Üye ol"; 6 ekip kartı düz metin, seçim yok) · AESTRO 3 kapak bağlantısı · sponsorluk 2 (E-posta yaz, Adresi kopyala) · hesap değişmedi · ayrıntı penceresi 6 (v8) | ≤ 5 | UYARI | yalnız ayrıntı penceresi (v8 gerekçesi) |
+| 2 | Fitts | mobil-denetim 390/1047/1440: < 44 px hedef 0; kurum etiketleri 44 px yükseklik (bağlantı değil) | ≥ 44 px | geçti | |
+| 3 | Jakob | kapak bağlantısı yeni sekme ve uçak imi (sitenin dış bağlantı deseni); biniş kartı ayrıntı penceresindeki biniş kartıyla aynı düzen (petrol başlık, kalkış → varış, kesikli koçan, barkod) | — | geçti | |
+| 4 | Seçim Yükü | kabin seçimi kalktı (6 ekip aynı anda okunur) | ≤ 5 | geçti | |
+| 5 | Yakınlık | ekip kartı içi 6 px / kartlar arası 16 px (1:2,7); biçim içi 6 px / biçimler arası 24 px (1:4); defter satırı 12 px dolgu, defter–biçimler 64 px | ≤ 1:2 | geçti | |
+| 6 | Benzerlik | punto ölçek dışı 0 · köşe yarıçapı 4 (2px, 1px ve kapak resmi v14'ten; koltuk sırtı r-3 / 60 px eliptik üst: çizim biçimi) · gölge 2 (g-1 ve önceki; kabin vurgusu ve ekip çerçevesi outline'a çevrildi: önce 3 → şimdi 2) · numara levhası çizimde ve kartta aynı (siyah zemin sarı rakam, kapı tabelası) | ≤ 4 · ≤ 2 | geçti | |
+| 7 | Tekdüze Bağlılık | ekip numarası ile çizimdeki bölme aynı levha; olgu defterinde etiket ve değer aynı satırda; zarfta adres ve konu zarf satırlarında | — | geçti | |
+| 8 | Ortak Bölge | ekip kartları tek ızgara; zarf tek çerçeve (kartpostal kenarı); biniş kartı tek kutu, koçan kesikli çizgiyle ayrılır; iç içe kart 0 | 0 iç içe | geçti | |
+| 9 | Prägnanz | simge + 01–04 sayacı + rozet üçlüsü ve büyük rakam şeridi kalktı; degrade/cam/ışıma 0 | 0 | geçti | |
+| 10 | Von Restorff | kabinde tek birincil "Üye ol"; sponsorlukta tek birincil "E-posta yaz" (ikincisi ikincil); vurgu tonu petrol, sarı yalnız etkin vurgu (bölme çerçevesi, levha) | 1 | geçti | |
+| 11 | Miller | ekip 6 (kokpit + 5 kabin; tek ızgarada 3+3) · defter 4 · biçim 4 · kurum 5 | ≤ 7 | geçti | |
+| 12 | Sıra Konumu | ekipler burundan kuyruğa 1–6 (ilk: Yönetim kurulu); sponsorlukta ilk olgu kuruluş yılı, son biçim proje takımı (v14 sırası) | — | geçti | |
+| 13 | Doherty | kabin 7 sn süre çubuğu kalktı; vurgu geçişi 160 ms; kapağın cepten yükselişi 560 ms (--sure, ≤ 600 ms; bekleme değil süs) | < 400 ms | geçti | |
+| 14 | Zeigarnik | hesap adımları değişmedi | — | geçti | |
+| 15 | Zirve-Son | biniş kartı dört durumda tasarlı: taslak (gri damga), yazarken (sarı), doğrulama bekliyor, doğrulandı (petrol damga basılır) | — | geçti | |
+| 16 | Parkinson | kayıt formu değişmedi (6/6 zorunlu) | ≤ %50 | UYARI | kullanıcı isteği (v12) |
+| 17 | Tesler | kabin vurgusu ve telefonda burundan başlayan kaydırma CSS'te (JS ve ayar yok); AESTRO ipucu 3. kapağın blog yazısına gittiğini önceden söyler | — | geçti | |
+| 18 | Postel | değişmedi | — | geçti | |
+| 19 | Occam | sayfa 3113 → 3100 öğe; giriş ve tarihçe yoğunluğu değişmedi | ≤ 900 | UYARI | v12 gerekçesi (3 occam satırı) |
+| 20 | Pareto | değişmedi | ≥ %60 | UYARI (v9) | v9 gerekçesi |
+
 # YASA DENETİMİ — UUMK v14 (kabin apronu, gece İstanbulu, altbilgi e-postası, kimlik uçuşu) · 2026-10-11 gece · denetleyici index 0 HATA · 7 UYARI (v13 ile aynı)
 
 Sonuç: 20/20 ölçüldü · 0 HATA · 7 UYARI (hepsi v12–v13'ten, gerekçeler değişmedi) · TESLİM

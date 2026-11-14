@@ -1,5 +1,4 @@
-/* YÖNETİM — etkinlik ve yazı yönetimi (rol: yonetici). İlk yönetici sunucuda atanır: node sunucu/yonet.mjs yonetici <eposta>.
- * Tüm işlemler sunucu/api.mjs /api/yonetim/* uçlarıyla; sunucu yetkiyi her istekte yeniden denetler. */
+/* YÖNETİM — etkinlik ve yazı yönetimi (rol: yonetici). İşlemler /api/yonetim/* uçlarıyla; sunucu yetkiyi her istekte yeniden denetler. */
 import { api } from './sahne/hesap.mjs';
 
 const $ = (s) => document.querySelector(s);

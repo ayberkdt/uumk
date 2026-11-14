@@ -1,5 +1,4 @@
-/* İSTANBUL — blok blok kurulan panorama (preset, v5). Tarayıcıda çalışmaz: araclar/istanbul-insa.mjs bu modülle SVG'yi üretip
- * index.html'e yazar (JS'siz de görünür; dogrula.mjs sayfadaki çizimin bu çıktıyla birebir aynı olduğunu sınar).
+/* İSTANBUL — blok blok kurulan panorama. SVG üretim aşamasında index.html'e yazılır (JS'siz de görünür).
  * Görünüm: Marmara'dan kuzeye bakış — solda tarihî yarımada (Ayasofya, Süleymaniye, Yeni Cami), Galata Köprüsü'nde balıkçılar,
  * ortada Galata, uzakta Boğaz Köprüsü, önde Kız Kulesi, sağda Üsküdar. Işık sağ üstten (güneş): gölgeli yüzler solda, tarama
  * dokusuyla (desen: pulSembolleri içindeki #tarama-gun / #tarama-gece). Suda yapıların kırık yansımaları.
@@ -175,7 +174,7 @@ function yansima(liste, r) {
   return P(d, 'yy');
 }
 
-/* ── preset: sahnenin blokları (sıra = kurulma sırası) ── */
+/* ── sahnenin blokları (sıra = kurulma sırası) ── */
 function sahne() {
   const r = rastgele(2001);
   const B = [];   /* { katman, parcalar[], sinif? } */

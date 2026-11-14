@@ -37,7 +37,7 @@ export function ingilizce() {
 }
 
 const HTML_I = /(<!-- tarihce:seritler -->\n)[\s\S]*?(        <!-- \/tarihce:seritler -->)/;
-const EN_I = /(  \/\* tarihce:basla — araclar\/tarihce-insa\.mjs üretir \*\/\n)[\s\S]*?(  \/\* tarihce:bitir \*\/)/;
+const EN_I = /(  \/\* tarihce:basla \*\/\n)[\s\S]*?(  \/\* tarihce:bitir \*\/)/;
 export const htmlYerlestir = (html) => { if (!HTML_I.test(html)) throw new Error('index.html: tarihce işareti yok'); return html.replace(HTML_I, (_, a, b) => a + seritler() + b); };
 export const enYerlestir = (en) => { if (!EN_I.test(en)) throw new Error('en.mjs: tarihce işareti yok'); return en.replace(EN_I, (_, a, b) => a + ingilizce() + b); };
 

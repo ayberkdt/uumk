@@ -1,13 +1,11 @@
 /* Code 128-B kodlayıcı — saf, DOM'suz, deterministik.
  *
- *   encode128B('SNM042')  → { values, widths, modules, checksum }
- *   code128Svg('SNM042', { height: 96 }) → '<svg …>' (viewBox birim = modül)
+ *   encode128B('UUMK-0001')  → { values, widths, modules, checksum }
+ *   code128Svg('UUMK-0001', { height: 96 }) → '<svg …>' (viewBox birim = modül)
  *
  * Code 128: her sembol 3 çubuk + 3 boşluktan oluşur, toplam 11 modül;
  * bitiş sembolü 4 çubuk + 3 boşluk, 13 modül. B kümesi ASCII 32–127'yi
  * kodlar (değer = kod − 32). Sağlama: (başlangıç + Σ değer·konum) mod 103.
- * Desen tablosu ve test vektörleri scripts/validate-page-presets.mjs'te
- * bağımsız bir kodlayıcının (reportlab 5.0) çıktısına karşı sabitlenmiştir.
  */
 
 export const PATTERNS = [
@@ -60,10 +58,10 @@ export function code128Svg(text, { height = 60, label } = {}) {
     if (i % 2 === 0) rects.push(`<rect x="${x}" y="0" width="${w}" height="${height}"/>`);
     x += w;
   }
-  /* ekran okuyucu etiketi sayfanın dilinde; Node'da (doğrulayıcı) belge yok */
+  /* ekran okuyucu etiketi sayfanın dilinde; belge yoksa Türkçe */
   const en = typeof document !== 'undefined' && (document.documentElement.lang || 'tr').startsWith('en');
   const aria = label ?? `${en ? 'Barcode' : 'Barkod'}: ${text}`;
-  return `<svg class="bp-barkod-svg" viewBox="0 0 ${total} ${height}" preserveAspectRatio="none" role="img" aria-label="${escapeAttr(aria)}" fill="currentColor">${rects.join('')}</svg>`;
+  return `<svg viewBox="0 0 ${total} ${height}" preserveAspectRatio="none" role="img" aria-label="${escapeAttr(aria)}" fill="currentColor">${rects.join('')}</svg>`;
 }
 
 function escapeAttr(s) {

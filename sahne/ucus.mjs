@@ -1,4 +1,4 @@
-/* UÇUŞ — açılıştaki kâğıt uçak (tuval 2B, kendi 3B izdüşümü). Ayrıntı: notlar/tasarim.md "Modül notları". */
+/* UÇUŞ — açılıştaki kâğıt uçak (tuval 2B, kendi 3B izdüşümü). */
 import { RENK } from './renk.mjs';
 
 const ek = (a, b) => [a[0] + b[0], a[1] + b[1], a[2] + b[2]];
@@ -66,7 +66,7 @@ export function yorunge(anahtar) {
     return { ileri, hedef: ek(kat(kavis, 0.32 + 3.2 * w), [0, 0.9 - 0.86 * w, 0]) };
   }
   /* üst vektör tablosu: önceki üst ileri yöne dik izdüşürülür ve hedefe yumuşakça yaklaşır; böylece yatış hiçbir karede
-   * birden değişmez (eskiden her kare bağımsız hesaplanıyordu, taklanın tepesinde 180° ters dönüş vardı) */
+   * birden değişmez */
   const NT = 1600, ustler = [];
   let ust = [0, 1, 0];
   for (let i = 0; i <= NT; i++) {
